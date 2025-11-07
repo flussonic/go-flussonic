@@ -58,7 +58,7 @@ func main() {
 	// Example 2: Get list of agents with pagination
 	fmt.Println("\n=== Example 2: List Agents with Pagination ===")
 	agents, err := client.AgentsList(ctx, &central.AgentsListQuery{
-		Select: "id,name,status",
+		Select: []string{"id", "name", "status"},
 		Limit:  10,
 	})
 	if err != nil {

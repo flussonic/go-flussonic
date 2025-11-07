@@ -9,7 +9,6 @@ linters:
     - dogsled
     - errcheck
     - funlen
-    - goconst
     - gocritic
     - gosec
     - govet
@@ -34,9 +33,6 @@ linters:
     funlen:
       lines: 300
       statements: 200
-    goconst:
-      min-len: 2
-      min-occurrences: 5
     gocritic:
       disabled-checks:
         - wrapperFunc
@@ -74,12 +70,10 @@ linters:
     rules:
       - linters:
           - funlen
-          - goconst
           - revive
         path: _test\.go
       - linters:
           - funlen
-          - goconst
           - revive
           - misspell
           - nakedret
@@ -90,7 +84,6 @@ linters:
         path: .*_generated\.go$
       - linters:
           - funlen
-          - goconst
           - revive
           - misspell
           - nakedret

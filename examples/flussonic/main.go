@@ -46,7 +46,7 @@ func main() {
 	}
 
 	streamsListQuery := &flussonic.StreamsListQuery{
-		Select: "name,stats",
+		Select: []string{"name", "stats"},
 		Limit:  10, // Limit number of items per page
 	}
 
@@ -63,7 +63,7 @@ func main() {
 	// Example 3: Get list of streams with pagination
 	fmt.Println("\n=== Example 3: List Streams with Pagination ===")
 	streams, err := client.StreamsList(ctx, &flussonic.StreamsListQuery{
-		Select: "name,stats",
+		Select: []string{"name", "stats"},
 		Limit:  10, // Limit number of items per page
 	})
 	if err != nil {
@@ -117,7 +117,7 @@ func main() {
 	// Example 6: Get list of DVR archives
 	fmt.Println("\n=== Example 6: List DVR Archives ===")
 	dvrs, err := client.DvrsList(ctx, &flussonic.DvrsListQuery{
-		Sort:  "name",
+		Sort:  []string{"name"},
 		Limit: 10,
 	})
 	if err != nil {
@@ -167,9 +167,9 @@ func main() {
 	// Example 9: Get list of packages with filtering
 	fmt.Println("\n=== Example 9: List Packages with Filtering ===")
 	packages, err := client.PackagesList(ctx, &flussonic.PackagesListQuery{
-		Select: "name,streams",
+		Select: []string{"name", "streams"},
 		Limit:  10,
-		Sort:   "name",
+		Sort:   []string{"name"},
 	})
 	if err != nil {
 		log.Printf("Failed to get packages: %v", err)

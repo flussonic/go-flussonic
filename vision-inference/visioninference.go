@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	"github.com/flussonic/go-flussonic/config"
@@ -60,8 +61,8 @@ type CounterRecordsListQuery struct {
 	Media string
 	// Filter results by timstamp when record was created.
 	OpenedAt int
-	Select   string
-	Sort     string
+	Select   []string
+	Sort     []string
 	Extra    map[string]string
 }
 
@@ -78,11 +79,11 @@ func (q *CounterRecordsListQuery) ToQueryString() (string, error) {
 	if q.OpenedAt != 0 {
 		values.Set("opened_at", strconv.Itoa(q.OpenedAt))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -117,8 +118,8 @@ type EpisodesListQuery struct {
 	PollTimeout int
 	// Request for the search across the streams being processed by the inference server. Query is a free-formed text that describes an object to search for and its attributes. Query may include color properties ("yellow"), appearance attributes ("beard"). Results may be inaccurate and should be reviewed by inspecting corresponding video fragments. In order to use "context search" feature package `vision-context-search` must be installed at the  inference server to make digital fingerprints of streams. In case you use the "q" parameter to get a list of episodes, the following collection filters are only supported: "media", "opened_at_gte", "opened_at_lte".
 	Q      string
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	// Filter results by timstamp when episode was updated.   To specify timestamp range these suffixes may be used:     `_gt`: greater than value     `_lt`: less than value     `_gte`: greater than or equal to value     `_lte`: less than or equal to value
 	UpdatedAt int
 	Extra     map[string]string
@@ -146,11 +147,11 @@ func (q *EpisodesListQuery) ToQueryString() (string, error) {
 	if q.UpdatedAt != 0 {
 		values.Set("updated_at", strconv.Itoa(q.UpdatedAt))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -177,8 +178,8 @@ func (q *EpisodesListQuery) SetCursor(cursor *string) {
 type StreamsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -189,11 +190,11 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))

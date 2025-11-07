@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	"github.com/flussonic/go-flussonic/config"
@@ -211,8 +212,8 @@ type AdminStreamsListQuery struct {
 	PreferredZones string
 	// Comma-separated list of required zones. Returns streams, belonging to at least one required zone from the list.
 	RequiredZones string
-	Select        string
-	Sort          string
+	Select        []string
+	Sort          []string
 	Extra         map[string]string
 }
 
@@ -229,11 +230,11 @@ func (q *AdminStreamsListQuery) ToQueryString() (string, error) {
 	if q.RequiredZones != "" {
 		values.Set("required_zones", q.RequiredZones)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -262,8 +263,8 @@ type AgentsListQuery struct {
 	Limit  int
 	// Organization identifier to select agents only available for this organization. If the `organization_id` is not transferred, all available agents will be returned.
 	OrganizationId int
-	Select         string
-	Sort           string
+	Select         []string
+	Sort           []string
 	// Filter agents by stream presence. If any stream has the agent in its inputs, the agent will not be returned with filter `stream_is=null`.
 	Stream string
 	// Filter agents by stream title using partial match. The search is case-insensitive and matches any part of the stream title.
@@ -287,11 +288,11 @@ func (q *AgentsListQuery) ToQueryString() (string, error) {
 	if q.TitleLike != "" {
 		values.Set("title_like", q.TitleLike)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -341,8 +342,8 @@ func (q *ClusterStatsGetQuery) ToQueryString() (string, error) {
 type EventsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -353,11 +354,11 @@ func (q *EventsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -386,8 +387,8 @@ type PresetsListQuery struct {
 	Limit  int
 	// Organization identifier to select presets only available for this organization. If the `organization_id` is not transferred, all available presets will be returned.
 	OrganizationId int
-	Select         string
-	Sort           string
+	Select         []string
+	Sort           []string
 	Extra          map[string]string
 }
 
@@ -401,11 +402,11 @@ func (q *PresetsListQuery) ToQueryString() (string, error) {
 	if q.OrganizationId != 0 {
 		values.Set("organization_id", strconv.Itoa(q.OrganizationId))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -432,8 +433,8 @@ func (q *PresetsListQuery) SetCursor(cursor *string) {
 type PreviewLayoutChangeForStreamConfigQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -444,11 +445,11 @@ func (q *PreviewLayoutChangeForStreamConfigQuery) ToQueryString() (string, error
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -475,8 +476,8 @@ func (q *PreviewLayoutChangeForStreamConfigQuery) SetCursor(cursor *string) {
 type PreviewLayoutChangeForStreamerConfigQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -487,11 +488,11 @@ func (q *PreviewLayoutChangeForStreamerConfigQuery) ToQueryString() (string, err
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -518,8 +519,8 @@ func (q *PreviewLayoutChangeForStreamerConfigQuery) SetCursor(cursor *string) {
 type SharedTokensListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -530,11 +531,11 @@ func (q *SharedTokensListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -590,8 +591,8 @@ type StreamLayoutsGetQuery struct {
 	Cursor string
 	// Limit the number of returned layouts
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -614,11 +615,11 @@ func (q *StreamLayoutsGetQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -683,8 +684,8 @@ func (q *StreamerSaveQuery) ToQueryString() (string, error) {
 type StreamersListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -695,11 +696,11 @@ func (q *StreamersListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -728,8 +729,8 @@ type UsersListQuery struct {
 	Limit  int
 	// Organization identifier to select users only available for this organization. If the `organization_id` is not transferred, all available users will be returned.
 	OrganizationId int
-	Select         string
-	Sort           string
+	Select         []string
+	Sort           []string
 	Extra          map[string]string
 }
 
@@ -743,11 +744,11 @@ func (q *UsersListQuery) ToQueryString() (string, error) {
 	if q.OrganizationId != 0 {
 		values.Set("organization_id", strconv.Itoa(q.OrganizationId))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -774,8 +775,8 @@ func (q *UsersListQuery) SetCursor(cursor *string) {
 type ZonesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -786,11 +787,11 @@ func (q *ZonesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))

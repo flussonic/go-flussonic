@@ -52,9 +52,9 @@ func main() {
 	// Example 3: Get list of episodes with iterator
 	fmt.Println("\n=== Example 3: List Episodes with Iterator ===")
 	episodesIter := client.EpisodesListIterator(ctx, &visioninference.EpisodesListQuery{
-		Select: "episode_id,media,opened_at",
+		Select: []string{"episode_id", "media", "opened_at"},
 		Limit:  5,
-		Sort:   "timestamp",
+		Sort:   []string{"timestamp"},
 	})
 
 	episodeCount := 0

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	"github.com/flussonic/go-flussonic/config"
@@ -507,8 +508,8 @@ type Flussonic interface {
 type ApiTokensListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -519,11 +520,11 @@ func (q *ApiTokensListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -550,8 +551,8 @@ func (q *ApiTokensListQuery) SetCursor(cursor *string) {
 type AuthBackendsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -562,11 +563,11 @@ func (q *AuthBackendsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -593,8 +594,8 @@ func (q *AuthBackendsListQuery) SetCursor(cursor *string) {
 type AvailableEventsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -605,11 +606,11 @@ func (q *AvailableEventsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -636,8 +637,8 @@ func (q *AvailableEventsListQuery) SetCursor(cursor *string) {
 type CachesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -648,11 +649,11 @@ func (q *CachesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -707,8 +708,8 @@ type DiskFilesListQuery struct {
 	// The folder in the storage to filter the results by.
 	Folder string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -722,11 +723,11 @@ func (q *DiskFilesListQuery) ToQueryString() (string, error) {
 	if q.Folder != "" {
 		values.Set("folder", q.Folder)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -753,8 +754,8 @@ func (q *DiskFilesListQuery) SetCursor(cursor *string) {
 type DvbCardAvailableProgramsGetQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -765,11 +766,11 @@ func (q *DvbCardAvailableProgramsGetQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -796,8 +797,8 @@ func (q *DvbCardAvailableProgramsGetQuery) SetCursor(cursor *string) {
 type DvbCardsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -808,11 +809,11 @@ func (q *DvbCardsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -839,8 +840,8 @@ func (q *DvbCardsListQuery) SetCursor(cursor *string) {
 type DvrDisksListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -851,11 +852,11 @@ func (q *DvrDisksListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -887,8 +888,8 @@ type DvrEpisodesListQuery struct {
 	// Filter the collection by media name on which the episode is registered
 	Media string
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -908,11 +909,11 @@ func (q *DvrEpisodesListQuery) ToQueryString() (string, error) {
 	if q.Media != "" {
 		values.Set("media", q.Media)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -935,8 +936,8 @@ type DvrsListQuery struct {
 	// This parameter is used instead of the Accept header to select of non-JSON response content format.
 	Format string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -950,11 +951,11 @@ func (q *DvrsListQuery) ToQueryString() (string, error) {
 	if q.Format != "" {
 		values.Set("format", q.Format)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -992,8 +993,8 @@ type EpisodesListQuery struct {
 	// Client may ask to delay a response if there are no episodes to fetch. This should be used as a long-poll mechanism for lightweight fetching episodes from origin.
 	PollTimeout int
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	// Filter the collection by episode update time. This field is rather specific because it allows to have an update stream with new/updated episodes
 	UpdatedAtGt int
 	Extra       map[string]string
@@ -1022,14 +1023,14 @@ func (q *EpisodesListQuery) ToQueryString() (string, error) {
 	if q.PollTimeout != 0 {
 		values.Set("poll_timeout", strconv.Itoa(q.PollTimeout))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
 	if q.UpdatedAtGt != 0 {
 		values.Set("updated_at_gt", strconv.Itoa(q.UpdatedAtGt))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1050,8 +1051,8 @@ func (q *EpisodesListQuery) SetCursor(cursor *string) {
 type EventSinksListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1062,11 +1063,11 @@ func (q *EventSinksListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1095,8 +1096,8 @@ type HttpProxiesListQuery struct {
 	// This parameter is used instead of the Accept header to select of non-JSON response content format.
 	Format string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1110,11 +1111,11 @@ func (q *HttpProxiesListQuery) ToQueryString() (string, error) {
 	if q.Format != "" {
 		values.Set("format", q.Format)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1141,8 +1142,8 @@ func (q *HttpProxiesListQuery) SetCursor(cursor *string) {
 type LogosListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1153,11 +1154,11 @@ func (q *LogosListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1188,9 +1189,9 @@ type OpenedFilesListQuery struct {
 	Limit int
 	// The unique name of VOD location.  It is used as a prefix for displaying opened VOD files in this location.
 	Prefix string
-	Select string
+	Select []string
 	// Composite sort direction. Default sort order is `name`.
-	Sort string
+	Sort []string
 	// Index of the storage in the VOD location. It is used as a storage_index for displaying opened VOD files in this storage.
 	StorageIndex int
 	Extra        map[string]string
@@ -1212,14 +1213,14 @@ func (q *OpenedFilesListQuery) ToQueryString() (string, error) {
 	if q.Prefix != "" {
 		values.Set("prefix", q.Prefix)
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.StorageIndex != 0 {
 		values.Set("storage_index", strconv.Itoa(q.StorageIndex))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1243,9 +1244,9 @@ type PackagesListQuery struct {
 	// Limit select count in collection to N elements
 	Limit int
 	// Comma-separated list of fields (including nested) that will be returned
-	Select string
+	Select []string
 	// Composite sort direction
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1262,11 +1263,11 @@ func (q *PackagesListQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1287,8 +1288,8 @@ func (q *PackagesListQuery) SetCursor(cursor *string) {
 type PeersListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1299,11 +1300,11 @@ func (q *PeersListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1330,8 +1331,8 @@ func (q *PeersListQuery) SetCursor(cursor *string) {
 type RproxyAgentsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1342,11 +1343,11 @@ func (q *RproxyAgentsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1376,9 +1377,9 @@ type SessionsListQuery struct {
 	// Limit select count in collection to N elements.
 	Limit int
 	// Comma-separated list of fields (including nested) that will be returned
-	Select string
+	Select []string
 	// Composite sort direction.
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1395,11 +1396,11 @@ func (q *SessionsListQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1444,8 +1445,8 @@ func (q *SessionsReauthQuery) ToQueryString() (string, error) {
 type SourcesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1456,11 +1457,11 @@ func (q *SourcesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1487,8 +1488,8 @@ func (q *SourcesListQuery) SetCursor(cursor *string) {
 type StreamDvrLocksListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1499,11 +1500,11 @@ func (q *StreamDvrLocksListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1530,8 +1531,8 @@ func (q *StreamDvrLocksListQuery) SetCursor(cursor *string) {
 type StreamDvrRangesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1542,11 +1543,11 @@ func (q *StreamDvrRangesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1632,9 +1633,9 @@ type StreamsListQuery struct {
 	// Search pattern for different fields like name, title, urls, etc.
 	Q string
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
+	Select []string
 	// Composite sort direction. Default sort order is `named_by (config,user,remote)`, `position`, `name`.
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1657,11 +1658,11 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 	if q.Q != "" {
 		values.Set("q", q.Q)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1685,9 +1686,9 @@ type SubscribersListQuery struct {
 	// Limit select count in collection to N elements
 	Limit int
 	// Comma-separated list of fields (including nested) that will be returned
-	Select string
+	Select []string
 	// Composite sort direction
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1704,11 +1705,11 @@ func (q *SubscribersListQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1729,8 +1730,8 @@ func (q *SubscribersListQuery) SetCursor(cursor *string) {
 type TemplatesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1741,11 +1742,11 @@ func (q *TemplatesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1772,8 +1773,8 @@ func (q *TemplatesListQuery) SetCursor(cursor *string) {
 type TransponderOthersListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1784,11 +1785,11 @@ func (q *TransponderOthersListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1815,8 +1816,8 @@ func (q *TransponderOthersListQuery) SetCursor(cursor *string) {
 type TransponderProgramsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1827,11 +1828,11 @@ func (q *TransponderProgramsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1858,8 +1859,8 @@ func (q *TransponderProgramsListQuery) SetCursor(cursor *string) {
 type TransponderPushesListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1870,11 +1871,11 @@ func (q *TransponderPushesListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1901,8 +1902,8 @@ func (q *TransponderPushesListQuery) SetCursor(cursor *string) {
 type TransponderTimeOffsetsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1913,11 +1914,11 @@ func (q *TransponderTimeOffsetsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1944,8 +1945,8 @@ func (q *TransponderTimeOffsetsListQuery) SetCursor(cursor *string) {
 type TransponderTsDescriptorsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1956,11 +1957,11 @@ func (q *TransponderTsDescriptorsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1989,8 +1990,8 @@ type TranspondersListQuery struct {
 	// This parameter is used instead of the Accept header to select of non-JSON response content format.
 	Format string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -2004,11 +2005,11 @@ func (q *TranspondersListQuery) ToQueryString() (string, error) {
 	if q.Format != "" {
 		values.Set("format", q.Format)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -2035,8 +2036,8 @@ func (q *TranspondersListQuery) SetCursor(cursor *string) {
 type VodsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -2047,11 +2048,11 @@ func (q *VodsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	model "github.com/flussonic/go-flussonic/central/model"
@@ -245,9 +246,9 @@ type AgentsListQuery struct {
 	Limit int
 	// Full-text search for agents
 	Q      string
-	Select string
+	Select []string
 	// Composite sort direction. Specify field name(s) using comma `,` as a separator. Default sorting order is reverse alphabetical by `id`.  Place `-` before the field name to sort in reverse alphabetical order or descending.
-	Sort string
+	Sort []string
 	// Filter agents by stream presence. If any stream has the agent in its inputs, the agent will not be returned with filter `stream_is=null`.
 	Stream string
 	Extra  map[string]string
@@ -269,14 +270,14 @@ func (q *AgentsListQuery) ToQueryString() (string, error) {
 	if q.Q != "" {
 		values.Set("q", q.Q)
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Stream != "" {
 		values.Set("stream", q.Stream)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -297,8 +298,8 @@ func (q *AgentsListQuery) SetCursor(cursor *string) {
 type ApiTokensListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -309,11 +310,11 @@ func (q *ApiTokensListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -340,8 +341,8 @@ func (q *ApiTokensListQuery) SetCursor(cursor *string) {
 type AuthBackendsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -352,11 +353,11 @@ func (q *AuthBackendsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -487,8 +488,8 @@ func (q *AuthRequestQuery) ToQueryString() (string, error) {
 type BatchStreamLayoutPreviewQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -499,11 +500,11 @@ func (q *BatchStreamLayoutPreviewQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -530,8 +531,8 @@ func (q *BatchStreamLayoutPreviewQuery) SetCursor(cursor *string) {
 type BatchStreamerLayoutPreviewQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -542,11 +543,11 @@ func (q *BatchStreamerLayoutPreviewQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -573,8 +574,8 @@ func (q *BatchStreamerLayoutPreviewQuery) SetCursor(cursor *string) {
 type CentralEventsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -585,11 +586,11 @@ func (q *CentralEventsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -662,8 +663,8 @@ func (q *ConfigGetQuery) ToQueryString() (string, error) {
 type DvrsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -674,11 +675,11 @@ func (q *DvrsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -737,8 +738,8 @@ type EpisodesListQuery struct {
 	// Client may ask to delay a response if there are no episodes to fetch. This should be used as a long-poll mechanism for lightweight fetching episodes from origin.
 	PollTimeout int
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	// Filter the collection by episode update time. This field is rather specific because it allows to have an update stream with new/updated episodes
 	UpdatedAtGt int
 	Extra       map[string]string
@@ -767,14 +768,14 @@ func (q *EpisodesListQuery) ToQueryString() (string, error) {
 	if q.PollTimeout != 0 {
 		values.Set("poll_timeout", strconv.Itoa(q.PollTimeout))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
 	if q.UpdatedAtGt != 0 {
 		values.Set("updated_at_gt", strconv.Itoa(q.UpdatedAtGt))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -801,8 +802,8 @@ type ExternalEpisodesListQuery struct {
 	Media string
 	// If you want to fetch episodes earlier than 1 day ago, you need to skip all new episodes, so you need those episodes, whose `opened_at` is in past, i.e. `less than = lt` then 1 day ago.  The meaning of this parameter is following: all episodes with `time =< opened_at` (opposite to requested) are very new and not interesting for the requester. Only old enough episodes with `opened_at` far in the past can be interesting to us.
 	OpenedAtLt int
-	Select     string
-	Sort       string
+	Select     []string
+	Sort       []string
 	Extra      map[string]string
 }
 
@@ -823,11 +824,11 @@ func (q *ExternalEpisodesListQuery) ToQueryString() (string, error) {
 	if q.OpenedAtLt != 0 {
 		values.Set("opened_at_lt", strconv.Itoa(q.OpenedAtLt))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -857,8 +858,8 @@ type LoadBalancersListQuery struct {
 	// Limit select count in collection to N elements.
 	Limit int
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -875,11 +876,11 @@ func (q *LoadBalancersListQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -903,8 +904,8 @@ type PersonsListQuery struct {
 	// Limit select count in collection to N elements.
 	Limit int
 	// Comma-separated list of fields (including nested) that will be returned.
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -921,11 +922,11 @@ func (q *PersonsListQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -946,8 +947,8 @@ func (q *PersonsListQuery) SetCursor(cursor *string) {
 type PreviewLayoutChangeForStreamConfigQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -958,11 +959,11 @@ func (q *PreviewLayoutChangeForStreamConfigQuery) ToQueryString() (string, error
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -989,8 +990,8 @@ func (q *PreviewLayoutChangeForStreamConfigQuery) SetCursor(cursor *string) {
 type PreviewLayoutChangeForStreamerConfigQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1001,11 +1002,11 @@ func (q *PreviewLayoutChangeForStreamerConfigQuery) ToQueryString() (string, err
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1062,8 +1063,8 @@ type StreamLayoutsGetQuery struct {
 	Cursor string
 	// Limit the number of returned layouts
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1086,11 +1087,11 @@ func (q *StreamLayoutsGetQuery) ToQueryString() (string, error) {
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1114,8 +1115,8 @@ type StreamerDynamicStreamsListQuery struct {
 	Limit  int
 	// Comma-separated expicitly passed list of stream names. Used to get configuration for the streams that were not listed in previous request without `name` field
 	Name   string
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1133,11 +1134,11 @@ func (q *StreamerDynamicStreamsListQuery) ToQueryString() (string, error) {
 		values.Set("cursor", q.Cursor)
 	}
 	values.Set("name", q.Name)
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1187,9 +1188,9 @@ type StreamerStreamsListQuery struct {
 	// Search pattern for text fields like name, title, urls, etc.
 	Q string
 	// Comma-separated list of fields (including nested) that will be returned. Use `parent.child` notation to mention nested (child) fields.
-	Select string
+	Select []string
 	// Composite sort direction. Specify field name(s) using comma `,` as a separator.  Default sorting order is alphabetical by `name`.  Place `-` before the field name to sort in reverse alphabetical order or descending.
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1209,11 +1210,11 @@ func (q *StreamerStreamsListQuery) ToQueryString() (string, error) {
 	if q.Q != "" {
 		values.Set("q", q.Q)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)
@@ -1237,8 +1238,8 @@ type StreamerUpdateStreamsListQuery struct {
 	Limit  int
 	// Comma-separated exlpicitly passed list of stream names. Used to get configuration for the streams that were not listed in previous request without `name` field
 	Name   string
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1256,11 +1257,11 @@ func (q *StreamerUpdateStreamsListQuery) ToQueryString() (string, error) {
 		values.Set("cursor", q.Cursor)
 	}
 	values.Set("name", q.Name)
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1284,8 +1285,8 @@ func (q *StreamerUpdateStreamsListQuery) SetCursor(cursor *string) {
 type StreamersListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -1296,11 +1297,11 @@ func (q *StreamersListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1340,9 +1341,9 @@ type StreamsListQuery struct {
 	// Which protocol was requested by client. Central will use the param to try adjust "streaming_endpoint" in the response if it possible. For example, if there are no streamers with configured "http" listeners, we'll return "https://" for requested "http" scheme.
 	Scheme string
 	// Comma-separated list of fields (including nested) that will be returned.  Use `parent.child` notation to mention nested (child) fields.
-	Select string
+	Select []string
 	// Composite sort direction. Specify field name(s) using comma `,` as a separator.    Default sorting order is alphabetical by `name`.   Place `-` before the field name to sort in reverse alphabetical order or descending.
-	Sort  string
+	Sort  []string
 	Extra map[string]string
 }
 
@@ -1372,11 +1373,11 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 	if q.Scheme != "" {
 		values.Set("scheme", q.Scheme)
 	}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	for key, value := range q.Extra {
 		values.Set(key, value)

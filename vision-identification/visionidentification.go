@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	"github.com/flussonic/go-flussonic/config"
@@ -49,8 +50,8 @@ type VisionIdentification interface {
 type PersonsListQuery struct {
 	Cursor string
 	Limit  int
-	Select string
-	Sort   string
+	Select []string
+	Sort   []string
 	Extra  map[string]string
 }
 
@@ -61,11 +62,11 @@ func (q *PersonsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
-	if q.Select != "" {
-		values.Set("select", q.Select)
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
 	}
-	if q.Sort != "" {
-		values.Set("sort", q.Sort)
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
 	}
 	if q.Limit > 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
