@@ -1,0 +1,120 @@
+version: "2"
+run:
+  go: 1.25.3
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - errcheck
+    - funlen
+    - goconst
+    - gocritic
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - prealloc
+    - revive
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+  settings:
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: github.com/sirupsen/logrus
+              desc: logging is allowed only by logutils.Log
+    dupl:
+      threshold: 100
+    funlen:
+      lines: 300
+      statements: 200
+    goconst:
+      min-len: 2
+      min-occurrences: 5
+    gocritic:
+      disabled-checks:
+        - wrapperFunc
+        - dupImport
+        - ifElseChain
+        - octalLiteral
+        - whyNoLint
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+    gocyclo:
+      min-complexity: 15
+    govet:
+      enable:
+        - unreachable
+      settings:
+        printf:
+          funcs:
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - funlen
+          - goconst
+          - revive
+        path: _test\.go
+      - linters:
+          - funlen
+          - goconst
+          - revive
+          - misspell
+          - nakedret
+          - prealloc
+          - unconvert
+          - unparam
+          - gocritic
+        path: .*_generated\.go$
+      - linters:
+          - funlen
+          - goconst
+          - revive
+          - misspell
+          - nakedret
+          - prealloc
+          - unconvert
+          - unparam
+          - gocritic
+        path: ^(central/central\.go|flussonic/flussonic\.go|vision-inference/visioninference\.go|watcher-admin/watcheradmin\.go|watcher-client/watcherclient\.go)$
+    paths:
+      - infra/
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/flussonic/go-flussonic
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
