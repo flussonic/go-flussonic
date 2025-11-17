@@ -14155,7 +14155,7 @@ type AgentImpl struct {
 	ModelValue   *string                `json:"model,omitempty" validate:"omitempty"`
 	SerialValue  *string                `json:"serial,omitempty" validate:"omitempty"`
 	StatsValue   *WatcherAgentStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 type AgentConfigBaseImpl struct {
@@ -14171,7 +14171,7 @@ type AgentsListImpl struct {
 	EstimatedCountValue *int         `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string      `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string      `json:"prev,omitempty" validate:"omitempty"`
-	AgentsValue         []*AgentImpl `json:"agents,omitempty" validate:"omitempty"`
+	AgentsValue         []*AgentImpl `json:"agents,omitempty" validate:"omitempty,dive"`
 }
 
 // Users apikey for access via API.
@@ -14210,15 +14210,15 @@ type AuthImpl struct {
 type AuthBackendConfigImpl struct {
 	AllowDefaultValue   *bool                 `json:"allow_default,omitempty" validate:"omitempty"`
 	NameValue           AuthBackendName       `json:"name" validate:"required"`
-	AllowCountriesValue []string              `json:"allow_countries,omitempty" validate:"omitempty"`
-	AllowIpsValue       []string              `json:"allow_ips,omitempty" validate:"omitempty"`
-	AllowTokensValue    []string              `json:"allow_tokens,omitempty" validate:"omitempty"`
-	AllowUasValue       []string              `json:"allow_uas,omitempty" validate:"omitempty"`
-	BackendsValue       []*AuthBackendURLImpl `json:"backends,omitempty" validate:"omitempty"`
-	DenyCountriesValue  []string              `json:"deny_countries,omitempty" validate:"omitempty"`
-	DenyIpsValue        []string              `json:"deny_ips,omitempty" validate:"omitempty"`
-	DenyTokensValue     []string              `json:"deny_tokens,omitempty" validate:"omitempty"`
-	DenyUasValue        []string              `json:"deny_uas,omitempty" validate:"omitempty"`
+	AllowCountriesValue []string              `json:"allow_countries,omitempty" validate:"omitempty,dive"`
+	AllowIpsValue       []string              `json:"allow_ips,omitempty" validate:"omitempty,dive"`
+	AllowTokensValue    []string              `json:"allow_tokens,omitempty" validate:"omitempty,dive"`
+	AllowUasValue       []string              `json:"allow_uas,omitempty" validate:"omitempty,dive"`
+	BackendsValue       []*AuthBackendURLImpl `json:"backends,omitempty" validate:"omitempty,dive"`
+	DenyCountriesValue  []string              `json:"deny_countries,omitempty" validate:"omitempty,dive"`
+	DenyIpsValue        []string              `json:"deny_ips,omitempty" validate:"omitempty,dive"`
+	DenyTokensValue     []string              `json:"deny_tokens,omitempty" validate:"omitempty,dive"`
+	DenyUasValue        []string              `json:"deny_uas,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: url
@@ -14227,27 +14227,27 @@ type AuthBackendURLImpl struct {
 }
 
 type AuthSpecImpl struct {
-	ExtraValue               map[string]string `json:"extra,omitempty" validate:"omitempty"`
+	ExtraValue               map[string]string `json:"extra,omitempty" validate:"omitempty,dive"`
 	MaxSessionsValue         *int              `json:"max_sessions,omitempty" validate:"omitempty"`
 	SoftLimitationValue      *bool             `json:"soft_limitation,omitempty" validate:"omitempty"`
 	URLValue                 *AuthURL          `json:"url,omitempty" validate:"omitempty"`
-	AllowedCountriesValue    []Iso3166         `json:"allowed_countries,omitempty" validate:"omitempty"`
-	DisallowedCountriesValue []Iso3166         `json:"disallowed_countries,omitempty" validate:"omitempty"`
-	DomainsValue             []string          `json:"domains,omitempty" validate:"omitempty"`
-	SessionKeysValue         []SessionKey      `json:"session_keys,omitempty" validate:"omitempty"`
+	AllowedCountriesValue    []Iso3166         `json:"allowed_countries,omitempty" validate:"omitempty,dive"`
+	DisallowedCountriesValue []Iso3166         `json:"disallowed_countries,omitempty" validate:"omitempty,dive"`
+	DomainsValue             []string          `json:"domains,omitempty" validate:"omitempty,dive"`
+	SessionKeysValue         []SessionKey      `json:"session_keys,omitempty" validate:"omitempty,dive,oneof=ip name proto token"`
 }
 
 type BalancerConfigImpl struct {
 	ModeValue    *BalancerConfigMode         `json:"mode,omitempty" validate:"omitempty,oneof=usage clients bitrate streams"`
 	NameValue    *MediaName                  `json:"name,omitempty" validate:"omitempty"`
-	ServersValue []*BalancerServerConfigImpl `json:"servers,omitempty" validate:"omitempty"`
+	ServersValue []*BalancerServerConfigImpl `json:"servers,omitempty" validate:"omitempty,dive"`
 }
 
 type BalancerServerConfigImpl struct {
 	CountriesDefaultValue *bool       `json:"countries_default,omitempty" validate:"omitempty"`
 	MaxBitrateValue       *Speed      `json:"max_bitrate,omitempty" validate:"omitempty"`
 	NameValue             *ServerName `json:"name,omitempty" validate:"omitempty"`
-	CountriesValue        []Iso3166   `json:"countries,omitempty" validate:"omitempty"`
+	CountriesValue        []Iso3166   `json:"countries,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: name
@@ -14268,7 +14268,7 @@ type CacheSpecImpl struct {
 
 type CameraAlarmConfigImpl struct {
 	ListenValue *ListenSpec `json:"listen,omitempty" validate:"omitempty"`
-	CatchValue  []string    `json:"catch,omitempty" validate:"omitempty"`
+	CatchValue  []string    `json:"catch,omitempty" validate:"omitempty,dive"`
 }
 
 type CameraConfigImpl struct {
@@ -14297,7 +14297,7 @@ type CentralNodeLayoutDecisionImpl struct {
 	HostnameValue     *ServerName                       `json:"hostname,omitempty" validate:"omitempty"`
 	NodeDecisionValue *bool                             `json:"node_decision,omitempty" validate:"omitempty"`
 	RoleValue         *CentralNodeRoleRole              `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
-	ReasonsValue      []CentralNodeLayoutDecisionReason `json:"reasons,omitempty" validate:"omitempty"`
+	ReasonsValue      []CentralNodeLayoutDecisionReason `json:"reasons,omitempty" validate:"omitempty,dive,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_channel_limit_exceeded streamer_dvr_size_exceeded node_not_available_for_transcoding node_offline streamer_total_bandwidth_exceeded namespace_mismatch"`
 }
 
 type CentralNodeRoleImpl struct {
@@ -14310,9 +14310,9 @@ type CentralStreamLayoutImpl struct {
 	InferenceValue           *ServerName                      `json:"inference,omitempty" validate:"omitempty"`
 	IngestValue              *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
 	OriginatorValue          *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
-	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty"`
-	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty"`
-	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty"`
+	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
+	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
+	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
 }
 
 type CentralStreamLayoutBaseImpl struct {
@@ -14328,9 +14328,9 @@ type CentralStreamLayoutListItemImpl struct {
 	IngestValue              *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
 	NameValue                *string                          `json:"name,omitempty" validate:"omitempty"`
 	OriginatorValue          *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
-	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty"`
-	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty"`
-	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty"`
+	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
+	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
+	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
 }
 
 type CentralStreamLayoutPredictionImpl struct {
@@ -14338,7 +14338,7 @@ type CentralStreamLayoutPredictionImpl struct {
 	EstimatedCountValue *int                               `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                            `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                            `json:"prev,omitempty" validate:"omitempty"`
-	ChangesValue        []*CentralStreamLayoutListItemImpl `json:"changes,omitempty" validate:"omitempty"`
+	ChangesValue        []*CentralStreamLayoutListItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
 }
 
 type CentralStreamLayoutsImpl struct {
@@ -14346,7 +14346,7 @@ type CentralStreamLayoutsImpl struct {
 	EstimatedCountValue *int                       `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                    `json:"prev,omitempty" validate:"omitempty"`
-	LayoutsValue        []*CentralStreamLayoutImpl `json:"layouts,omitempty" validate:"omitempty"`
+	LayoutsValue        []*CentralStreamLayoutImpl `json:"layouts,omitempty" validate:"omitempty,dive"`
 }
 
 type CentralStreamerLayoutPredictionImpl struct {
@@ -14354,7 +14354,7 @@ type CentralStreamerLayoutPredictionImpl struct {
 	EstimatedCountValue *int                                       `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                                    `json:"prev,omitempty" validate:"omitempty"`
-	ChangesValue        []*CentralStreamerLayoutPredictionItemImpl `json:"changes,omitempty" validate:"omitempty"`
+	ChangesValue        []*CentralStreamerLayoutPredictionItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
 }
 
 type CentralStreamerLayoutPredictionItemImpl struct {
@@ -14370,7 +14370,7 @@ type CertificateInfoImpl struct {
 	NotAfterValue   *int     `json:"not_after,omitempty" validate:"omitempty"`
 	NotBeforeValue  *int     `json:"not_before,omitempty" validate:"omitempty"`
 	PublicKeyValue  *string  `json:"public_key,omitempty" validate:"omitempty"`
-	DomainsValue    []string `json:"domains,omitempty" validate:"omitempty"`
+	DomainsValue    []string `json:"domains,omitempty" validate:"omitempty,dive"`
 }
 
 type ChassisConfigImpl struct {
@@ -14393,7 +14393,7 @@ type ChassisConfigImpl struct {
 	StatsValue                   *ChassisStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 	TftpPortValue                *ListenSpec       `json:"tftp_port,omitempty" validate:"omitempty"`
 	TftpRootValue                *DiskPath         `json:"tftp_root,omitempty" validate:"omitempty"`
-	NtpServersValue              []string          `json:"ntp_servers,omitempty" validate:"omitempty"`
+	NtpServersValue              []string          `json:"ntp_servers,omitempty" validate:"omitempty,dive"`
 }
 
 type ChassisStatsImpl struct {
@@ -14430,7 +14430,7 @@ type ClusterHealthStatsImpl struct {
 	StreamerBitrateMetricsTotalValue *ClusterHealthStatsStreamerBitrateMetricsTotalImpl `json:"streamer_bitrate_metrics_total,omitempty" validate:"omitempty"`
 	StreamerMetricsTotalValue        *ClusterHealthMetricsTotalImpl                     `json:"streamer_metrics_total,omitempty" validate:"omitempty" openmetrics_metric_segment:"streamer"`
 	VersionValue                     *int                                               `json:"version,omitempty" validate:"omitempty" openmetrics_metric:"version"`
-	StreamerMetricsValue             []*ClusterHealthStreamerStatsImpl                  `json:"streamer_metrics,omitempty" validate:"omitempty"`
+	StreamerMetricsValue             []*ClusterHealthStreamerStatsImpl                  `json:"streamer_metrics,omitempty" validate:"omitempty,dive"`
 }
 
 // Cluster total bitrate metrics
@@ -14532,7 +14532,7 @@ type ConfigErrorStatusImpl struct {
 	FirstErrorColValue  *int                `json:"first_error_col,omitempty" validate:"omitempty"`
 	FirstErrorLineValue *int                `json:"first_error_line,omitempty" validate:"omitempty"`
 	LineValue           *int                `json:"line,omitempty" validate:"omitempty"`
-	PathValue           []ConfigPathSegment `json:"path,omitempty" validate:"omitempty"`
+	PathValue           []ConfigPathSegment `json:"path,omitempty" validate:"omitempty,dive"`
 }
 
 type ConfigExternalErrorStatusImpl struct {
@@ -14542,7 +14542,7 @@ type ConfigExternalErrorStatusImpl struct {
 	ReasonValue *RequestErrorReason              `json:"reason,omitempty" validate:"omitempty"`
 	StatusValue *ConfigExternalErrorStatusStatus `json:"status,omitempty" validate:"omitempty,oneof=loaded error"`
 	WhileValue  *ConfigExternalErrorStatusWhile  `json:"while,omitempty" validate:"omitempty,oneof=refresh request srt_port_resolve"`
-	PathValue   []ConfigPathSegment              `json:"path,omitempty" validate:"omitempty"`
+	PathValue   []ConfigPathSegment              `json:"path,omitempty" validate:"omitempty,dive"`
 }
 
 type CreationInfoImpl struct {
@@ -14591,7 +14591,7 @@ type DrmCpixBaseImpl struct {
 	IvValue         *string        `json:"iv,omitempty" validate:"omitempty"`
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmEncKeyImpl struct {
@@ -14648,11 +14648,11 @@ type DrmSpecImpl struct {
 	UserPathValue          *string        `json:"user_path,omitempty" validate:"omitempty"`
 	UserkeyValue           *string        `json:"userkey,omitempty" validate:"omitempty"`
 	VendorValue            string         `json:"vendor" validate:"required"`
-	SystemsValue           []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue           []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmSystemsImpl struct {
-	SystemsValue []DrmSystem `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue []DrmSystem `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorAes128Impl struct {
@@ -14673,7 +14673,7 @@ type DrmVendorAxinomImpl struct {
 	ResourceIDValue    *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	TenantIDValue      *string        `json:"tenant_id,omitempty" validate:"omitempty"`
 	VendorValue        string         `json:"vendor" validate:"required"`
-	SystemsValue       []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue       []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorBuydrmImpl struct {
@@ -14704,7 +14704,7 @@ type DrmVendorConaxImpl struct {
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	UserPathValue   *string        `json:"user_path,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorCpixImpl struct {
@@ -14714,7 +14714,7 @@ type DrmVendorCpixImpl struct {
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorDrmtodayImpl struct {
@@ -14729,7 +14729,7 @@ type DrmVendorDrmtodayImpl struct {
 	ResourceIDValue   *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	UsernameValue     *string        `json:"username,omitempty" validate:"omitempty"`
 	VendorValue       string         `json:"vendor" validate:"required"`
-	SystemsValue      []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue      []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorEzdrmImpl struct {
@@ -14771,7 +14771,7 @@ type DrmVendorIrdetoImpl struct {
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	UserNameValue   *string        `json:"user_name,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorKeyosImpl struct {
@@ -14794,7 +14794,7 @@ type DrmVendorPallyconImpl struct {
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorPlayreadyImpl struct {
@@ -14935,7 +14935,7 @@ type DvrConfigImpl struct {
 	StorageLimitValue       *Bytes                     `json:"storage_limit,omitempty" validate:"omitempty"`
 	NameValue               DvrName                    `json:"name" validate:"required" openmetrics_label:"dvr_name"`
 	RootValue               DvrURL                     `json:"root" validate:"required"`
-	DisksValue              []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty"`
+	DisksValue              []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: from, depth, ranges
@@ -14943,7 +14943,7 @@ type DvrInfoImpl struct {
 	BytesValue    *Bytes          `json:"bytes,omitempty" validate:"omitempty"`
 	DiskSizeValue *Bytes          `json:"disk_size,omitempty" validate:"omitempty"`
 	DurationValue *Seconds        `json:"duration,omitempty" validate:"omitempty"`
-	RangesValue   []*DvrRangeImpl `json:"ranges" validate:"required"`
+	RangesValue   []*DvrRangeImpl `json:"ranges" validate:"required,dive"`
 	DepthValue    Seconds         `json:"depth" validate:"required"`
 	FromValue     Utc             `json:"from" validate:"required,min=1e+09,max=1e+10"`
 }
@@ -14963,7 +14963,7 @@ type DvrStorageConfigImpl struct {
 	StatsValue  *DvrStorageConfigStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 	NameValue   DvrName                    `json:"name" validate:"required" openmetrics_label:"dvr_name"`
 	RootValue   DvrURL                     `json:"root" validate:"required"`
-	DisksValue  []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty"`
+	DisksValue  []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty,dive"`
 }
 
 // The runtime statistics about DVR.
@@ -14992,14 +14992,14 @@ type DvrStorageStatsImpl struct {
 type ErrorImpl struct {
 	CodeValue   *string           `json:"code,omitempty" validate:"omitempty"`
 	IDValue     *string           `json:"id,omitempty" validate:"omitempty"`
-	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty"`
+	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty,dive"`
 	SourceValue *ErrorSourceImpl  `json:"source,omitempty" validate:"omitempty"`
 	StatusValue *string           `json:"status,omitempty" validate:"omitempty"`
 	TitleValue  *string           `json:"title,omitempty" validate:"omitempty"`
 }
 
 type ErrorResponseImpl struct {
-	ErrorsValue []*ErrorImpl `json:"errors,omitempty" validate:"omitempty"`
+	ErrorsValue []*ErrorImpl `json:"errors,omitempty" validate:"omitempty,dive"`
 }
 
 // an object containing references to the source of the error
@@ -15036,7 +15036,7 @@ type EventDefaultImpl struct {
 
 // Required: name, url
 type EventSinkConfigImpl struct {
-	ExtraValue         map[string]string     `json:"extra,omitempty" validate:"omitempty"`
+	ExtraValue         map[string]string     `json:"extra,omitempty" validate:"omitempty,dive"`
 	LevelValue         *Loglevel             `json:"level,omitempty" validate:"omitempty"`
 	MaxDepthValue      *int                  `json:"max_depth,omitempty" validate:"omitempty"`
 	MaxSizeValue       *Bytes                `json:"max_size,omitempty" validate:"omitempty"`
@@ -15045,8 +15045,8 @@ type EventSinkConfigImpl struct {
 	ThrottleDelayValue *Seconds              `json:"throttle_delay,omitempty" validate:"omitempty"`
 	NameValue          EventSinkName         `json:"name" validate:"required"`
 	URLValue           string                `json:"url" validate:"required"`
-	ExceptValue        []map[string][]string `json:"except,omitempty" validate:"omitempty"`
-	OnlyValue          []map[string][]string `json:"only,omitempty" validate:"omitempty"`
+	ExceptValue        []map[string][]string `json:"except,omitempty" validate:"omitempty,dive"`
+	OnlyValue          []map[string][]string `json:"only,omitempty" validate:"omitempty,dive"`
 }
 
 // Choosing which type of events to subscribe to
@@ -15062,7 +15062,7 @@ type EventsListImpl struct {
 	EstimatedCountValue *int         `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string      `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string      `json:"prev,omitempty" validate:"omitempty"`
-	EventsValue         []*EventImpl `json:"events,omitempty" validate:"omitempty"`
+	EventsValue         []*EventImpl `json:"events,omitempty" validate:"omitempty,dive"`
 }
 
 type FileProcessorConfigImpl struct {
@@ -15189,8 +15189,8 @@ type InputCountersImpl struct {
 	RetriesValue                *int                             `json:"retries,omitempty" validate:"omitempty"`
 	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
 	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
-	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty"`
-	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty"`
+	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
+	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
 }
 
 // Specific counters to get insights on current state of getting events from cameras.
@@ -15354,9 +15354,9 @@ type InputStatsImpl struct {
 	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
 	TSDelayValue                *Ticks                           `json:"ts_delay,omitempty" validate:"omitempty"`
 	URLValue                    *URL                             `json:"url,omitempty" validate:"omitempty"`
-	TSDelayPerTracksValue       []Ticks                          `json:"ts_delay_per_tracks,omitempty" validate:"omitempty"`
-	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty"`
-	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty"`
+	TSDelayPerTracksValue       []Ticks                          `json:"ts_delay_per_tracks,omitempty" validate:"omitempty,dive"`
+	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
+	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
 }
 
 type IptvConfigImpl struct {
@@ -15364,7 +15364,7 @@ type IptvConfigImpl struct {
 }
 
 type LetsencryptRequestImpl struct {
-	DomainsValue []string `json:"domains,omitempty" validate:"omitempty"`
+	DomainsValue []string `json:"domains,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: port
@@ -15382,7 +15382,7 @@ type ListenHTTPConfigParamsImpl struct {
 }
 
 type ListenersImpl struct {
-	HTTPValue []*ListenHTTPConfigImpl `json:"http,omitempty" validate:"omitempty"`
+	HTTPValue []*ListenHTTPConfigImpl `json:"http,omitempty" validate:"omitempty,dive"`
 }
 
 type LoginInfoAdditionalImpl struct {
@@ -15448,7 +15448,7 @@ type MediaInfoImpl struct {
 	ProviderValue  *string                    `json:"provider,omitempty" validate:"omitempty"`
 	StreamIDValue  *int                       `json:"stream_id,omitempty" validate:"omitempty"`
 	TitleValue     *string                    `json:"title,omitempty" validate:"omitempty"`
-	TracksValue    []*TrackInfoImpl           `json:"tracks,omitempty" validate:"omitempty"`
+	TracksValue    []*TrackInfoImpl           `json:"tracks,omitempty" validate:"omitempty,dive"`
 }
 
 type MediaInfoCommonImpl struct {
@@ -15461,7 +15461,7 @@ type MediaInfoCommonImpl struct {
 type MediaInfoSpecificImpl struct {
 	DurationValue *Ticks                     `json:"duration,omitempty" validate:"omitempty"`
 	FlowTypeValue *MediaInfoSpecificFlowType `json:"flow_type,omitempty" validate:"omitempty,oneof=file stream dvr_file dvr_stream"`
-	TracksValue   []*TrackInfoImpl           `json:"tracks,omitempty" validate:"omitempty"`
+	TracksValue   []*TrackInfoImpl           `json:"tracks,omitempty" validate:"omitempty,dive"`
 }
 
 type MultiplexerStatsImpl struct {
@@ -15482,8 +15482,8 @@ type MultiplexerStatsImpl struct {
 	SysPayloadValue         *Bytes                         `json:"sys_payload,omitempty" validate:"omitempty"`
 	SysStuffingPacketsValue *int                           `json:"sys_stuffing_packets,omitempty" validate:"omitempty"`
 	TrimmedBytesValue       *Bytes                         `json:"trimmed_bytes,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_trimmed_bytes"`
-	ProgramsValue           []*TransponderProgramStatsImpl `json:"programs,omitempty" validate:"omitempty"`
-	PidsValue               []*PushPidCountersImpl         `json:"pids,omitempty" validate:"omitempty"`
+	ProgramsValue           []*TransponderProgramStatsImpl `json:"programs,omitempty" validate:"omitempty,dive"`
+	PidsValue               []*PushPidCountersImpl         `json:"pids,omitempty" validate:"omitempty,dive"`
 }
 
 type OnOffImpl struct {
@@ -15524,7 +15524,7 @@ type OutputMpegtsPidsImpl struct {
 	PcrValue     *int                  `json:"pcr,omitempty" validate:"omitempty"`
 	PmtValue     *int                  `json:"pmt,omitempty" validate:"omitempty"`
 	SdtValue     *int                  `json:"sdt,omitempty" validate:"omitempty"`
-	MediaValue   []*TransponderPidImpl `json:"media,omitempty" validate:"omitempty"`
+	MediaValue   []*TransponderPidImpl `json:"media,omitempty" validate:"omitempty,dive"`
 }
 
 type PartitionStatsImpl struct {
@@ -15571,15 +15571,15 @@ type PeerStatsImpl struct {
 	ServerVersionValue        *ServerVersion                 `json:"server_version,omitempty" validate:"omitempty" openmetrics_label:"version"`
 	StartedAtValue            *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10" openmetrics_metric:"server_started_at"`
 	StreamerStatusValue       *ServerStatsStreamerStatus     `json:"streamer_status,omitempty" validate:"omitempty"`
-	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty"`
+	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty,dive"`
 	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
 	TotalClientsValue         *int                           `json:"total_clients,omitempty" validate:"omitempty" openmetrics_metric:"server_total_clients"`
 	TotalStreamsValue         *int                           `json:"total_streams,omitempty" validate:"omitempty"`
 	TranscoderValue           *bool                          `json:"transcoder,omitempty" validate:"omitempty"`
 	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
 	UptimeValue               *Seconds                       `json:"uptime,omitempty" validate:"omitempty"`
-	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty"`
-	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty"`
+	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty,dive"`
+	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
 	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
 }
 
@@ -15645,7 +15645,7 @@ type PresetsListImpl struct {
 	EstimatedCountValue *int          `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string       `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string       `json:"prev,omitempty" validate:"omitempty"`
-	PresetsValue        []*PresetImpl `json:"presets,omitempty" validate:"omitempty"`
+	PresetsValue        []*PresetImpl `json:"presets,omitempty" validate:"omitempty,dive"`
 }
 
 type PushCountersImpl struct {
@@ -15682,7 +15682,7 @@ type PushCountersImpl struct {
 	SysFillersBytesValue            *Bytes                 `json:"sys_fillers_bytes,omitempty" validate:"omitempty"`
 	SysPayloadBytesValue            *Bytes                 `json:"sys_payload_bytes,omitempty" validate:"omitempty"`
 	SysStuffingPacketsValue         *int                   `json:"sys_stuffing_packets,omitempty" validate:"omitempty"`
-	PidsValue                       []*PushPidCountersImpl `json:"pids,omitempty" validate:"omitempty"`
+	PidsValue                       []*PushPidCountersImpl `json:"pids,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: pid
@@ -15791,7 +15791,7 @@ type RaidDiskStatsImpl struct {
 // Required: streampoint_key
 type RproxyConfigImpl struct {
 	EndpointAuthValue   *string                            `json:"endpoint_auth,omitempty" validate:"omitempty"`
-	ForwardPortsValue   map[string]*ForwardPortsConfigImpl `json:"forward_ports,omitempty" validate:"omitempty"`
+	ForwardPortsValue   map[string]*ForwardPortsConfigImpl `json:"forward_ports,omitempty" validate:"omitempty,dive"`
 	StreampointKeyValue string                             `json:"streampoint_key" validate:"required,min=1,max=256"`
 }
 
@@ -15828,8 +15828,8 @@ type ServerConfigBaseImpl struct {
 	TotalBandwidthValue *Speed                  `json:"total_bandwidth,omitempty" validate:"omitempty"`
 	URLPrefixValue      *URLPrefix              `json:"url_prefix,omitempty" validate:"omitempty"`
 	ViewAuthValue       *AdminCredentialsImpl   `json:"view_auth,omitempty" validate:"omitempty"`
-	APIAllowedFromValue []Cidr                  `json:"api_allowed_from,omitempty" validate:"omitempty"`
-	ServerNamesValue    []*ServerNameConfigImpl `json:"server_names,omitempty" validate:"omitempty"`
+	APIAllowedFromValue []Cidr                  `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
+	ServerNamesValue    []*ServerNameConfigImpl `json:"server_names,omitempty" validate:"omitempty,dive"`
 }
 
 type ServerConfigFullImpl struct {
@@ -15839,26 +15839,26 @@ type ServerConfigFullImpl struct {
 	CameraAlarmValue   *CameraAlarmConfigImpl   `json:"camera_alarm,omitempty" validate:"omitempty"`
 	ChassisValue       *ChassisConfigImpl       `json:"chassis,omitempty" validate:"omitempty"`
 	IptvValue          *IptvConfigImpl          `json:"iptv,omitempty" validate:"omitempty"`
-	HTTPProxiesValue   []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty"`
-	CachesValue        []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty"`
-	EventSinksValue    []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty"`
-	DvbCardsValue      []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty"`
-	AuthBackendsValue  []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty"`
-	DecklinksValue     []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty"`
-	PeersValue         []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty"`
-	DvrsValue          []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty"`
-	SourcesValue       []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty"`
-	StreamsValue       []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty"`
-	TemplatesValue     []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty"`
-	TranspondersValue  []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty"`
-	VodsValue          []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty"`
-	BalancersValue     []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty"`
+	HTTPProxiesValue   []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
+	CachesValue        []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
+	EventSinksValue    []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
+	DvbCardsValue      []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
+	AuthBackendsValue  []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
+	DecklinksValue     []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
+	PeersValue         []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty,dive"`
+	DvrsValue          []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
+	SourcesValue       []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty,dive"`
+	StreamsValue       []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty,dive"`
+	TemplatesValue     []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty,dive"`
+	TranspondersValue  []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
+	VodsValue          []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
+	BalancersValue     []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: domain
 type ServerNameConfigImpl struct {
 	DomainValue  string   `json:"domain" validate:"required"`
-	AliasesValue []string `json:"aliases,omitempty" validate:"omitempty"`
+	AliasesValue []string `json:"aliases,omitempty" validate:"omitempty,dive"`
 }
 
 type ServerStatsNetworkImpl struct {
@@ -15888,13 +15888,13 @@ type ServerStatsStreamerImpl struct {
 	VsaasBrandingValue        *bool                          `json:"vsaas_branding,omitempty" validate:"omitempty"`
 	SchedulerLoadValue        *Percent                       `json:"scheduler_load,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_scheduler_load"`
 	StreamerStatusValue       *ServerStatsStreamerStatus     `json:"streamer_status,omitempty" validate:"omitempty"`
-	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty"`
+	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty,dive"`
 	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
 	TranscoderValue           *bool                          `json:"transcoder,omitempty" validate:"omitempty"`
 	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
 	RproxyValue               *bool                          `json:"rproxy,omitempty" validate:"omitempty"`
-	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty"`
-	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty"`
+	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty,dive"`
+	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
 	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
 }
 
@@ -15915,7 +15915,7 @@ type SharedTokenImpl struct {
 	KeyValue         string                       `json:"key" validate:"required"`
 	MediaValue       *string                      `json:"media,omitempty" validate:"omitempty"`
 	NameValue        string                       `json:"name" validate:"required"`
-	PermissionsValue []*SharedTokenPermissionImpl `json:"permissions,omitempty" validate:"omitempty"`
+	PermissionsValue []*SharedTokenPermissionImpl `json:"permissions,omitempty" validate:"omitempty,dive"`
 }
 
 type SharedTokenPermissionImpl struct {
@@ -15932,14 +15932,14 @@ type SharedTokensListImpl struct {
 	EstimatedCountValue *int               `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string            `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string            `json:"prev,omitempty" validate:"omitempty"`
-	SharedTokensValue   []*SharedTokenImpl `json:"shared_tokens,omitempty" validate:"omitempty"`
+	SharedTokensValue   []*SharedTokenImpl `json:"shared_tokens,omitempty" validate:"omitempty,dive"`
 }
 
 type SourceConfigImpl struct {
 	DvrValue    *StreamDvrSpecImpl  `json:"dvr,omitempty" validate:"omitempty"`
 	LabelsValue map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
 	VisionValue *VisionSpecImpl     `json:"vision,omitempty" validate:"omitempty"`
-	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty"`
+	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
 }
 
 type SourceSpecificConfigImpl struct {
@@ -15981,10 +15981,10 @@ type StreamConfigImpl struct {
 	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
 	PresetIDValue               *int                                        `json:"preset_id,omitempty" validate:"omitempty"`
 	NameValue                   MediaName                                   `json:"name" validate:"required" openmetrics_label:"name"`
-	PushesValue                 []StreamPush                                `json:"pushes,omitempty" validate:"omitempty"`
-	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty"`
-	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty"`
-	InputsValue                 []StreamInput                               `json:"inputs,omitempty" validate:"omitempty"`
+	PushesValue                 []StreamPush                                `json:"pushes,omitempty" validate:"omitempty,dive"`
+	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty,dive"`
+	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty,dive"`
+	InputsValue                 []StreamInput                               `json:"inputs,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamConfigAdditionalImpl struct {
@@ -16000,13 +16000,13 @@ type StreamConfigDeprecatedImpl struct {
 }
 
 type StreamConfigInputImpl struct {
-	InputsValue []StreamInput `json:"inputs,omitempty" validate:"omitempty"`
+	InputsValue []StreamInput `json:"inputs,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamConfigMediaImpl struct {
 	DvrValue    *StreamDvrSpecImpl  `json:"dvr,omitempty" validate:"omitempty"`
 	LabelsValue map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
-	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty"`
+	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamConfigMultieditImpl struct {
@@ -16045,7 +16045,7 @@ type StreamInputBaseImpl struct {
 	CommentValue                 *string           `json:"comment,omitempty" validate:"omitempty"`
 	DenyIfValue                  *string           `json:"deny_if,omitempty" validate:"omitempty"`
 	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty"`
+	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
 	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
 	NoClientsReconnectDelayValue *int              `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
 	OutputAudioValue             *OutputAudio      `json:"output_audio,omitempty" validate:"omitempty"`
@@ -16065,7 +16065,7 @@ type StreamInputFakeImpl struct {
 	CommentValue                 *string           `json:"comment,omitempty" validate:"omitempty"`
 	AllowIfValue                 *string           `json:"allow_if,omitempty" validate:"omitempty"`
 	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty"`
+	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
 	HeightValue                  *int              `json:"height,omitempty" validate:"omitempty"`
 	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
 	BitrateValue                 *Speed            `json:"bitrate,omitempty" validate:"omitempty"`
@@ -16088,12 +16088,12 @@ type StreamInputFileImpl struct {
 	CommentValue                 *string                             `json:"comment,omitempty" validate:"omitempty"`
 	DenyIfValue                  *string                             `json:"deny_if,omitempty" validate:"omitempty"`
 	AllowIfValue                 *string                             `json:"allow_if,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string                   `json:"headers,omitempty" validate:"omitempty"`
-	LanguagesValue               map[string]string                   `json:"languages,omitempty" validate:"omitempty"`
+	HeadersValue                 map[string]string                   `json:"headers,omitempty" validate:"omitempty,dive"`
+	LanguagesValue               map[string]string                   `json:"languages,omitempty" validate:"omitempty,dive"`
 	MaxRetryTimeoutValue         *Seconds                            `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
 	NoClientsReconnectDelayValue *int                                `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
 	VideoTimeoutValue            *Seconds                            `json:"video_timeout,omitempty" validate:"omitempty"`
-	ClosedCaptionsValue          map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue          map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 	ViaValue                     *AgentURL                           `json:"via,omitempty" validate:"omitempty"`
 	OutputAudioValue             *OutputAudio                        `json:"output_audio,omitempty" validate:"omitempty"`
 	Scte35Value                  *bool                               `json:"scte35,omitempty" validate:"omitempty"`
@@ -16103,17 +16103,17 @@ type StreamInputFileImpl struct {
 	TimeoutValue                 *int                                `json:"timeout,omitempty" validate:"omitempty"`
 	UserAgentValue               *string                             `json:"user_agent,omitempty" validate:"omitempty"`
 	URLValue                     InputURL                            `json:"url" validate:"required"`
-	PidsValue                    []int                               `json:"pids,omitempty" validate:"omitempty"`
-	ProgramsValue                []int                               `json:"programs,omitempty" validate:"omitempty"`
+	PidsValue                    []int                               `json:"pids,omitempty" validate:"omitempty,dive"`
+	ProgramsValue                []int                               `json:"programs,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamInputMpegtsSpecificImpl struct {
-	ClosedCaptionsValue map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty"`
-	LanguagesValue      map[string]string                   `json:"languages,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	LanguagesValue      map[string]string                   `json:"languages,omitempty" validate:"omitempty,dive"`
 	Scte35Value         *bool                               `json:"scte35,omitempty" validate:"omitempty"`
 	SubtitlesValue      *StreamInputMpegtsSpecificSubtitles `json:"subtitles,omitempty" validate:"omitempty,oneof=drop accept ocr_replace ocr_add"`
-	PidsValue           []int                               `json:"pids,omitempty" validate:"omitempty"`
-	ProgramsValue       []int                               `json:"programs,omitempty" validate:"omitempty"`
+	PidsValue           []int                               `json:"pids,omitempty" validate:"omitempty,dive"`
+	ProgramsValue       []int                               `json:"programs,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamInputPublishImpl struct {
@@ -16131,7 +16131,7 @@ type StreamInputPublishImpl struct {
 	CommentValue                 *string                                 `json:"comment,omitempty" validate:"omitempty"`
 	DenyIfValue                  *string                                 `json:"deny_if,omitempty" validate:"omitempty"`
 	FramesTimeoutValue           *int                                    `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string                       `json:"headers,omitempty" validate:"omitempty"`
+	HeadersValue                 map[string]string                       `json:"headers,omitempty" validate:"omitempty,dive"`
 	AbrDebugValue                *int                                    `json:"abr_debug,omitempty" validate:"omitempty"`
 	MaxRetryTimeoutValue         *Seconds                                `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
 	AllowIfValue                 *string                                 `json:"allow_if,omitempty" validate:"omitempty"`
@@ -16158,7 +16158,7 @@ type StreamInputRtspImpl struct {
 	AudioTimeoutValue            *Seconds          `json:"audio_timeout,omitempty" validate:"omitempty"`
 	DenyIfValue                  *string           `json:"deny_if,omitempty" validate:"omitempty"`
 	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty"`
+	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
 	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
 	NoClientsReconnectDelayValue *int              `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
 	AllowIfValue                 *string           `json:"allow_if,omitempty" validate:"omitempty"`
@@ -16251,8 +16251,8 @@ type StreamStatsImpl struct {
 }
 
 type StreamZoneConfigImpl struct {
-	PreferredZonesValue []string `json:"preferred_zones,omitempty" validate:"omitempty"`
-	RequiredZonesValue  []string `json:"required_zones,omitempty" validate:"omitempty"`
+	PreferredZonesValue []string `json:"preferred_zones,omitempty" validate:"omitempty,dive"`
+	RequiredZonesValue  []string `json:"required_zones,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamerImpl struct {
@@ -16260,7 +16260,7 @@ type StreamerImpl struct {
 	ChannelLimitValue      *int                      `json:"channel_limit,omitempty" validate:"omitempty"`
 	ClusterKeyValue        *string                   `json:"cluster_key,omitempty" validate:"omitempty"`
 	ConfigValue            *StreamerConfigConfigImpl `json:"config,omitempty" validate:"omitempty"`
-	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty"`
+	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty,dive"`
 	HostnameValue          *ServerName               `json:"hostname,omitempty" validate:"omitempty"`
 	LabelsValue            map[string]UnixName       `json:"labels,omitempty" validate:"omitempty"`
 	PrivatePayloadURLValue *URL                      `json:"private_payload_url,omitempty" validate:"omitempty"`
@@ -16268,7 +16268,7 @@ type StreamerImpl struct {
 	RoleValue              *CentralNodeRoleRole      `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
 	StatsValue             *PeerStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 	TotalBandwidthValue    *Speed                    `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	ZonesValue             []string                  `json:"zones,omitempty" validate:"omitempty"`
+	ZonesValue             []string                  `json:"zones,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamerConfigImpl struct {
@@ -16283,7 +16283,7 @@ type StreamerConfigImpl struct {
 	RoleValue              *CentralNodeRoleRole      `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
 	StatsValue             *PeerStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 	TotalBandwidthValue    *Speed                    `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty"`
+	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty,dive"`
 }
 
 // Flussonic Media Server configuration which will be provided to Streamer
@@ -16315,22 +16315,22 @@ type StreamerConfigConfigImpl struct {
 	RproxyValue         *RproxyConfigImpl        `json:"rproxy,omitempty" validate:"omitempty"`
 	SrtValue            *ListenSpec              `json:"srt,omitempty" validate:"omitempty"`
 	SessionLogValue     *DiskPath                `json:"session_log,omitempty" validate:"omitempty"`
-	EventSinksValue     []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty"`
-	TemplatesValue      []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty"`
-	PeersValue          []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty"`
-	APIAllowedFromValue []Cidr                   `json:"api_allowed_from,omitempty" validate:"omitempty"`
-	AuthBackendsValue   []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty"`
-	HTTPProxiesValue    []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty"`
-	ServerNamesValue    []*ServerNameConfigImpl  `json:"server_names,omitempty" validate:"omitempty"`
-	StreamsValue        []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty"`
-	TranspondersValue   []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty"`
-	SourcesValue        []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty"`
-	DvrsValue           []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty"`
-	DvbCardsValue       []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty"`
-	VodsValue           []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty"`
-	DecklinksValue      []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty"`
-	CachesValue         []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty"`
-	BalancersValue      []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty"`
+	EventSinksValue     []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
+	TemplatesValue      []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty,dive"`
+	PeersValue          []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty,dive"`
+	APIAllowedFromValue []Cidr                   `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
+	AuthBackendsValue   []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
+	HTTPProxiesValue    []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
+	ServerNamesValue    []*ServerNameConfigImpl  `json:"server_names,omitempty" validate:"omitempty,dive"`
+	StreamsValue        []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty,dive"`
+	TranspondersValue   []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
+	SourcesValue        []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty,dive"`
+	DvrsValue           []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
+	DvbCardsValue       []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
+	VodsValue           []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
+	DecklinksValue      []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
+	CachesValue         []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
+	BalancersValue      []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamerLayoutPredictionImpl struct {
@@ -16338,7 +16338,7 @@ type StreamerLayoutPredictionImpl struct {
 	ChannelLimitValue      *int                      `json:"channel_limit,omitempty" validate:"omitempty"`
 	ClusterKeyValue        *string                   `json:"cluster_key,omitempty" validate:"omitempty"`
 	ConfigValue            *StreamerConfigConfigImpl `json:"config,omitempty" validate:"omitempty"`
-	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty"`
+	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty,dive"`
 	HostnameValue          *ServerName               `json:"hostname,omitempty" validate:"omitempty"`
 	LabelsValue            map[string]UnixName       `json:"labels,omitempty" validate:"omitempty"`
 	PrivatePayloadURLValue *URL                      `json:"private_payload_url,omitempty" validate:"omitempty"`
@@ -16346,7 +16346,7 @@ type StreamerLayoutPredictionImpl struct {
 	RoleValue              *CentralNodeRoleRole      `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
 	StatsValue             *PeerStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 	TotalBandwidthValue    *Speed                    `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	ZonesValue             []string                  `json:"zones,omitempty" validate:"omitempty"`
+	ZonesValue             []string                  `json:"zones,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamersListImpl struct {
@@ -16354,7 +16354,7 @@ type StreamersListImpl struct {
 	EstimatedCountValue *int            `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string         `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string         `json:"prev,omitempty" validate:"omitempty"`
-	StreamersValue      []*StreamerImpl `json:"streamers,omitempty" validate:"omitempty"`
+	StreamersValue      []*StreamerImpl `json:"streamers,omitempty" validate:"omitempty,dive"`
 }
 
 type StreamsListImpl struct {
@@ -16362,17 +16362,17 @@ type StreamsListImpl struct {
 	EstimatedCountValue *int                `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
-	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 // Array of streams with settings
 type StreamsMultieditConfigImpl struct {
-	StreamsValue []*StreamConfigMultieditImpl `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue []*StreamConfigMultieditImpl `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 // Array of streams with zone settings
 type StreamsZoneSettingsImpl struct {
-	StreamsValue []any `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue []any `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 // System settings
@@ -16418,8 +16418,8 @@ type TemplateConfigImpl struct {
 	LabelsValue   map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
 	StaticValue   *bool               `json:"static,omitempty" validate:"omitempty"`
 	VisionValue   *VisionSpecImpl     `json:"vision,omitempty" validate:"omitempty"`
-	InputsValue   []StreamInput       `json:"inputs,omitempty" validate:"omitempty"`
-	PushesValue   []StreamPush        `json:"pushes,omitempty" validate:"omitempty"`
+	InputsValue   []StreamInput       `json:"inputs,omitempty" validate:"omitempty,dive"`
+	PushesValue   []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
 }
 
 type TemplateConfigSpecificImpl struct {
@@ -16433,7 +16433,7 @@ type TlsCertificateImpl struct {
 	CacertValue                     *CertificateInfoImpl   `json:"cacert,omitempty" validate:"omitempty"`
 	CertValue                       *CertificateInfoImpl   `json:"cert,omitempty" validate:"omitempty"`
 	PrivateKeyMatchCertificateValue *bool                  `json:"private_key_match_certificate,omitempty" validate:"omitempty"`
-	FullchainValue                  []*CertificateInfoImpl `json:"fullchain,omitempty" validate:"omitempty"`
+	FullchainValue                  []*CertificateInfoImpl `json:"fullchain,omitempty" validate:"omitempty,dive"`
 }
 
 type TrackInfoImpl struct {
@@ -16466,7 +16466,7 @@ type TrackInfoImpl struct {
 	SarWidthValue       *int                  `json:"sar_width,omitempty" validate:"omitempty"`
 	TitleValue          *string               `json:"title,omitempty" validate:"omitempty"`
 	ContentValue        FrameContent          `json:"content" validate:"required"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 }
 
 type TrackInfoApplicationImpl struct {
@@ -16578,7 +16578,7 @@ type TrackInfoVideoImpl struct {
 	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
 	TitleValue          *string               `json:"title,omitempty" validate:"omitempty"`
 	ContentValue        FrameContent          `json:"content" validate:"required"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 }
 
 type TrackInfoVideoConfigurableImpl struct {
@@ -16602,7 +16602,7 @@ type TrackInfoVideoSpecificImpl struct {
 	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
 	LastGopValue        *int                  `json:"last_gop,omitempty" validate:"omitempty"`
 	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 }
 
 type TranscoderDeviceStatsImpl struct {
@@ -16637,11 +16637,11 @@ type TransponderConfigImpl struct {
 	StatsValue             *MultiplexerStatsImpl        `json:"stats,omitempty" validate:"omitempty"`
 	TSStreamIDValue        *int                         `json:"ts_stream_id,omitempty" validate:"omitempty"`
 	NameValue              MediaName                    `json:"name" validate:"required" openmetrics_label:"name"`
-	ProgramsValue          []*TransponderProgramImpl    `json:"programs,omitempty" validate:"omitempty"`
-	TSDescriptorsValue     []*TSDescriptorImpl          `json:"ts_descriptors,omitempty" validate:"omitempty"`
-	TimeOffsetsValue       []*TransponderTimeOffsetImpl `json:"time_offsets,omitempty" validate:"omitempty"`
-	PushesValue            []*TransponderPushImpl       `json:"pushes,omitempty" validate:"omitempty"`
-	OthersValue            []*TransponderOtherImpl      `json:"others,omitempty" validate:"omitempty"`
+	ProgramsValue          []*TransponderProgramImpl    `json:"programs,omitempty" validate:"omitempty,dive"`
+	TSDescriptorsValue     []*TSDescriptorImpl          `json:"ts_descriptors,omitempty" validate:"omitempty,dive"`
+	TimeOffsetsValue       []*TransponderTimeOffsetImpl `json:"time_offsets,omitempty" validate:"omitempty,dive"`
+	PushesValue            []*TransponderPushImpl       `json:"pushes,omitempty" validate:"omitempty,dive"`
+	OthersValue            []*TransponderOtherImpl      `json:"others,omitempty" validate:"omitempty,dive"`
 }
 
 type TransponderEitImpl struct {
@@ -16721,7 +16721,7 @@ type UserImpl struct {
 	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 	PasswordValue      *string                           `json:"password,omitempty" validate:"omitempty"`
 	MaxSessionsValue   *int                              `json:"max_sessions,omitempty" validate:"omitempty"`
-	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty"`
+	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
 }
 
 // User Parameters available from Admin API.
@@ -16730,7 +16730,7 @@ type UserAdminImpl struct {
 	DisabledValue      *bool                             `json:"disabled,omitempty" validate:"omitempty"`
 	IDValue            *int                              `json:"id,omitempty" validate:"omitempty"`
 	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
-	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty"`
+	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
 }
 
 type UserAdminOrganizationsItemImpl struct {
@@ -16774,7 +16774,7 @@ type UserCreateImpl struct {
 	ReadonlyValue       *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 	PasswordValue       *string                           `json:"password,omitempty" validate:"omitempty"`
 	PhoneValue          *PhoneNumber                      `json:"phone,omitempty" validate:"omitempty"`
-	OrganizationsValue  []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty"`
+	OrganizationsValue  []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
 }
 
 type UsersImpl struct {
@@ -16782,7 +16782,7 @@ type UsersImpl struct {
 	NextValue           *string     `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string     `json:"prev,omitempty" validate:"omitempty"`
 	TimingValue         any         `json:"timing,omitempty" validate:"omitempty"`
-	UsersListValue      []*UserImpl `json:"users_list,omitempty" validate:"omitempty"`
+	UsersListValue      []*UserImpl `json:"users_list,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionAlertsImpl struct {
@@ -16821,7 +16821,7 @@ type VisionPointImpl struct {
 type VisionSpecImpl struct {
 	AlgValue       *VisionSpecAlg              `json:"alg,omitempty" validate:"omitempty,oneof=faces plates"`
 	AreasValue     *string                     `json:"areas,omitempty" validate:"omitempty"`
-	DetectorsValue []*VisionDetectorConfigImpl `json:"detectors,omitempty" validate:"omitempty"`
+	DetectorsValue []*VisionDetectorConfigImpl `json:"detectors,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionSpecPresetsImpl struct {
@@ -16846,11 +16846,11 @@ type VodConfigImpl struct {
 	URLPrefixValue       *URLPrefix             `json:"url_prefix,omitempty" validate:"omitempty"`
 	ThumbnailsValue      *ThumbnailsSpecImpl    `json:"thumbnails,omitempty" validate:"omitempty"`
 	TimeoutValue         *int                   `json:"timeout,omitempty" validate:"omitempty"`
-	StoragesValue        []*VodStorageImpl      `json:"storages,omitempty" validate:"omitempty"`
+	StoragesValue        []*VodStorageImpl      `json:"storages,omitempty" validate:"omitempty,dive"`
 }
 
 type VodStorageImpl struct {
-	ExtraValue map[string]string `json:"extra,omitempty" validate:"omitempty"`
+	ExtraValue map[string]string `json:"extra,omitempty" validate:"omitempty,dive"`
 	URLValue   *string           `json:"url,omitempty" validate:"omitempty"`
 }
 
@@ -16865,7 +16865,7 @@ type WatcherAgentConfigImpl struct {
 	ModelValue   *string                `json:"model,omitempty" validate:"omitempty"`
 	SerialValue  *string                `json:"serial,omitempty" validate:"omitempty"`
 	StatsValue   *WatcherAgentStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 type WatcherAgentControlConnectionImpl struct {
@@ -16918,7 +16918,7 @@ type WatcherStatusChecksImpl struct {
 	IsDomainAPIKeyMatchedValue *bool                                       `json:"is_domain_api_key_matched,omitempty" validate:"omitempty"`
 	IsWatcherURLAvailableValue *bool                                       `json:"is_watcher_url_available,omitempty" validate:"omitempty"`
 	IsWatcherURLMatchedValue   *bool                                       `json:"is_watcher_url_matched,omitempty" validate:"omitempty"`
-	ErrorsDetailsValue         []*WatcherStatusChecksErrorsDetailsItemImpl `json:"errors_details,omitempty" validate:"omitempty"`
+	ErrorsDetailsValue         []*WatcherStatusChecksErrorsDetailsItemImpl `json:"errors_details,omitempty" validate:"omitempty,dive"`
 }
 
 // Error details
@@ -16946,8 +16946,8 @@ type WatcherStreamConfigImpl struct {
 	OrganizationIDValue         *int                                        `json:"organization_id,omitempty" validate:"omitempty"`
 	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
 	PostalAddressValue          *string                                     `json:"postal_address,omitempty" validate:"omitempty"`
-	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty"`
-	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty"`
+	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty,dive"`
+	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty,dive"`
 }
 
 // Audio settings for the stream.
@@ -16974,7 +16974,7 @@ type WebLogoSpecImpl struct {
 // Required: ports
 type WebrtcRouterConfigImpl struct {
 	TransportValue *WebrtcTransport `json:"transport,omitempty" validate:"omitempty"`
-	PortsValue     []int            `json:"ports" validate:"required"`
+	PortsValue     []int            `json:"ports" validate:"required,dive"`
 }
 
 // Required: name
@@ -16990,7 +16990,7 @@ type ZoneStatsImpl struct {
 	PreferredStreamsCountValue *int     `json:"preferred_streams_count,omitempty" validate:"omitempty"`
 	RequiredStreamsCountValue  *int     `json:"required_streams_count,omitempty" validate:"omitempty"`
 	StreamersCountValue        *int     `json:"streamers_count,omitempty" validate:"omitempty"`
-	StreamersValue             []string `json:"streamers,omitempty" validate:"omitempty"`
+	StreamersValue             []string `json:"streamers,omitempty" validate:"omitempty,dive"`
 }
 
 type ZonesListImpl struct {
@@ -16998,7 +16998,7 @@ type ZonesListImpl struct {
 	NextValue           *string     `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string     `json:"prev,omitempty" validate:"omitempty"`
 	TimingValue         any         `json:"timing,omitempty" validate:"omitempty"`
-	ZonesValue          []*ZoneImpl `json:"zones,omitempty" validate:"omitempty"`
+	ZonesValue          []*ZoneImpl `json:"zones,omitempty" validate:"omitempty,dive"`
 }
 
 // NewAPICall creates a new APICall instance

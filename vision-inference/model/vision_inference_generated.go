@@ -3248,7 +3248,7 @@ type ConfigVisionImpl struct {
 	ListenersValue      *ListenersImpl               `json:"listeners,omitempty" validate:"omitempty"`
 	LoglevelValue       *VisionLoglevel              `json:"loglevel,omitempty" validate:"omitempty"`
 	StatsValue          *ConfigVisionStatsImpl       `json:"stats,omitempty" validate:"omitempty"`
-	DevicesValue        []*VisionInferenceDeviceImpl `json:"devices,omitempty" validate:"omitempty"`
+	DevicesValue        []*VisionInferenceDeviceImpl `json:"devices,omitempty" validate:"omitempty,dive"`
 }
 
 // Server runtime stats
@@ -3259,7 +3259,7 @@ type ConfigVisionStatsImpl struct {
 	SchemaVersionValue    *string                        `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue    *ServerVersion                 `json:"server_version,omitempty" validate:"omitempty"`
 	StartedAtValue        *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
-	DevicesValue          []*VisionDeviceInfoImpl        `json:"devices,omitempty" validate:"omitempty"`
+	DevicesValue          []*VisionDeviceInfoImpl        `json:"devices,omitempty" validate:"omitempty,dive"`
 }
 
 type CounterRecordsListImpl struct {
@@ -3267,11 +3267,11 @@ type CounterRecordsListImpl struct {
 	EstimatedCountValue *int                       `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                    `json:"prev,omitempty" validate:"omitempty"`
-	RecordsValue        []*VisionCounterRecordImpl `json:"records,omitempty" validate:"omitempty"`
+	RecordsValue        []*VisionCounterRecordImpl `json:"records,omitempty" validate:"omitempty,dive"`
 }
 
 type EpisodeImpl struct {
-	DetectionsValue                  any                              `json:"detections,omitempty" validate:"omitempty"`
+	DetectionsValue                  any                              `json:"detections,omitempty" validate:"omitempty,dive"`
 	PayloadValue                     any                              `json:"payload,omitempty" validate:"omitempty"`
 	MatchScoreValue                  *float64                         `json:"match_score,omitempty" validate:"omitempty"`
 	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
@@ -3289,7 +3289,7 @@ type EpisodeImpl struct {
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
 	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty"`
+	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty,dive"`
 	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
@@ -3376,7 +3376,7 @@ type EpisodesListImpl struct {
 	EstimatedCountValue *int           `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string        `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string        `json:"prev,omitempty" validate:"omitempty"`
-	EpisodesValue       []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty"`
+	EpisodesValue       []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
 }
 
 // Required: port
@@ -3398,17 +3398,17 @@ type ListenHTTPConfigParamsImpl struct {
 type ListenHTTPSConfigImpl struct {
 	AddressValue      *string      `json:"address,omitempty" validate:"omitempty"`
 	APIValue          *bool        `json:"api,omitempty" validate:"omitempty"`
-	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty"`
+	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty,dive,oneof=tlsv1 tlsv1.1 tlsv1.2 tlsv1.3"`
 	PortValue         NetworkPort  `json:"port" validate:"required"`
 }
 
 type ListenSslConfigImpl struct {
-	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty"`
+	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty,dive,oneof=tlsv1 tlsv1.1 tlsv1.2 tlsv1.3"`
 }
 
 type ListenersImpl struct {
-	HTTPValue  []*ListenHTTPConfigImpl  `json:"http,omitempty" validate:"omitempty"`
-	HTTPSValue []*ListenHTTPSConfigImpl `json:"https,omitempty" validate:"omitempty"`
+	HTTPValue  []*ListenHTTPConfigImpl  `json:"http,omitempty" validate:"omitempty,dive"`
+	HTTPSValue []*ListenHTTPSConfigImpl `json:"https,omitempty" validate:"omitempty,dive"`
 }
 
 type OpenmetricsLabelsImpl struct {
@@ -3459,7 +3459,7 @@ type StreamsListImpl struct {
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
 	ServerIDValue       *UUID               `json:"server_id,omitempty" validate:"omitempty" openmetrics_label:"server_id"`
-	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty"`
+	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionAlertsImpl struct {
@@ -3629,8 +3629,8 @@ type VisionEpisodeFaceImpl struct {
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
 	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
-	DetectionsValue                  []*VisionDetectedFaceImpl        `json:"detections,omitempty" validate:"omitempty"`
-	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty"`
+	DetectionsValue                  []*VisionDetectedFaceImpl        `json:"detections,omitempty" validate:"omitempty,dive"`
+	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty,dive"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
@@ -3646,7 +3646,7 @@ type VisionEpisodeHumanImpl struct {
 	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	DetectionsValue                  []*VisionDetectedObjectBaseImpl  `json:"detections,omitempty" validate:"omitempty"`
+	DetectionsValue                  []*VisionDetectedObjectBaseImpl  `json:"detections,omitempty" validate:"omitempty,dive"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
@@ -3683,7 +3683,7 @@ type VisionEpisodeVehicleImpl struct {
 	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
 	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	DetectionsValue                  []any                            `json:"detections,omitempty" validate:"omitempty"`
+	DetectionsValue                  []any                            `json:"detections,omitempty" validate:"omitempty,dive"`
 	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
 	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
@@ -3826,7 +3826,7 @@ type VisionPersonImpl struct {
 	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	ExternalIDValue   *string                      `json:"external_id,omitempty" validate:"omitempty"`
 	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
-	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty"`
+	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty,dive"`
 	PersonIDValue     SnowflakeID                  `json:"person_id" validate:"required"`
 	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
 }
@@ -3846,11 +3846,11 @@ type VisionPointImpl struct {
 }
 
 type VisionProcessResultImpl struct {
-	EpisodesValue []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty"`
+	EpisodesValue []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionServerDevicesImpl struct {
-	DevicesValue []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty"`
+	DevicesValue []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionServerInfoImpl struct {
@@ -3865,7 +3865,7 @@ type VisionSpecImpl struct {
 	AlgValue       *VisionSpecAlg              `json:"alg,omitempty" validate:"omitempty,oneof=faces plates"`
 	AreasValue     *string                     `json:"areas,omitempty" validate:"omitempty"`
 	StatsValue     *VisionStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
-	DetectorsValue []*VisionDetectorConfigImpl `json:"detectors,omitempty" validate:"omitempty"`
+	DetectorsValue []*VisionDetectorConfigImpl `json:"detectors,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionStatsImpl struct {
@@ -3883,7 +3883,7 @@ type VisionWorkerStatsImpl struct {
 	SchemaVersionValue *string                 `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue *ServerVersion          `json:"server_version,omitempty" validate:"omitempty"`
 	StartedAtValue     *Utc                    `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
-	DevicesValue       []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty"`
+	DevicesValue       []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty,dive"`
 }
 
 // NewCollectionResponse creates a new CollectionResponse instance

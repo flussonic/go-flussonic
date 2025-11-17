@@ -395,20 +395,20 @@ type EpisodeIdentificationErrorImpl struct {
 
 // Episodes identification request
 type EpisodeIdentificationRequestImpl struct {
-	EpisodesValue []*EpisodeFingerprintImpl `json:"episodes,omitempty" validate:"omitempty"`
+	EpisodesValue []*EpisodeFingerprintImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
 }
 
 type ErrorImpl struct {
 	CodeValue   *string           `json:"code,omitempty" validate:"omitempty"`
 	IDValue     *string           `json:"id,omitempty" validate:"omitempty"`
-	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty"`
+	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty,dive"`
 	SourceValue *ErrorSourceImpl  `json:"source,omitempty" validate:"omitempty"`
 	StatusValue *string           `json:"status,omitempty" validate:"omitempty"`
 	TitleValue  *string           `json:"title,omitempty" validate:"omitempty"`
 }
 
 type ErrorResponseImpl struct {
-	ErrorsValue []*ErrorImpl `json:"errors,omitempty" validate:"omitempty"`
+	ErrorsValue []*ErrorImpl `json:"errors,omitempty" validate:"omitempty,dive"`
 }
 
 // an object containing references to the source of the error
@@ -427,7 +427,7 @@ type IdentificationMetricsImpl struct {
 type IdentifiedEpisodeImpl struct {
 	EpisodeIDValue           *int                                      `json:"episode_id,omitempty" validate:"omitempty"`
 	IdentificationErrorValue *IdentifiedEpisodeIdentificationErrorImpl `json:"identification_error,omitempty" validate:"omitempty"`
-	MatchedPersonsValue      []*VisionPersonMatchImpl                  `json:"matched_persons,omitempty" validate:"omitempty"`
+	MatchedPersonsValue      []*VisionPersonMatchImpl                  `json:"matched_persons,omitempty" validate:"omitempty,dive"`
 }
 
 type IdentifiedEpisodeIdentificationErrorImpl struct {
@@ -436,7 +436,7 @@ type IdentifiedEpisodeIdentificationErrorImpl struct {
 
 // Batch of identified fingerprints
 type IdentifiedEpisodesListImpl struct {
-	EpisodesValue []*IdentifiedEpisodeImpl `json:"episodes,omitempty" validate:"omitempty"`
+	EpisodesValue []*IdentifiedEpisodeImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
 }
 
 // Digital fingerprint of the face
@@ -452,7 +452,7 @@ type VisionPersonImpl struct {
 	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	ExternalIDValue   *string                      `json:"external_id,omitempty" validate:"omitempty"`
 	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
-	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty"`
+	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty,dive"`
 	PersonIDValue     SnowflakeID                  `json:"person_id" validate:"required"`
 	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
 }
@@ -466,7 +466,7 @@ type VisionPersonMatchImpl struct {
 
 // Person matching information
 type VisionPersonMatchesImpl struct {
-	MatchedPersonsValue []*VisionPersonMatchImpl `json:"matched_persons,omitempty" validate:"omitempty"`
+	MatchedPersonsValue []*VisionPersonMatchImpl `json:"matched_persons,omitempty" validate:"omitempty,dive"`
 }
 
 type VisionPersonsListImpl struct {
@@ -474,7 +474,7 @@ type VisionPersonsListImpl struct {
 	EstimatedCountValue *int                `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
-	PersonsValue        []*VisionPersonImpl `json:"persons" validate:"required"`
+	PersonsValue        []*VisionPersonImpl `json:"persons" validate:"required,dive"`
 }
 
 type VisionServerInfoImpl struct {
