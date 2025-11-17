@@ -19,7 +19,6 @@ linters:
     - revive
     - staticcheck
     - unconvert
-    - unparam
     - unused
   settings:
     depguard:
@@ -79,7 +78,6 @@ linters:
           - nakedret
           - prealloc
           - unconvert
-          - unparam
           - gocritic
         path: .*_generated\.go$
       - linters:
@@ -89,7 +87,6 @@ linters:
           - nakedret
           - prealloc
           - unconvert
-          - unparam
           - gocritic
         path: ^(central/central\.go|flussonic/flussonic\.go|vision-inference/visioninference\.go|watcher-admin/watcheradmin\.go|watcher-client/watcherclient\.go)$
     paths:

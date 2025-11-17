@@ -1017,6 +1017,40 @@ func TestErrorSource(t *testing.T) {
 	})
 }
 
+func TestEventTypes(t *testing.T) {
+	t.Run("EpisodeFaceValue", func(t *testing.T) {
+		obj := model.NewEventTypes()
+		value := true
+		obj.SetEpisodeFace(value)
+		assert.NotNil(t, obj.EpisodeFace())
+		assert.Equal(t, value, *obj.EpisodeFace())
+	})
+
+	t.Run("EpisodeGenericValue", func(t *testing.T) {
+		obj := model.NewEventTypes()
+		value := true
+		obj.SetEpisodeGeneric(value)
+		assert.NotNil(t, obj.EpisodeGeneric())
+		assert.Equal(t, value, *obj.EpisodeGeneric())
+	})
+
+	t.Run("EpisodeVehicleValue", func(t *testing.T) {
+		obj := model.NewEventTypes()
+		value := true
+		obj.SetEpisodeVehicle(value)
+		assert.NotNil(t, obj.EpisodeVehicle())
+		assert.Equal(t, value, *obj.EpisodeVehicle())
+	})
+
+	t.Run("StreamDeadValue", func(t *testing.T) {
+		obj := model.NewEventTypes()
+		value := true
+		obj.SetStreamDead(value)
+		assert.NotNil(t, obj.StreamDead())
+		assert.Equal(t, value, *obj.StreamDead())
+	})
+}
+
 func TestFirmwareUpdate(t *testing.T) {
 	t.Run("ProtoValue", func(t *testing.T) {
 		obj := model.NewFirmwareUpdate()
@@ -5819,6 +5853,23 @@ func TestStreamConfig(t *testing.T) {
 		assert.Equal(t, value, obj.Name())
 	})
 
+	t.Run("NotificationsValue", func(t *testing.T) {
+		obj := model.NewStreamConfig()
+		item1 := model.NewWatcherStreamConfigNotificationsItem()
+		item2 := model.NewWatcherStreamConfigNotificationsItem()
+		item1.SetNotificationType(model.NotificationType("test"))
+		item2.SetNotificationType(model.NotificationType("test"))
+		value := []model.WatcherStreamConfigNotificationsItem{item1, item2}
+		obj.SetNotifications(value)
+		result := obj.Notifications()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].NotificationType())
+			assert.Equal(t, model.NotificationType("test"), *result[0].NotificationType())
+		}
+	})
+
 	t.Run("NotificationsEnabledValue", func(t *testing.T) {
 		obj := model.NewStreamConfig()
 		value := true
@@ -7475,7 +7526,7 @@ func TestStreamsMultieditConfig(t *testing.T) {
 func TestSubscription(t *testing.T) {
 	t.Run("EventTypesValue", func(t *testing.T) {
 		obj := model.NewSubscription()
-		value := model.NewSubscriptionRequestEventTypes()
+		value := model.NewEventTypes()
 		value.SetEpisodeFace(true)
 		value.SetEpisodeGeneric(true)
 		obj.SetEventTypes(value)
@@ -7497,7 +7548,7 @@ func TestSubscription(t *testing.T) {
 
 	t.Run("NotificationTypeValue", func(t *testing.T) {
 		obj := model.NewSubscription()
-		value := "test"
+		value := model.NotificationType("test")
 		obj.SetNotificationType(value)
 		assert.Equal(t, value, obj.NotificationType())
 	})
@@ -7510,44 +7561,10 @@ func TestSubscription(t *testing.T) {
 	})
 }
 
-func TestSubscriptionRequestEventTypes(t *testing.T) {
-	t.Run("EpisodeFaceValue", func(t *testing.T) {
-		obj := model.NewSubscriptionRequestEventTypes()
-		value := true
-		obj.SetEpisodeFace(value)
-		assert.NotNil(t, obj.EpisodeFace())
-		assert.Equal(t, value, *obj.EpisodeFace())
-	})
-
-	t.Run("EpisodeGenericValue", func(t *testing.T) {
-		obj := model.NewSubscriptionRequestEventTypes()
-		value := true
-		obj.SetEpisodeGeneric(value)
-		assert.NotNil(t, obj.EpisodeGeneric())
-		assert.Equal(t, value, *obj.EpisodeGeneric())
-	})
-
-	t.Run("EpisodeVehicleValue", func(t *testing.T) {
-		obj := model.NewSubscriptionRequestEventTypes()
-		value := true
-		obj.SetEpisodeVehicle(value)
-		assert.NotNil(t, obj.EpisodeVehicle())
-		assert.Equal(t, value, *obj.EpisodeVehicle())
-	})
-
-	t.Run("StreamDeadValue", func(t *testing.T) {
-		obj := model.NewSubscriptionRequestEventTypes()
-		value := true
-		obj.SetStreamDead(value)
-		assert.NotNil(t, obj.StreamDead())
-		assert.Equal(t, value, *obj.StreamDead())
-	})
-}
-
 func TestSubscriptionRequest(t *testing.T) {
 	t.Run("EventTypesValue", func(t *testing.T) {
 		obj := model.NewSubscriptionRequest()
-		value := model.NewSubscriptionRequestEventTypes()
+		value := model.NewEventTypes()
 		value.SetEpisodeFace(true)
 		value.SetEpisodeGeneric(true)
 		obj.SetEventTypes(value)
@@ -7561,7 +7578,7 @@ func TestSubscriptionRequest(t *testing.T) {
 
 	t.Run("NotificationTypeValue", func(t *testing.T) {
 		obj := model.NewSubscriptionRequest()
-		value := "test"
+		value := model.NotificationType("test")
 		obj.SetNotificationType(value)
 		assert.Equal(t, value, obj.NotificationType())
 	})
@@ -12694,6 +12711,23 @@ func TestWatcherStreamConfig(t *testing.T) {
 		assert.Equal(t, 3.14, result.Longitude())
 	})
 
+	t.Run("NotificationsValue", func(t *testing.T) {
+		obj := model.NewWatcherStreamConfig()
+		item1 := model.NewWatcherStreamConfigNotificationsItem()
+		item2 := model.NewWatcherStreamConfigNotificationsItem()
+		item1.SetNotificationType(model.NotificationType("test"))
+		item2.SetNotificationType(model.NotificationType("test"))
+		value := []model.WatcherStreamConfigNotificationsItem{item1, item2}
+		obj.SetNotifications(value)
+		result := obj.Notifications()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].NotificationType())
+			assert.Equal(t, model.NotificationType("test"), *result[0].NotificationType())
+		}
+	})
+
 	t.Run("NotificationsEnabledValue", func(t *testing.T) {
 		obj := model.NewWatcherStreamConfig()
 		value := true
@@ -12784,6 +12818,30 @@ func TestWatcherStreamConfig(t *testing.T) {
 		obj.SetPresetID(value)
 		assert.NotNil(t, obj.PresetID())
 		assert.Equal(t, value, *obj.PresetID())
+	})
+}
+
+func TestWatcherStreamConfigNotificationsItem(t *testing.T) {
+	t.Run("EventTypesValue", func(t *testing.T) {
+		obj := model.NewWatcherStreamConfigNotificationsItem()
+		value := model.NewEventTypes()
+		value.SetEpisodeFace(true)
+		value.SetEpisodeGeneric(true)
+		obj.SetEventTypes(value)
+		result := obj.EventTypes()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.EpisodeFace())
+		assert.Equal(t, true, *result.EpisodeFace())
+		assert.NotNil(t, result.EpisodeGeneric())
+		assert.Equal(t, true, *result.EpisodeGeneric())
+	})
+
+	t.Run("NotificationTypeValue", func(t *testing.T) {
+		obj := model.NewWatcherStreamConfigNotificationsItem()
+		value := model.NotificationType("test")
+		obj.SetNotificationType(value)
+		assert.NotNil(t, obj.NotificationType())
+		assert.Equal(t, value, *obj.NotificationType())
 	})
 }
 

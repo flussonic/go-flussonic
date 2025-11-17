@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/flussonic/go-flussonic/authorization"
 	"github.com/flussonic/go-flussonic/config"
@@ -34,6 +35,8 @@ type VisionInference interface {
 	EpisodesList(ctx context.Context, query *EpisodesListQuery) (model.EpisodesList, error)
 	// EpisodesListIterator iterates through all items using cursor pagination
 	EpisodesListIterator(ctx context.Context, query *EpisodesListQuery) iter.Seq2[model.Episode, error]
+	// EpisodesStreaming streams episodes using long polling with poll_timeout and updated_at_gt.
+	EpisodesStreaming(ctx context.Context, query *EpisodesListQuery, callback func(ctx context.Context, episode model.Episode) error)
 	// LivenessProbe Liveness probe
 	// Liveness probe.
 	LivenessProbe(ctx context.Context) (model.VisionServerInfo, error)
@@ -391,6 +394,61 @@ func (c *Client) EpisodesList(ctx context.Context, query *EpisodesListQuery) (mo
 // EpisodesListIterator iterates through all Episode items using cursor pagination.
 func (c *Client) EpisodesListIterator(ctx context.Context, query *EpisodesListQuery) iter.Seq2[model.Episode, error] {
 	return cursors.Iterator(ctx, c.EpisodesList, query)
+}
+
+// EpisodesStreaming streams episodes using long polling with poll_timeout and updated_at_gt.
+func (c *Client) EpisodesStreaming(ctx context.Context, query *EpisodesListQuery, callback func(ctx context.Context, episode model.Episode) error) {
+	if query.PollTimeout == 0 {
+		// Default poll timeout is 30 seconds
+		query.PollTimeout = 30
+	}
+
+	// UpdatedAtGt is not set, so we need to take current time
+	// It is required because there can be millions of episodes
+	// Since UpdatedAtGt field doesn't exist in query struct, use Extra map
+	if query.Extra == nil {
+		query.Extra = make(map[string]string)
+	}
+	if _, exists := query.Extra["updated_at_gt"]; !exists {
+		query.Extra["updated_at_gt"] = fmt.Sprintf("%d", time.Now().UnixMilli())
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
+		// Get current updated_at_gt from Extra map
+		var maxUpdatedAt int
+		if val, exists := query.Extra["updated_at_gt"]; exists {
+			if parsed, err := strconv.Atoi(val); err == nil {
+				maxUpdatedAt = parsed
+			}
+		}
+		episodesProcessed := 0
+		tN := time.Now()
+		iter := c.EpisodesListIterator(ctx, query)
+		for episode, err := range iter {
+			if err != nil {
+				// error making request, need to break current loop
+				break
+			}
+			episodesProcessed++
+			maxUpdatedAt = max(maxUpdatedAt, int(episode.UpdatedAt()))
+			if err := callback(ctx, episode); err != nil {
+				// handle error and continue streaming
+				continue
+			}
+		}
+		if episodesProcessed == 0 && time.Since(tN) < time.Duration(query.PollTimeout)*time.Second {
+			// long polling does not work, need to switch to regular polling
+			<-time.After(time.Duration(query.PollTimeout) * time.Second)
+		}
+		// Update updated_at_gt in Extra map
+		query.Extra["updated_at_gt"] = fmt.Sprintf("%d", maxUpdatedAt)
+	}
 }
 
 // LivenessProbe Liveness probe

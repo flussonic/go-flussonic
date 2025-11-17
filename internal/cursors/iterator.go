@@ -32,6 +32,12 @@ func Iterator[C any, T Iterable[C], Q IsQuery](
 		opts := initialOpts
 
 		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+
 			res, apiErr := request(ctx, opts)
 			if apiErr != nil {
 				yield(*new(C), apiErr)

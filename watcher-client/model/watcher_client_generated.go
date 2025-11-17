@@ -365,6 +365,8 @@ const (
 	MediaQualityHigh   MediaQuality = "high"
 )
 
+type NotificationType string
+
 type OutputAudio string
 
 const (
@@ -1589,6 +1591,34 @@ type ErrorSource interface {
 	// a JSON Pointer [RFC6901] to the associated entity in the request document
 	// [e.g. `"/data"` for a primary data object, or `"/data/attributes/title"` for a specific attribute].
 	SetPointer(string) ErrorSource
+}
+
+// Choosing which type of events to subscribe to
+type EventTypes interface {
+	// Face episode
+	// Example: true
+	EpisodeFace() *bool
+	// Face episode
+	// Example: true
+	SetEpisodeFace(bool) EventTypes
+	// Generic episode
+	// Example: true
+	EpisodeGeneric() *bool
+	// Generic episode
+	// Example: true
+	SetEpisodeGeneric(bool) EventTypes
+	// Vehicle episode
+	// Example: false
+	EpisodeVehicle() *bool
+	// Vehicle episode
+	// Example: false
+	SetEpisodeVehicle(bool) EventTypes
+	// Get notified when a stream goes offline
+	// Example: true
+	StreamDead() *bool
+	// Get notified when a stream goes offline
+	// Example: true
+	SetStreamDead(bool) EventTypes
 }
 
 // Update camera firmware
@@ -4680,8 +4710,16 @@ type StreamConfig interface {
 	// Format: media_name (media_name)
 	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
 	SetName(MediaName) StreamConfig
+	// User's active notification subscriptions for this camera.
+	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+	Notifications() []WatcherStreamConfigNotificationsItem
+	// User's active notification subscriptions for this camera.
+	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+	SetNotifications([]WatcherStreamConfigNotificationsItem) StreamConfig
+	// Deprecated field. Will be deleted at 26.05
 	// Notifications are enabled for the camera.
 	NotificationsEnabled() *bool
+	// Deprecated field. Will be deleted at 26.05
 	// Notifications are enabled for the camera.
 	SetNotificationsEnabled(bool) StreamConfig
 	// Onvif configuration
@@ -6319,20 +6357,16 @@ type StreamsMultieditConfig interface {
 }
 
 type Subscription interface {
-	// Choosing which type of events to subscribe to
-	EventTypes() SubscriptionRequestEventTypes
-	// Choosing which type of events to subscribe to
-	SetEventTypes(SubscriptionRequestEventTypes) Subscription
+	EventTypes() EventTypes
+	SetEventTypes(EventTypes) Subscription
 	// notification frequency in seconds
 	// Format: seconds (seconds)
 	NotificationFrequency() *Seconds
 	// notification frequency in seconds
 	// Format: seconds (seconds)
 	SetNotificationFrequency(Seconds) Subscription
-	// Type of notification
-	NotificationType() string
-	// Type of notification
-	SetNotificationType(string) Subscription
+	NotificationType() NotificationType
+	SetNotificationType(NotificationType) Subscription
 	// stream identificator
 	StreamName() string
 	// stream identificator
@@ -6341,46 +6375,14 @@ type Subscription interface {
 
 // Required: event_types, notification_type, stream_name
 type SubscriptionRequest interface {
-	// Choosing which type of events to subscribe to
-	EventTypes() SubscriptionRequestEventTypes
-	// Choosing which type of events to subscribe to
-	SetEventTypes(SubscriptionRequestEventTypes) SubscriptionRequest
-	// Type of notification
-	NotificationType() string
-	// Type of notification
-	SetNotificationType(string) SubscriptionRequest
+	EventTypes() EventTypes
+	SetEventTypes(EventTypes) SubscriptionRequest
+	NotificationType() NotificationType
+	SetNotificationType(NotificationType) SubscriptionRequest
 	// stream identificator
 	StreamName() string
 	// stream identificator
 	SetStreamName(string) SubscriptionRequest
-}
-
-// Choosing which type of events to subscribe to
-type SubscriptionRequestEventTypes interface {
-	// Face episode
-	// Example: true
-	EpisodeFace() *bool
-	// Face episode
-	// Example: true
-	SetEpisodeFace(bool) SubscriptionRequestEventTypes
-	// Generic episode
-	// Example: true
-	EpisodeGeneric() *bool
-	// Generic episode
-	// Example: true
-	SetEpisodeGeneric(bool) SubscriptionRequestEventTypes
-	// Vehicle episode
-	// Example: false
-	EpisodeVehicle() *bool
-	// Vehicle episode
-	// Example: false
-	SetEpisodeVehicle(bool) SubscriptionRequestEventTypes
-	// Get notified when a stream goes offline
-	// Example: true
-	StreamDead() *bool
-	// Get notified when a stream goes offline
-	// Example: true
-	SetStreamDead(bool) SubscriptionRequestEventTypes
 }
 
 type ThumbnailsSpec interface {
@@ -11037,8 +11039,16 @@ type WatcherStreamConfig interface {
 	// Deprecated field. Will be deleted at 24.12
 	// Camera coordinates on a map or a floor plan. Deprecated. Use coordinates instead.
 	SetMapCoordinates(MapSpec) WatcherStreamConfig
+	// User's active notification subscriptions for this camera.
+	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+	Notifications() []WatcherStreamConfigNotificationsItem
+	// User's active notification subscriptions for this camera.
+	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+	SetNotifications([]WatcherStreamConfigNotificationsItem) WatcherStreamConfig
+	// Deprecated field. Will be deleted at 26.05
 	// Notifications are enabled for the camera.
 	NotificationsEnabled() *bool
+	// Deprecated field. Will be deleted at 26.05
 	// Notifications are enabled for the camera.
 	SetNotificationsEnabled(bool) WatcherStreamConfig
 	// Onvif configuration
@@ -11093,6 +11103,14 @@ type WatcherStreamConfigAudio interface {
 	TranscodeAudioCodec() *FrameAudioCodec
 	// Audio codec (the AAC codec is used by default).
 	SetTranscodeAudioCodec(FrameAudioCodec) WatcherStreamConfigAudio
+}
+
+// Notification subscription details for a specific event type.
+type WatcherStreamConfigNotificationsItem interface {
+	EventTypes() EventTypes
+	SetEventTypes(EventTypes) WatcherStreamConfigNotificationsItem
+	NotificationType() *NotificationType
+	SetNotificationType(NotificationType) WatcherStreamConfigNotificationsItem
 }
 
 // WebPush Notifications subscription
@@ -11375,6 +11393,14 @@ type ErrorResponseImpl struct {
 type ErrorSourceImpl struct {
 	ParameterValue *string `json:"parameter,omitempty" validate:"omitempty"`
 	PointerValue   *string `json:"pointer,omitempty" validate:"omitempty"`
+}
+
+// Choosing which type of events to subscribe to
+type EventTypesImpl struct {
+	EpisodeFaceValue    *bool `json:"episode_face,omitempty" validate:"omitempty"`
+	EpisodeGenericValue *bool `json:"episode_generic,omitempty" validate:"omitempty"`
+	EpisodeVehicleValue *bool `json:"episode_vehicle,omitempty" validate:"omitempty"`
+	StreamDeadValue     *bool `json:"stream_dead,omitempty" validate:"omitempty"`
 }
 
 // Update camera firmware
@@ -12175,33 +12201,34 @@ type StreamBaseStreamPermissionsImpl struct {
 }
 
 type StreamConfigImpl struct {
-	LastEpisodeAtValue          *UtcMs                        `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StatsValue                  *StreamStatsImpl              `json:"stats,omitempty" validate:"omitempty"`
-	CommentValue                *string                       `json:"comment,omitempty" validate:"omitempty"`
-	CoordinatesValue            *MapSpecImpl                  `json:"coordinates,omitempty" validate:"omitempty"`
-	CreatedAtValue              *UtcMs                        `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	DisabledValue               *bool                         `json:"disabled,omitempty" validate:"omitempty"`
-	DvrValue                    *StreamDvrSpecImpl            `json:"dvr,omitempty" validate:"omitempty"`
-	FirmwareUpdateDurationValue *Milliseconds                 `json:"firmware_update_duration,omitempty" validate:"omitempty"`
-	FolderIDValue               *int                          `json:"folder_id,omitempty" validate:"omitempty"`
-	VisionValue                 *VisionSpecImpl               `json:"vision,omitempty" validate:"omitempty"`
-	IsFavouriteValue            *bool                         `json:"is_favourite,omitempty" validate:"omitempty"`
-	TitleValue                  *string                       `json:"title,omitempty" validate:"omitempty"`
-	CanPublishValue             *bool                         `json:"can_publish,omitempty" validate:"omitempty"`
-	AudioValue                  *WatcherStreamConfigAudioImpl `json:"audio,omitempty" validate:"omitempty"`
-	LastChangeValue             *AuditLogRecordImpl           `json:"last_change,omitempty" validate:"omitempty"`
-	NotificationsEnabledValue   *bool                         `json:"notifications_enabled,omitempty" validate:"omitempty"`
-	OnvifValue                  *StreamOnvifConfigImpl        `json:"onvif,omitempty" validate:"omitempty"`
-	OrganizationValue           *OrganizationStreamImpl       `json:"organization,omitempty" validate:"omitempty"`
-	OrganizationIDValue         *int                          `json:"organization_id,omitempty" validate:"omitempty"`
-	MapCoordinatesValue         *MapSpecImpl                  `json:"map_coordinates,omitempty" validate:"omitempty"`
-	PostalAddressValue          *string                       `json:"postal_address,omitempty" validate:"omitempty"`
-	PresetValue                 *StreamPresetImpl             `json:"preset,omitempty" validate:"omitempty"`
-	PresetIDValue               *int                          `json:"preset_id,omitempty" validate:"omitempty"`
-	StaticValue                 *bool                         `json:"static,omitempty" validate:"omitempty"`
-	NameValue                   MediaName                     `json:"name" validate:"required" openmetrics_label:"name"`
-	PathValue                   []*StreamPathItemImpl         `json:"path,omitempty" validate:"omitempty"`
-	InputsValue                 []StreamInput                 `json:"inputs,omitempty" validate:"omitempty"`
+	PostalAddressValue          *string                                     `json:"postal_address,omitempty" validate:"omitempty"`
+	PresetIDValue               *int                                        `json:"preset_id,omitempty" validate:"omitempty"`
+	CommentValue                *string                                     `json:"comment,omitempty" validate:"omitempty"`
+	CoordinatesValue            *MapSpecImpl                                `json:"coordinates,omitempty" validate:"omitempty"`
+	VisionValue                 *VisionSpecImpl                             `json:"vision,omitempty" validate:"omitempty"`
+	DisabledValue               *bool                                       `json:"disabled,omitempty" validate:"omitempty"`
+	DvrValue                    *StreamDvrSpecImpl                          `json:"dvr,omitempty" validate:"omitempty"`
+	FirmwareUpdateDurationValue *Milliseconds                               `json:"firmware_update_duration,omitempty" validate:"omitempty"`
+	FolderIDValue               *int                                        `json:"folder_id,omitempty" validate:"omitempty"`
+	TitleValue                  *string                                     `json:"title,omitempty" validate:"omitempty"`
+	IsFavouriteValue            *bool                                       `json:"is_favourite,omitempty" validate:"omitempty"`
+	LastChangeValue             *AuditLogRecordImpl                         `json:"last_change,omitempty" validate:"omitempty"`
+	CanPublishValue             *bool                                       `json:"can_publish,omitempty" validate:"omitempty"`
+	LastEpisodeAtValue          *UtcMs                                      `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue              *UtcMs                                      `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	StatsValue                  *StreamStatsImpl                            `json:"stats,omitempty" validate:"omitempty"`
+	NotificationsEnabledValue   *bool                                       `json:"notifications_enabled,omitempty" validate:"omitempty"`
+	OnvifValue                  *StreamOnvifConfigImpl                      `json:"onvif,omitempty" validate:"omitempty"`
+	OrganizationValue           *OrganizationStreamImpl                     `json:"organization,omitempty" validate:"omitempty"`
+	OrganizationIDValue         *int                                        `json:"organization_id,omitempty" validate:"omitempty"`
+	StaticValue                 *bool                                       `json:"static,omitempty" validate:"omitempty"`
+	AudioValue                  *WatcherStreamConfigAudioImpl               `json:"audio,omitempty" validate:"omitempty"`
+	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
+	MapCoordinatesValue         *MapSpecImpl                                `json:"map_coordinates,omitempty" validate:"omitempty"`
+	NameValue                   MediaName                                   `json:"name" validate:"required" openmetrics_label:"name"`
+	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty"`
+	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty"`
+	InputsValue                 []StreamInput                               `json:"inputs,omitempty" validate:"omitempty"`
 }
 
 type StreamConfigAdditionalImpl struct {
@@ -12490,25 +12517,17 @@ type StreamsMultieditConfigImpl struct {
 }
 
 type SubscriptionImpl struct {
-	EventTypesValue            *SubscriptionRequestEventTypesImpl `json:"event_types" validate:"required"`
-	NotificationFrequencyValue *Seconds                           `json:"notification_frequency,omitempty" validate:"omitempty"`
-	NotificationTypeValue      string                             `json:"notification_type" validate:"required"`
-	StreamNameValue            string                             `json:"stream_name" validate:"required"`
+	EventTypesValue            *EventTypesImpl  `json:"event_types" validate:"required"`
+	NotificationFrequencyValue *Seconds         `json:"notification_frequency,omitempty" validate:"omitempty"`
+	NotificationTypeValue      NotificationType `json:"notification_type" validate:"required"`
+	StreamNameValue            string           `json:"stream_name" validate:"required"`
 }
 
 // Required: event_types, notification_type, stream_name
 type SubscriptionRequestImpl struct {
-	EventTypesValue       *SubscriptionRequestEventTypesImpl `json:"event_types" validate:"required"`
-	NotificationTypeValue string                             `json:"notification_type" validate:"required"`
-	StreamNameValue       string                             `json:"stream_name" validate:"required"`
-}
-
-// Choosing which type of events to subscribe to
-type SubscriptionRequestEventTypesImpl struct {
-	EpisodeFaceValue    *bool `json:"episode_face,omitempty" validate:"omitempty"`
-	EpisodeGenericValue *bool `json:"episode_generic,omitempty" validate:"omitempty"`
-	EpisodeVehicleValue *bool `json:"episode_vehicle,omitempty" validate:"omitempty"`
-	StreamDeadValue     *bool `json:"stream_dead,omitempty" validate:"omitempty"`
+	EventTypesValue       *EventTypesImpl  `json:"event_types" validate:"required"`
+	NotificationTypeValue NotificationType `json:"notification_type" validate:"required"`
+	StreamNameValue       string           `json:"stream_name" validate:"required"`
 }
 
 type ThumbnailsSpecImpl struct {
@@ -13323,30 +13342,37 @@ type WatcherEpisodeVehicleImpl struct {
 }
 
 type WatcherStreamConfigImpl struct {
-	LastEpisodeAtValue          *UtcMs                        `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	NotificationsEnabledValue   *bool                         `json:"notifications_enabled,omitempty" validate:"omitempty"`
-	CoordinatesValue            *MapSpecImpl                  `json:"coordinates,omitempty" validate:"omitempty"`
-	CreatedAtValue              *UtcMs                        `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	FirmwareUpdateDurationValue *Milliseconds                 `json:"firmware_update_duration,omitempty" validate:"omitempty"`
-	FolderIDValue               *int                          `json:"folder_id,omitempty" validate:"omitempty"`
-	IsFavouriteValue            *bool                         `json:"is_favourite,omitempty" validate:"omitempty"`
-	LastChangeValue             *AuditLogRecordImpl           `json:"last_change,omitempty" validate:"omitempty"`
-	CanPublishValue             *bool                         `json:"can_publish,omitempty" validate:"omitempty"`
-	AudioValue                  *WatcherStreamConfigAudioImpl `json:"audio,omitempty" validate:"omitempty"`
-	MapCoordinatesValue         *MapSpecImpl                  `json:"map_coordinates,omitempty" validate:"omitempty"`
-	OnvifValue                  *StreamOnvifConfigImpl        `json:"onvif,omitempty" validate:"omitempty"`
-	OrganizationValue           *OrganizationStreamImpl       `json:"organization,omitempty" validate:"omitempty"`
-	OrganizationIDValue         *int                          `json:"organization_id,omitempty" validate:"omitempty"`
-	PresetIDValue               *int                          `json:"preset_id,omitempty" validate:"omitempty"`
-	PostalAddressValue          *string                       `json:"postal_address,omitempty" validate:"omitempty"`
-	PresetValue                 *StreamPresetImpl             `json:"preset,omitempty" validate:"omitempty"`
-	PathValue                   []*StreamPathItemImpl         `json:"path,omitempty" validate:"omitempty"`
+	LastEpisodeAtValue          *UtcMs                                      `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	OrganizationValue           *OrganizationStreamImpl                     `json:"organization,omitempty" validate:"omitempty"`
+	CoordinatesValue            *MapSpecImpl                                `json:"coordinates,omitempty" validate:"omitempty"`
+	MapCoordinatesValue         *MapSpecImpl                                `json:"map_coordinates,omitempty" validate:"omitempty"`
+	FirmwareUpdateDurationValue *Milliseconds                               `json:"firmware_update_duration,omitempty" validate:"omitempty"`
+	FolderIDValue               *int                                        `json:"folder_id,omitempty" validate:"omitempty"`
+	IsFavouriteValue            *bool                                       `json:"is_favourite,omitempty" validate:"omitempty"`
+	LastChangeValue             *AuditLogRecordImpl                         `json:"last_change,omitempty" validate:"omitempty"`
+	CanPublishValue             *bool                                       `json:"can_publish,omitempty" validate:"omitempty"`
+	PresetIDValue               *int                                        `json:"preset_id,omitempty" validate:"omitempty"`
+	CreatedAtValue              *UtcMs                                      `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	NotificationsEnabledValue   *bool                                       `json:"notifications_enabled,omitempty" validate:"omitempty"`
+	OnvifValue                  *StreamOnvifConfigImpl                      `json:"onvif,omitempty" validate:"omitempty"`
+	AudioValue                  *WatcherStreamConfigAudioImpl               `json:"audio,omitempty" validate:"omitempty"`
+	OrganizationIDValue         *int                                        `json:"organization_id,omitempty" validate:"omitempty"`
+	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
+	PostalAddressValue          *string                                     `json:"postal_address,omitempty" validate:"omitempty"`
+	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty"`
+	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty"`
 }
 
 // Audio settings for the stream.
 type WatcherStreamConfigAudioImpl struct {
 	DisabledValue            *bool            `json:"disabled,omitempty" validate:"omitempty"`
 	TranscodeAudioCodecValue *FrameAudioCodec `json:"transcode_audio_codec,omitempty" validate:"omitempty"`
+}
+
+// Notification subscription details for a specific event type.
+type WatcherStreamConfigNotificationsItemImpl struct {
+	EventTypesValue       *EventTypesImpl   `json:"event_types,omitempty" validate:"omitempty"`
+	NotificationTypeValue *NotificationType `json:"notification_type,omitempty" validate:"omitempty"`
 }
 
 // WebPush Notifications subscription
@@ -15646,6 +15672,75 @@ func (s *ErrorSourceImpl) SetPointer(v string) ErrorSource {
 		return nil
 	}
 	s.PointerValue = &v
+	return s
+}
+
+// NewEventTypes creates a new EventTypes instance
+func NewEventTypes() EventTypes {
+	return &EventTypesImpl{}
+}
+
+// Face episode
+// Example: true
+func (s EventTypesImpl) EpisodeFace() *bool {
+	return s.EpisodeFaceValue
+}
+
+// Face episode
+// Example: true
+func (s *EventTypesImpl) SetEpisodeFace(v bool) EventTypes {
+	if s == nil {
+		return nil
+	}
+	s.EpisodeFaceValue = &v
+	return s
+}
+
+// Generic episode
+// Example: true
+func (s EventTypesImpl) EpisodeGeneric() *bool {
+	return s.EpisodeGenericValue
+}
+
+// Generic episode
+// Example: true
+func (s *EventTypesImpl) SetEpisodeGeneric(v bool) EventTypes {
+	if s == nil {
+		return nil
+	}
+	s.EpisodeGenericValue = &v
+	return s
+}
+
+// Vehicle episode
+// Example: false
+func (s EventTypesImpl) EpisodeVehicle() *bool {
+	return s.EpisodeVehicleValue
+}
+
+// Vehicle episode
+// Example: false
+func (s *EventTypesImpl) SetEpisodeVehicle(v bool) EventTypes {
+	if s == nil {
+		return nil
+	}
+	s.EpisodeVehicleValue = &v
+	return s
+}
+
+// Get notified when a stream goes offline
+// Example: true
+func (s EventTypesImpl) StreamDead() *bool {
+	return s.StreamDeadValue
+}
+
+// Get notified when a stream goes offline
+// Example: true
+func (s *EventTypesImpl) SetStreamDead(v bool) EventTypes {
+	if s == nil {
+		return nil
+	}
+	s.StreamDeadValue = &v
 	return s
 }
 
@@ -24579,11 +24674,44 @@ func (s *StreamConfigImpl) SetName(v MediaName) StreamConfig {
 	return s
 }
 
+// User's active notification subscriptions for this camera.
+// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+func (s StreamConfigImpl) Notifications() []WatcherStreamConfigNotificationsItem {
+	if s.NotificationsValue == nil {
+		return nil
+	}
+	result := make([]WatcherStreamConfigNotificationsItem, len(s.NotificationsValue))
+	for i, item := range s.NotificationsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// User's active notification subscriptions for this camera.
+// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+func (s *StreamConfigImpl) SetNotifications(v []WatcherStreamConfigNotificationsItem) StreamConfig {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*WatcherStreamConfigNotificationsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*WatcherStreamConfigNotificationsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.NotificationsValue = impl
+	}
+	return s
+}
+
+// Deprecated field. Will be deleted at 26.05
 // Notifications are enabled for the camera.
 func (s StreamConfigImpl) NotificationsEnabled() *bool {
 	return s.NotificationsEnabledValue
 }
 
+// Deprecated field. Will be deleted at 26.05
 // Notifications are enabled for the camera.
 func (s *StreamConfigImpl) SetNotificationsEnabled(v bool) StreamConfig {
 	if s == nil {
@@ -28447,17 +28575,15 @@ func NewSubscription() Subscription {
 	return &SubscriptionImpl{}
 }
 
-// Choosing which type of events to subscribe to
-func (s SubscriptionImpl) EventTypes() SubscriptionRequestEventTypes {
+func (s SubscriptionImpl) EventTypes() EventTypes {
 	return s.EventTypesValue
 }
 
-// Choosing which type of events to subscribe to
-func (s *SubscriptionImpl) SetEventTypes(v SubscriptionRequestEventTypes) Subscription {
+func (s *SubscriptionImpl) SetEventTypes(v EventTypes) Subscription {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*SubscriptionRequestEventTypesImpl); ok {
+	if impl, ok := v.(*EventTypesImpl); ok {
 		s.EventTypesValue = impl
 	}
 	return s
@@ -28479,13 +28605,11 @@ func (s *SubscriptionImpl) SetNotificationFrequency(v Seconds) Subscription {
 	return s
 }
 
-// Type of notification
-func (s SubscriptionImpl) NotificationType() string {
+func (s SubscriptionImpl) NotificationType() NotificationType {
 	return s.NotificationTypeValue
 }
 
-// Type of notification
-func (s *SubscriptionImpl) SetNotificationType(v string) Subscription {
+func (s *SubscriptionImpl) SetNotificationType(v NotificationType) Subscription {
 	if s == nil {
 		return nil
 	}
@@ -28512,29 +28636,25 @@ func NewSubscriptionRequest() SubscriptionRequest {
 	return &SubscriptionRequestImpl{}
 }
 
-// Choosing which type of events to subscribe to
-func (s SubscriptionRequestImpl) EventTypes() SubscriptionRequestEventTypes {
+func (s SubscriptionRequestImpl) EventTypes() EventTypes {
 	return s.EventTypesValue
 }
 
-// Choosing which type of events to subscribe to
-func (s *SubscriptionRequestImpl) SetEventTypes(v SubscriptionRequestEventTypes) SubscriptionRequest {
+func (s *SubscriptionRequestImpl) SetEventTypes(v EventTypes) SubscriptionRequest {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*SubscriptionRequestEventTypesImpl); ok {
+	if impl, ok := v.(*EventTypesImpl); ok {
 		s.EventTypesValue = impl
 	}
 	return s
 }
 
-// Type of notification
-func (s SubscriptionRequestImpl) NotificationType() string {
+func (s SubscriptionRequestImpl) NotificationType() NotificationType {
 	return s.NotificationTypeValue
 }
 
-// Type of notification
-func (s *SubscriptionRequestImpl) SetNotificationType(v string) SubscriptionRequest {
+func (s *SubscriptionRequestImpl) SetNotificationType(v NotificationType) SubscriptionRequest {
 	if s == nil {
 		return nil
 	}
@@ -28553,75 +28673,6 @@ func (s *SubscriptionRequestImpl) SetStreamName(v string) SubscriptionRequest {
 		return nil
 	}
 	s.StreamNameValue = v
-	return s
-}
-
-// NewSubscriptionRequestEventTypes creates a new SubscriptionRequestEventTypes instance
-func NewSubscriptionRequestEventTypes() SubscriptionRequestEventTypes {
-	return &SubscriptionRequestEventTypesImpl{}
-}
-
-// Face episode
-// Example: true
-func (s SubscriptionRequestEventTypesImpl) EpisodeFace() *bool {
-	return s.EpisodeFaceValue
-}
-
-// Face episode
-// Example: true
-func (s *SubscriptionRequestEventTypesImpl) SetEpisodeFace(v bool) SubscriptionRequestEventTypes {
-	if s == nil {
-		return nil
-	}
-	s.EpisodeFaceValue = &v
-	return s
-}
-
-// Generic episode
-// Example: true
-func (s SubscriptionRequestEventTypesImpl) EpisodeGeneric() *bool {
-	return s.EpisodeGenericValue
-}
-
-// Generic episode
-// Example: true
-func (s *SubscriptionRequestEventTypesImpl) SetEpisodeGeneric(v bool) SubscriptionRequestEventTypes {
-	if s == nil {
-		return nil
-	}
-	s.EpisodeGenericValue = &v
-	return s
-}
-
-// Vehicle episode
-// Example: false
-func (s SubscriptionRequestEventTypesImpl) EpisodeVehicle() *bool {
-	return s.EpisodeVehicleValue
-}
-
-// Vehicle episode
-// Example: false
-func (s *SubscriptionRequestEventTypesImpl) SetEpisodeVehicle(v bool) SubscriptionRequestEventTypes {
-	if s == nil {
-		return nil
-	}
-	s.EpisodeVehicleValue = &v
-	return s
-}
-
-// Get notified when a stream goes offline
-// Example: true
-func (s SubscriptionRequestEventTypesImpl) StreamDead() *bool {
-	return s.StreamDeadValue
-}
-
-// Get notified when a stream goes offline
-// Example: true
-func (s *SubscriptionRequestEventTypesImpl) SetStreamDead(v bool) SubscriptionRequestEventTypes {
-	if s == nil {
-		return nil
-	}
-	s.StreamDeadValue = &v
 	return s
 }
 
@@ -39618,11 +39669,44 @@ func (s *WatcherStreamConfigImpl) SetMapCoordinates(v MapSpec) WatcherStreamConf
 	return s
 }
 
+// User's active notification subscriptions for this camera.
+// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+func (s WatcherStreamConfigImpl) Notifications() []WatcherStreamConfigNotificationsItem {
+	if s.NotificationsValue == nil {
+		return nil
+	}
+	result := make([]WatcherStreamConfigNotificationsItem, len(s.NotificationsValue))
+	for i, item := range s.NotificationsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// User's active notification subscriptions for this camera.
+// Each subscription represents a specific event type the user is subscribed to receive notifications about.
+func (s *WatcherStreamConfigImpl) SetNotifications(v []WatcherStreamConfigNotificationsItem) WatcherStreamConfig {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*WatcherStreamConfigNotificationsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*WatcherStreamConfigNotificationsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.NotificationsValue = impl
+	}
+	return s
+}
+
+// Deprecated field. Will be deleted at 26.05
 // Notifications are enabled for the camera.
 func (s WatcherStreamConfigImpl) NotificationsEnabled() *bool {
 	return s.NotificationsEnabledValue
 }
 
+// Deprecated field. Will be deleted at 26.05
 // Notifications are enabled for the camera.
 func (s *WatcherStreamConfigImpl) SetNotificationsEnabled(v bool) WatcherStreamConfig {
 	if s == nil {
@@ -39793,6 +39877,37 @@ func (s *WatcherStreamConfigAudioImpl) SetTranscodeAudioCodec(v FrameAudioCodec)
 		return nil
 	}
 	s.TranscodeAudioCodecValue = &v
+	return s
+}
+
+// NewWatcherStreamConfigNotificationsItem creates a new WatcherStreamConfigNotificationsItem instance
+func NewWatcherStreamConfigNotificationsItem() WatcherStreamConfigNotificationsItem {
+	return &WatcherStreamConfigNotificationsItemImpl{}
+}
+
+func (s WatcherStreamConfigNotificationsItemImpl) EventTypes() EventTypes {
+	return s.EventTypesValue
+}
+
+func (s *WatcherStreamConfigNotificationsItemImpl) SetEventTypes(v EventTypes) WatcherStreamConfigNotificationsItem {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*EventTypesImpl); ok {
+		s.EventTypesValue = impl
+	}
+	return s
+}
+
+func (s WatcherStreamConfigNotificationsItemImpl) NotificationType() *NotificationType {
+	return s.NotificationTypeValue
+}
+
+func (s *WatcherStreamConfigNotificationsItemImpl) SetNotificationType(v NotificationType) WatcherStreamConfigNotificationsItem {
+	if s == nil {
+		return nil
+	}
+	s.NotificationTypeValue = &v
 	return s
 }
 
