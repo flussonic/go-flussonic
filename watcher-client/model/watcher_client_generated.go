@@ -2903,6 +2903,10 @@ type InputStats interface {
 	SetSdi(InputSdiCounters) InputStats
 	Srt() InputSrtCounters
 	SetSrt(InputSrtCounters) InputStats
+	// List of recent events that led to the input source being stopped.
+	StopEvents() []InputStatsStopEventsItem
+	// List of recent events that led to the input source being stopped.
+	SetStopEvents([]InputStatsStopEventsItem) InputStats
 	// The time period during which no frames were received from the stream's input.
 	// Format: ticks (ticks)
 	// Example: 1284
@@ -2941,6 +2945,20 @@ type InputStats interface {
 	// Number of secondary inputs that have no problems.
 	// Example: 2
 	SetValidSecondaryInputs(int) InputStats
+}
+
+// Required: code, timestamp
+type InputStatsStopEventsItem interface {
+	// Identifier of the event.
+	Code() string
+	// Identifier of the event.
+	SetCode(string) InputStatsStopEventsItem
+	// Time when the event occurred.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	Timestamp() UtcMs
+	// Time when the event occurred.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	SetTimestamp(UtcMs) InputStatsStopEventsItem
 }
 
 type LoginInfoAdditional interface {
@@ -11682,7 +11700,7 @@ type InputSrtCountersImpl struct {
 
 type InputStatsImpl struct {
 	InvalidSecondaryInputsValue *int                             `json:"invalid_secondary_inputs,omitempty" validate:"omitempty"`
-	Errors403Value              *int                             `json:"errors_403,omitempty" validate:"omitempty"`
+	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
 	AdSplicesInsertedValue      *int                             `json:"ad_splices_inserted,omitempty" validate:"omitempty"`
 	AgentValue                  *InputAgentCountersImpl          `json:"agent,omitempty" validate:"omitempty"`
 	BytesValue                  *Bytes                           `json:"bytes,omitempty" validate:"omitempty" openmetrics_metric:"stream_input_bytes"`
@@ -11690,8 +11708,8 @@ type InputStatsImpl struct {
 	DivergentInputsValue        *bool                            `json:"divergent_inputs,omitempty" validate:"omitempty"`
 	DvrInfoValue                *DvrInfoImpl                     `json:"dvr_info,omitempty" validate:"omitempty"`
 	ErrorRateValue              *int                             `json:"error_rate,omitempty" validate:"omitempty"`
-	ActiveValue                 *bool                            `json:"active,omitempty" validate:"omitempty"`
-	InputSwitchesValue          *int                             `json:"input_switches,omitempty" validate:"omitempty"`
+	ErrorsValue                 *int                             `json:"errors,omitempty" validate:"omitempty"`
+	Errors403Value              *int                             `json:"errors_403,omitempty" validate:"omitempty"`
 	Errors404Value              *int                             `json:"errors_404,omitempty" validate:"omitempty"`
 	Errors500Value              *int                             `json:"errors_500,omitempty" validate:"omitempty"`
 	ErrorsBrokenPayloadValue    *int                             `json:"errors_broken_payload,omitempty" validate:"omitempty"`
@@ -11703,11 +11721,11 @@ type InputStatsImpl struct {
 	ErrorsTSPatValue            *int                             `json:"errors_ts_pat,omitempty" validate:"omitempty"`
 	ErrorsTSServiceLostValue    *int                             `json:"errors_ts_service_lost,omitempty" validate:"omitempty"`
 	ErrorsTSStuckRestartsValue  *int                             `json:"errors_ts_stuck_restarts,omitempty" validate:"omitempty"`
-	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
 	FramesValue                 *int                             `json:"frames,omitempty" validate:"omitempty"`
-	ErrorsValue                 *int                             `json:"errors,omitempty" validate:"omitempty"`
-	IPValue                     *string                          `json:"ip,omitempty" validate:"omitempty"`
+	InputSwitchesValue          *int                             `json:"input_switches,omitempty" validate:"omitempty"`
+	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
 	MediaInfoValue              *MediaInfoImpl                   `json:"media_info,omitempty" validate:"omitempty"`
+	ActiveValue                 *bool                            `json:"active,omitempty" validate:"omitempty"`
 	MediaInfoChangesValue       *int                             `json:"media_info_changes,omitempty" validate:"omitempty"`
 	MotionDetectorValue         *InputMotionDetectorCountersImpl `json:"motion_detector,omitempty" validate:"omitempty"`
 	NumSecNoDataValue           *Seconds                         `json:"num_sec_no_data,omitempty" validate:"omitempty"`
@@ -11722,13 +11740,20 @@ type InputStatsImpl struct {
 	ResyncCountNormalValue      *int                             `json:"resync_count_normal,omitempty" validate:"omitempty"`
 	RetriesValue                *int                             `json:"retries,omitempty" validate:"omitempty"`
 	UserAgentValue              *string                          `json:"user_agent,omitempty" validate:"omitempty"`
-	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
+	IPValue                     *string                          `json:"ip,omitempty" validate:"omitempty"`
 	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
-	TSDelayValue                *Ticks                           `json:"ts_delay,omitempty" validate:"omitempty"`
 	URLValue                    *URL                             `json:"url,omitempty" validate:"omitempty"`
+	TSDelayValue                *Ticks                           `json:"ts_delay,omitempty" validate:"omitempty"`
 	TSDelayPerTracksValue       []Ticks                          `json:"ts_delay_per_tracks,omitempty" validate:"omitempty,dive"`
+	StopEventsValue             []*InputStatsStopEventsItemImpl  `json:"stop_events,omitempty" validate:"omitempty,dive"`
 	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
 	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
+}
+
+// Required: code, timestamp
+type InputStatsStopEventsItemImpl struct {
+	CodeValue      string `json:"code" validate:"required"`
+	TimestampValue UtcMs  `json:"timestamp" validate:"required,min=1e+12,max=1e+13"`
 }
 
 type LoginInfoAdditionalImpl struct {
@@ -19693,6 +19718,35 @@ func (s *InputStatsImpl) SetSrt(v InputSrtCounters) InputStats {
 	return s
 }
 
+// List of recent events that led to the input source being stopped.
+func (s InputStatsImpl) StopEvents() []InputStatsStopEventsItem {
+	if s.StopEventsValue == nil {
+		return nil
+	}
+	result := make([]InputStatsStopEventsItem, len(s.StopEventsValue))
+	for i, item := range s.StopEventsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of recent events that led to the input source being stopped.
+func (s *InputStatsImpl) SetStopEvents(v []InputStatsStopEventsItem) InputStats {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*InputStatsStopEventsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*InputStatsStopEventsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.StopEventsValue = impl
+	}
+	return s
+}
+
 // The time period during which no frames were received from the stream's input.
 // Format: ticks (ticks)
 // Example: 1284
@@ -19778,6 +19832,41 @@ func (s *InputStatsImpl) SetValidSecondaryInputs(v int) InputStats {
 		return nil
 	}
 	s.ValidSecondaryInputsValue = &v
+	return s
+}
+
+// NewInputStatsStopEventsItem creates a new InputStatsStopEventsItem instance
+func NewInputStatsStopEventsItem() InputStatsStopEventsItem {
+	return &InputStatsStopEventsItemImpl{}
+}
+
+// Identifier of the event.
+func (s InputStatsStopEventsItemImpl) Code() string {
+	return s.CodeValue
+}
+
+// Identifier of the event.
+func (s *InputStatsStopEventsItemImpl) SetCode(v string) InputStatsStopEventsItem {
+	if s == nil {
+		return nil
+	}
+	s.CodeValue = v
+	return s
+}
+
+// Time when the event occurred.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s InputStatsStopEventsItemImpl) Timestamp() UtcMs {
+	return s.TimestampValue
+}
+
+// Time when the event occurred.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s *InputStatsStopEventsItemImpl) SetTimestamp(v UtcMs) InputStatsStopEventsItem {
+	if s == nil {
+		return nil
+	}
+	s.TimestampValue = v
 	return s
 }
 

@@ -8921,6 +8921,27 @@ func TestInputStats(t *testing.T) {
 		assert.Equal(t, 42, *result.ErrorLostPackets())
 	})
 
+	t.Run("StopEventsValue", func(t *testing.T) {
+		obj := model.NewInputStats()
+		item1 := model.NewInputStatsStopEventsItem()
+		item2 := model.NewInputStatsStopEventsItem()
+		tNow1_1 := time.Now().UnixMilli()
+		tNow2_1 := time.Now().UnixMilli() + 1000
+		item1.SetCode("item1")
+		item2.SetCode("item2")
+		item1.SetTimestamp(model.UtcMs(float64(tNow1_1)))
+		item2.SetTimestamp(model.UtcMs(float64(tNow2_1)))
+		value := []model.InputStatsStopEventsItem{item1, item2}
+		obj.SetStopEvents(value)
+		result := obj.StopEvents()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.Equal(t, "item1", result[0].Code())
+			assert.Equal(t, model.UtcMs(float64(tNow1_1)), result[0].Timestamp())
+		}
+	})
+
 	t.Run("TSDelayValue", func(t *testing.T) {
 		obj := model.NewInputStats()
 		value := model.Ticks(3.14)
@@ -8951,6 +8972,22 @@ func TestInputStats(t *testing.T) {
 		obj.SetValidSecondaryInputs(value)
 		assert.NotNil(t, obj.ValidSecondaryInputs())
 		assert.Equal(t, value, *obj.ValidSecondaryInputs())
+	})
+}
+
+func TestInputStatsStopEventsItem(t *testing.T) {
+	t.Run("CodeValue", func(t *testing.T) {
+		obj := model.NewInputStatsStopEventsItem()
+		value := "test"
+		obj.SetCode(value)
+		assert.Equal(t, value, obj.Code())
+	})
+
+	t.Run("TimestampValue", func(t *testing.T) {
+		obj := model.NewInputStatsStopEventsItem()
+		tNow := time.Now().UnixMilli()
+		obj.SetTimestamp(model.UtcMs(float64(tNow)))
+		assert.Equal(t, model.UtcMs(float64(tNow)), obj.Timestamp())
 	})
 }
 
@@ -29645,6 +29682,14 @@ func TestStreamStats(t *testing.T) {
 		obj.SetRunningTranscoder(value)
 		assert.NotNil(t, obj.RunningTranscoder())
 		assert.Equal(t, value, *obj.RunningTranscoder())
+	})
+
+	t.Run("SourceErrorValue", func(t *testing.T) {
+		obj := model.NewStreamStats()
+		value := "test"
+		obj.SetSourceError(value)
+		assert.NotNil(t, obj.SourceError())
+		assert.Equal(t, value, *obj.SourceError())
 	})
 
 	t.Run("SourceIDValue", func(t *testing.T) {

@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: central
+      POSTGRES_USER: central
+      POSTGRES_PASSWORD: central
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U central"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  central:
+    image: flussonic/central:v25.11-34
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      CENTRAL_DATABASE_URL: postgres://central:central@postgres:5432/central?sslmode=disable
+      CENTRAL_REDIS_URL: redis://redis:6379/2
+      CENTRAL_EDIT_AUTH: admin admin123
+      CENTRAL_API_KEY: api_key
+      CENTRAL_API_URL: "http://central:9019"
+      CENTRAL_LOG_LEVEL: "debug"
+      CENTRAL_LOG_REQUESTS: true
+      CENTRAL_DIR: /app/
+      CENTRAL_LAYOUTER_SLEEPING_INTERVAL: 5s
+      CENTRAL_LICENSE_KEY: ${LICENSE_KEY}
+    ports:
+      - "9019:9019"
+    volumes:
+      - central_data:/var/lib/central
+
+  flussonic-1:
+    image: flussonic/flussonic:v25.11.1-55
+    depends_on:
+      - central
+    environment:
+      STREAMER_HTTP: 80
+      STREAMER_EDIT_AUTH: "admin:admin123"
+      STREAMER_CLUSTER_KEY: "cluster_key"
+      LICENSE_KEY: ${LICENSE_KEY}
+      STREAMER_CONFIG_EXTERNAL: http://api_key@central:9019/central/api/v3/streamers/flussonic-1
+    ports:
+      - "8081:80"
+      - "554:554"
+      - "1935:1935"
+    volumes:
+      - ./flussonic.conf:/etc/flussonic/flussonic.conf:ro
+      - ./qr_video.mp4:/vod_storage/qr_video.mp4:ro
+
+  demo-inference:
+    image: flussonic/demo-inference-node:latest
+    depends_on:
+      - central
+    environment:
+      CONFIG_EXTERNAL: "http://api_key@central:9019/central/api/v3/streamers/demo-inference"
+    ports:
+      - "8020:8020"
+
+  demo-app:
+    build:
+      context: ../..
+      dockerfile: examples/demo/Dockerfile
+    depends_on:
+      - central
+    environment:
+      CENTRAL_URL: http://central:9019
+      CENTRAL_API_KEY: api_key
+    volumes:
+      - ./streams.csv:/app/streams.csv
+    command: /app/demo
+
+volumes:
+  postgres_data:
+  central_data:
+  flussonic_data:
+

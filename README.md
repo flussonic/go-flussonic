@@ -21,6 +21,16 @@ This SDK provides a simple and idiomatic Go interface for managing Flussonic pro
 
 Examples for the SDK usage is located in Examples directory.
 
+### Demo Example
+
+A complete demo application (`examples/demo/`) that demonstrates:
+
+- Creating streamers in Central
+- Creating streams from CSV file
+- Streaming episodes with QR code detection and payload output
+
+Run with: `LICENSE_KEY='your_key' make up` (from `examples/demo/` directory)
+
 ## Features
 
 ### Flussonic Media Server (`flussonic`)
