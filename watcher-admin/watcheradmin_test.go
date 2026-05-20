@@ -15,6 +15,48 @@ import (
 	model "github.com/flussonic/go-flussonic/watcher-admin/model"
 )
 
+func TestClient_AdminNvrsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/admin-api/v3/nvrs"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","nvrs":[{"id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcheradmin.AdminNvrsListQuery{}
+	_, err := client.AdminNvrsList(ctx, query)
+	if err != nil {
+		t.Fatalf("AdminNvrsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.AdminNvrsList(ctx, query)
+	if err != nil {
+		t.Fatalf("AdminNvrsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("AdminNvrsList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_AdminStreamsList(t *testing.T) {
 	ctx := context.Background()
 
@@ -23,7 +65,7 @@ func TestClient_AdminStreamsList(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"id":123,"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"comment":"This is a test push","retry_timeout":7,"stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"domain_code":"54321","id":123,"owner_id":1,"settings":{"default_locale":"en","default_organization_id":1,"dns_names":["12345.example.com"],"license_id":12345},"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"onvif":{"url":"example"},"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -65,7 +107,7 @@ func TestClient_AgentGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/agents/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"id":"1234567","key":"example","model":"example","serial":"example","stats":{"agent_type":"single","endpoint_connection":{"bytes_from_server":40000,"bytes_to_server":400000000000,"hostname":"agents-001.vsaas.io","opened_at":1637094994000,"status_changed_at":1634560921},"local_ip":"10.10.17.88","mac_address":"F0-23-B9-59-20-F1","peer_ip":"185.134.232.183","streampoint_connection":{"bytes_from_server":40000,"bytes_to_server":400000000000,"connections_attempted":400,"connections_current":2,"connections_opened":300,"hostname":"agents-001.vsaas.io","opened_at":1637094994000,"status_changed_at":1634560921},"version":"v21.02-8-g535c85d"},"streams":[{"comment":"This is a test stream","name":"example","organization":{"id":7,"title":"Example LLC"},"title":"Hockey channel"}]}`
+	expectedJSON := `{"id":"1234567","key":"example","model":"example","serial":"example","stats":{"agent_type":"single","endpoint_connection":{"bytes_from_server":40000,"bytes_to_server":400000000000,"hostname":"agents-001.vsaas.io","opened_at":1637094994000,"status_changed_at":1634560921},"local_ip":"10.10.17.88","mac_address":"F0-23-B9-59-20-F1","peer_ip":"185.134.232.183","streampoint_connection":{"bytes_from_server":40000,"bytes_to_server":400000000000,"connections_attempted":400,"connections_current":2,"connections_opened":300,"hostname":"agents-001.vsaas.io","opened_at":1637094994000,"status_changed_at":1634560921},"version":"v21.02-8-g535c85d"},"streams":[{"comment":"This is a test stream","name":"example","named_by":"config","nmos":{"bind_to_device":"example"},"organization":{"id":7,"title":"Example LLC"},"position":2,"recheck_secondary_inputs_interval":120,"template":"sports-hd","title":"Hockey channel"}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -333,6 +375,48 @@ func TestClient_CameraReboot(t *testing.T) {
 	}
 }
 
+func TestClient_CameraUsagesAdminList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/admin-api/v3/usage/cameras"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","usage":[{"account_id":12345,"billing_plan_id":"billing-plan-456","external_account_id":"12345","from":"2025-01-01","license_id":"12345","plan_id":"episodes-30d-123","stream_name":"ag-123456","to":"2025-01-30"}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcheradmin.CameraUsagesAdminListQuery{}
+	_, err := client.CameraUsagesAdminList(ctx, query)
+	if err != nil {
+		t.Fatalf("CameraUsagesAdminList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.CameraUsagesAdminList(ctx, query)
+	if err != nil {
+		t.Fatalf("CameraUsagesAdminList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("CameraUsagesAdminList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_ClusterStatsGet(t *testing.T) {
 	ctx := context.Background()
 
@@ -341,7 +425,7 @@ func TestClient_ClusterStatsGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/cluster/stats"
 
 	// Expected JSON response
-	expectedJSON := `{"collected_at":1000000000000,"server_id":"123e4567-e89b-12d3-a456-426655440000","streamer_metrics":[{"agent_metrics":{"status":"operational"},"config":{"status":"operational"},"cpu":{"status":"operational","usage":48},"hostname":"example","memory":{"status":"operational","usage":27},"status":"operational","storage":{"status":"operational","usage":18},"stream_metrics":{"status":"operational"},"uptime":4325502}],"version":240100023}`
+	expectedJSON := `{"collected_at":1000000000000,"server_id":"123e4567-e89b-12d3-a456-426655440000","streamer_metrics":[{"agent_metrics":{"status":"operational"},"config":{"status":"operational"},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"cpu":{"status":"operational","usage":48},"healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"example","memory":{"status":"operational","usage":27},"status":"operational","storage":{"status":"operational","usage":18},"stream_metrics":{"status":"operational"},"uptime":4325502}],"version":240100023}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -646,7 +730,7 @@ func TestClient_OrganizationPresetSave(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/organizations/test-organization_id/presets"
 
 	// Expected JSON response
-	expectedJSON := `{"deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"external_id":"example","id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -680,6 +764,34 @@ func TestClient_OrganizationPresetSave(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_PresetDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/watcher/admin-api/v3/presets/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.PresetDelete(ctx, "test-id")
+	if err != nil {
+		t.Fatalf("PresetDelete failed: %v", err)
+	}
+}
+
 func TestClient_PresetGet(t *testing.T) {
 	ctx := context.Background()
 
@@ -688,7 +800,7 @@ func TestClient_PresetGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/presets/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"external_id":"example","id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -729,7 +841,7 @@ func TestClient_PresetSave(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/presets/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"external_id":"example","id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -771,7 +883,7 @@ func TestClient_PresetsCreate(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/presets"
 
 	// Expected JSON response
-	expectedJSON := `{"deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"external_id":"example","id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -813,7 +925,7 @@ func TestClient_PresetsList(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/presets"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","presets":[{"deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","presets":[{"billing_external_id":"example","deleted_at":1637095014573,"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"external_id":"example","id":7,"is_adjustable":true,"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1151,7 +1263,7 @@ func TestClient_StreamGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"id":123,"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"comment":"This is a test push","retry_timeout":7,"stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
+	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"domain_code":"54321","id":123,"owner_id":1,"settings":{"default_locale":"en","default_organization_id":1,"dns_names":["12345.example.com"],"license_id":12345},"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"onvif":{"url":"example"},"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1192,7 +1304,7 @@ func TestClient_StreamLayoutsGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/streams/test-name/layouts"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"layouts":[{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"layouts":[{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1234,7 +1346,7 @@ func TestClient_StreamSave(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"id":123,"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"comment":"This is a test push","retry_timeout":7,"stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
+	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"domain":{"domain_code":"54321","id":123,"owner_id":1,"settings":{"default_locale":"en","default_organization_id":1,"dns_names":["12345.example.com"],"license_id":12345},"title":"domain1"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"labels":{"key1":"example_value","key2":"example_value"},"last_episode_at":1000000000000,"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"layout_rules":{"preferred_zones":["example"],"required_zones":["example"]},"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"disk_usage_limit":98,"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"onvif":{"url":"example"},"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"onvif":{"url":"example"},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"pushes":[{"url":"example_value"}],"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1421,6 +1533,119 @@ func TestClient_StreamersList(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_StreamsDiscoverList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/admin-api/v3/streams/discover"
+
+	// Expected JSON response
+	expectedJSON := `{"devices":[{"endpoint":"http://192.168.1.100:80/onvif/device_service","error":"example","ip":"192.168.1.100","manufacturer":"Hikvision","model":"DS-2CD2143G2-I","streams":[{"bitrate":2048,"codec":"H264","fps":25,"height":1080,"jpeg_url":"http://192.168.1.100:80/snapshot.jpg","profile":"Profile_1","profile_name":"Main Stream","stream_url":"rtsp://192.168.1.100:554/stream/main","width":1920}]}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcheradmin.StreamsDiscoverListQuery{}
+	_, err := client.StreamsDiscoverList(ctx, query)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.StreamsDiscoverList(ctx, query)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("StreamsDiscoverList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_StreamsDiscoverStart(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/watcher/admin-api/v3/streams/discover"
+
+	// Expected JSON response
+	expectedJSON := `{"devices":[{"endpoint":"http://192.168.1.100:80/onvif/device_service","error":"example","ip":"192.168.1.100","manufacturer":"Hikvision","model":"DS-2CD2143G2-I","streams":[{"bitrate":2048,"codec":"H264","fps":25,"height":1080,"jpeg_url":"http://192.168.1.100:80/snapshot.jpg","profile":"Profile_1","profile_name":"Main Stream","stream_url":"rtsp://192.168.1.100:554/stream/main","width":1920}]}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcheradmin.StreamsDiscoverStartQuery{}
+	body := &model.OnvifDiscoverRequestImpl{}
+	_, err := client.StreamsDiscoverStart(ctx, query, body)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverStart failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.StreamsDiscoverStart(ctx, query, body)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverStart failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("StreamsDiscoverStart returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_StreamsDiscoverStop(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/watcher/admin-api/v3/streams/discover"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.StreamsDiscoverStop(ctx)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverStop failed: %v", err)
+	}
+}
+
 func TestClient_StreamsMultiedit(t *testing.T) {
 	ctx := context.Background()
 
@@ -1569,7 +1794,7 @@ func TestClient_UserCreate(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/users"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1638,7 +1863,7 @@ func TestClient_UserGet(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1679,7 +1904,7 @@ func TestClient_UserSave(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1803,7 +2028,7 @@ func TestClient_UsersList(t *testing.T) {
 	expectedPath := "/watcher/admin-api/v3/users"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users_list":[{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users_list":[{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{

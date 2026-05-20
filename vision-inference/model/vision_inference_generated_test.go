@@ -668,6 +668,25 @@ func TestEpisode(t *testing.T) {
 		assert.Equal(t, model.UtcMs(float64(tNow)), obj.UpdatedAt())
 	})
 
+	t.Run("VehicleColorValue", func(t *testing.T) {
+		obj := model.NewEpisode()
+		item1 := model.NewVisionVehicleColor()
+		item2 := model.NewVisionVehicleColor()
+		item1.SetColor(model.VisionVehicleColorColor("test"))
+		item2.SetColor(model.VisionVehicleColorColor("test"))
+		item1.SetConfidence(3.14)
+		item2.SetConfidence(3.14)
+		value := []model.VisionVehicleColor{item1, item2}
+		obj.SetVehicleColor(value)
+		result := obj.VehicleColor()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.Equal(t, model.VisionVehicleColorColor("test"), result[0].Color())
+			assert.Equal(t, 3.14, result[0].Confidence())
+		}
+	})
+
 	t.Run("VehicleEmergencySubtypeValue", func(t *testing.T) {
 		obj := model.NewEpisode()
 		value := model.VisionVehicleEmergencySubtype("test")
@@ -682,6 +701,25 @@ func TestEpisode(t *testing.T) {
 		obj.SetVehicleFacingSide(value)
 		assert.NotNil(t, obj.VehicleFacingSide())
 		assert.Equal(t, value, *obj.VehicleFacingSide())
+	})
+
+	t.Run("VehicleModelValue", func(t *testing.T) {
+		obj := model.NewEpisode()
+		item1 := model.NewVisionVehicleModel()
+		item2 := model.NewVisionVehicleModel()
+		item1.SetConfidence(3.14)
+		item2.SetConfidence(3.14)
+		item1.SetName("item1")
+		item2.SetName("item2")
+		value := []model.VisionVehicleModel{item1, item2}
+		obj.SetVehicleModel(value)
+		result := obj.VehicleModel()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.Equal(t, 3.14, result[0].Confidence())
+			assert.Equal(t, "item1", result[0].Name())
+		}
 	})
 
 	t.Run("VehiclePurposeValue", func(t *testing.T) {
@@ -875,25 +913,6 @@ func TestOpenmetricsLabels(t *testing.T) {
 	})
 }
 
-func TestStreamConfigAdditional(t *testing.T) {
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamConfigAdditional()
-		value := model.NewStreamStats()
-		value.SetStatus(model.StreamStatus("test"))
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Status())
-		assert.Equal(t, model.StreamStatus("test"), *result.Status())
-	})
-}
-
-func TestStreamConfigBase(t *testing.T) {
-}
-
-func TestStreamConfigDeprecated(t *testing.T) {
-}
-
 func TestStreamConfig(t *testing.T) {
 	t.Run("NameValue", func(t *testing.T) {
 		obj := model.NewStreamConfig()
@@ -925,40 +944,6 @@ func TestStreamConfig(t *testing.T) {
 		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
 		assert.NotNil(t, result.Areas())
 		assert.Equal(t, "test", *result.Areas())
-	})
-}
-
-func TestStreamConfigInput(t *testing.T) {
-}
-
-func TestStreamConfigMedia(t *testing.T) {
-}
-
-func TestStreamConfigOnpremises(t *testing.T) {
-	t.Run("VisionValue", func(t *testing.T) {
-		obj := model.NewStreamConfigOnpremises()
-		value := model.NewVisionSpec()
-		value.SetAlg(model.VisionSpecAlg("test"))
-		value.SetAreas("test")
-		obj.SetVision(value)
-		result := obj.Vision()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Alg())
-		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
-		assert.NotNil(t, result.Areas())
-		assert.Equal(t, "test", *result.Areas())
-	})
-}
-
-func TestStreamConfigSingleMedia(t *testing.T) {
-}
-
-func TestStreamConfigSpecific(t *testing.T) {
-	t.Run("NameValue", func(t *testing.T) {
-		obj := model.NewStreamConfigSpecific()
-		value := model.MediaName("test")
-		obj.SetName(value)
-		assert.Equal(t, value, obj.Name())
 	})
 }
 
@@ -2286,6 +2271,25 @@ func TestVisionEpisodeVehicle(t *testing.T) {
 		assert.Equal(t, model.UtcMs(float64(tNow)), obj.UpdatedAt())
 	})
 
+	t.Run("VehicleColorValue", func(t *testing.T) {
+		obj := model.NewVisionEpisodeVehicle()
+		item1 := model.NewVisionVehicleColor()
+		item2 := model.NewVisionVehicleColor()
+		item1.SetColor(model.VisionVehicleColorColor("test"))
+		item2.SetColor(model.VisionVehicleColorColor("test"))
+		item1.SetConfidence(3.14)
+		item2.SetConfidence(3.14)
+		value := []model.VisionVehicleColor{item1, item2}
+		obj.SetVehicleColor(value)
+		result := obj.VehicleColor()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.Equal(t, model.VisionVehicleColorColor("test"), result[0].Color())
+			assert.Equal(t, 3.14, result[0].Confidence())
+		}
+	})
+
 	t.Run("VehicleEmergencySubtypeValue", func(t *testing.T) {
 		obj := model.NewVisionEpisodeVehicle()
 		value := model.VisionVehicleEmergencySubtype("test")
@@ -2300,6 +2304,25 @@ func TestVisionEpisodeVehicle(t *testing.T) {
 		obj.SetVehicleFacingSide(value)
 		assert.NotNil(t, obj.VehicleFacingSide())
 		assert.Equal(t, value, *obj.VehicleFacingSide())
+	})
+
+	t.Run("VehicleModelValue", func(t *testing.T) {
+		obj := model.NewVisionEpisodeVehicle()
+		item1 := model.NewVisionVehicleModel()
+		item2 := model.NewVisionVehicleModel()
+		item1.SetConfidence(3.14)
+		item2.SetConfidence(3.14)
+		item1.SetName("item1")
+		item2.SetName("item2")
+		value := []model.VisionVehicleModel{item1, item2}
+		obj.SetVehicleModel(value)
+		result := obj.VehicleModel()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.Equal(t, 3.14, result[0].Confidence())
+			assert.Equal(t, "item1", result[0].Name())
+		}
 	})
 
 	t.Run("VehiclePurposeValue", func(t *testing.T) {
@@ -3380,6 +3403,38 @@ func TestVisionVehicleAttributes(t *testing.T) {
 		obj.SetPurpose(value)
 		assert.NotNil(t, obj.Purpose())
 		assert.Equal(t, value, *obj.Purpose())
+	})
+}
+
+func TestVisionVehicleColor(t *testing.T) {
+	t.Run("ColorValue", func(t *testing.T) {
+		obj := model.NewVisionVehicleColor()
+		value := model.VisionVehicleColorColor("test")
+		obj.SetColor(value)
+		assert.Equal(t, value, obj.Color())
+	})
+
+	t.Run("ConfidenceValue", func(t *testing.T) {
+		obj := model.NewVisionVehicleColor()
+		value := 3.14
+		obj.SetConfidence(value)
+		assert.Equal(t, value, obj.Confidence())
+	})
+}
+
+func TestVisionVehicleModel(t *testing.T) {
+	t.Run("ConfidenceValue", func(t *testing.T) {
+		obj := model.NewVisionVehicleModel()
+		value := 3.14
+		obj.SetConfidence(value)
+		assert.Equal(t, value, obj.Confidence())
+	})
+
+	t.Run("NameValue", func(t *testing.T) {
+		obj := model.NewVisionVehicleModel()
+		value := "test"
+		obj.SetName(value)
+		assert.Equal(t, value, obj.Name())
 	})
 }
 

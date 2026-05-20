@@ -92,6 +92,18 @@ type Central interface {
 	// BatchUpdateStreamsLayouts Batch update layouts of streams
 	// Batch update layouts of streams. This operation does everything or nothing.  If at least one stream has an invalid configuration or can't be processed, the request will fail.
 	BatchUpdateStreamsLayouts(ctx context.Context, body model.CentralStreamLayoutList) error
+	// CdnZoneDelete Delete CDN zone
+	// Delete a CDN zone.
+	CdnZoneDelete(ctx context.Context, name string) error
+	// CdnZoneGet Get CDN zone
+	// This method allows to get a single zone by name.
+	CdnZoneGet(ctx context.Context, name string) (model.CdnZone, error)
+	// CdnZoneSave Save CDN zone
+	// Create or update a CDN zone.  If you pass only a partial configuration, only the passed fields will be updated, not the whole CDN zone.
+	CdnZoneSave(ctx context.Context, name string, body model.CdnZone) (model.CdnZone, error)
+	// CdnZonesList List CDN zones
+	// This method allows to get the list of all CDN zones in Central.
+	CdnZonesList(ctx context.Context, query *CdnZonesListQuery) (model.CdnZonesList, error)
 	// CentralEventsList Get events of Central
 	// This method allows to get the batch of events. Currently this method is not implemented yet. However, its schema can be used for understanding Central logging.
 	CentralEventsList(ctx context.Context, query *CentralEventsListQuery) (model.CentralEventsList, error)
@@ -132,6 +144,12 @@ type Central interface {
 	ExternalEpisodesList(ctx context.Context, hostname string, query *ExternalEpisodesListQuery) (model.ExternalEpisodesList, error)
 	// ExternalEpisodesListIterator iterates through all items using cursor pagination
 	ExternalEpisodesListIterator(ctx context.Context, hostname string, query *ExternalEpisodesListQuery) iter.Seq2[model.ExternalEpisode, error]
+	// LayoutIterationGet Get layout iteration
+	// Get layout iteration by its identifier.  A layout iteration is one complete Layouter cycle that processes all streams and decides which stream layouts should be changed. After the cycle, Layouter sends the resulting changes to Central with [batch_update_streams_layouts](https://flussonic.com/doc/api/layouter/#tag/stream/operation/batch_update_streams_layouts).  Central stores iteration information only when `batch_update_streams_layouts` receives `iteration_id`. The response contains aggregated summaries and relayouts saved from that Layouter cycle.
+	LayoutIterationGet(ctx context.Context, iteration_id string) (model.CentralLayoutIteration, error)
+	// LayoutIterationsList List layout iterations
+	// List stored layout iterations.  A layout iteration is one complete Layouter cycle that processes all streams and decides which stream layouts should be changed. After the cycle, Layouter sends the resulting changes to Central with [batch_update_streams_layouts](https://flussonic.com/doc/api/layouter/#tag/stream/operation/batch_update_streams_layouts).  Central stores iteration information only when `batch_update_streams_layouts` receives `iteration_id`. The list response contains iteration metadata and aggregated relayout counters.
+	LayoutIterationsList(ctx context.Context, query *LayoutIterationsListQuery) (model.CentralLayoutIterations, error)
 	// LivenessProbe Liveness probe
 	// K8s liveness probe.
 	LivenessProbe(ctx context.Context) (model.ServerStatsWhoami, error)
@@ -184,7 +202,7 @@ type Central interface {
 	StreamDelete(ctx context.Context, name string) error
 	// StreamGet Get one stream
 	// This method allows you to fetch a single stream.  The data returned in this method are the same as for `streams_list` operation.
-	StreamGet(ctx context.Context, name string) (model.CentralStreamConfig, error)
+	StreamGet(ctx context.Context, name string, query *StreamGetQuery) (model.CentralStreamConfig, error)
 	// StreamLayoutsGet Get layouts of stream
 	// This method allows you to fetch stream layouts list
 	StreamLayoutsGet(ctx context.Context, name string, query *StreamLayoutsGetQuery) (model.CentralStreamLayouts, error)
@@ -193,6 +211,9 @@ type Central interface {
 	// StreamSave Save stream
 	// Create or update a stream by its name. If the stream doesn't exists in the disk config, it will be created.  If you pass only a partial stream configuration, just the passed field(s) will be updated, not the whole stream.  To create a new stream the property `name` is required.  Pass the `"$reset": true` option to replace the stream configuration with the provided one.
 	StreamSave(ctx context.Context, name string, body model.CentralStreamConfig) (model.CentralStreamConfig, error)
+	// StreamerConfigExt Get configuration of the streamer
+	// Return list of configured streams for the streamer
+	StreamerConfigExt(ctx context.Context, hostname string) (model.ExternalServerConfig, error)
 	// StreamerDelete Delete the streamer
 	// Delete the streamer by its hostname.
 	StreamerDelete(ctx context.Context, hostname string) error
@@ -235,10 +256,41 @@ type Central interface {
 	// This method allows you to update multiple streams in a single request. This operation does everything or nothing.  If at least one stream has an invalid configuration or can't be processed, the request will fail.  The request body should contain an array of stream objects with the fields to be updated. The update is applied using [JSON Merge Patch](https://tools.ietf.org/html/rfc7386) semantics.  If a stream does not exist, it will be created with the provided configuration.
 	StreamsBatchUpdate(ctx context.Context, body any) error
 	// StreamsList List streams
-	// This API method is one of the most important in whole API, because it gives the list of all streams, including:  * configured (maybe not running at the moment) * running (including those that are created via template and do not have own disk configuration) * remote (available from other servers) * only recorded  You can pass any stream configuration options to the `q` query string for filtering,  not only those specified in the `select` parameters.  This method, as well as `stream_get`, will return the **effective stream configuration** with all templates, defaults included into the response. It is not exactly what you can see in your disk config. If you have configured this stream in disk file, then the original disk configuration can be found in the `config_on_disk` field.  Thus, what you get from this API call may differ from what you write to `stream_save` which is another important method for managing streams.
+	// This API method is one of the most important in whole API, because it gives the list of all streams.  You can pass any stream configuration options to the `q` query string for filtering,  not only those specified in the `select` parameters.  **Important**: Filtering is always performed against the original stream configuration, without taking into account  template overlays.  By default, this method returns the **original stream configuration** with some runtime statistics included. Use the `effective` parameter to get the **effective stream configuration** with all templates and defaults applied  (runtime statistics will still be present).  Thus, what you get from this API call may differ from what you write to `stream_save` which is another important method for managing streams.
 	StreamsList(ctx context.Context, query *StreamsListQuery) (model.CentralStreamsList, error)
 	// StreamsListIterator iterates through all items using cursor pagination
 	StreamsListIterator(ctx context.Context, query *StreamsListQuery) iter.Seq2[model.CentralStreamConfig, error]
+	// StreamsStatsList List stream statistics
+	// Returns stream runtime statistics stored by Central.  Pagination is forward-only. Batch size is approximate.  The only guarantee: if there are more records, the response includes `next`. Pass it as the `cursor` query parameter to read the next batch.
+	StreamsStatsList(ctx context.Context, query *StreamsStatsListQuery) (model.CentralStreamStatsList, error)
+	// TemplateDelete Delete the template
+	// Delete the template by its name.
+	TemplateDelete(ctx context.Context, name string) error
+	// TemplateGet Get the template
+	// This method allows to get a single template by name.
+	TemplateGet(ctx context.Context, name string) (model.CentralTemplateConfig, error)
+	// TemplateSave Save the template
+	// Create or update a template.  If you pass only a partial template configuration, only the passed fields will be updated, not the whole template.
+	TemplateSave(ctx context.Context, name string, body model.CentralTemplateConfig) (model.CentralTemplateConfig, error)
+	// TemplatesList List templates
+	// This method allows to get the list of all templates in Central with all their settings.
+	TemplatesList(ctx context.Context, query *TemplatesListQuery) (model.CentralTemplatesList, error)
+	// TemplatesListIterator iterates through all items using cursor pagination
+	TemplatesListIterator(ctx context.Context, query *TemplatesListQuery) iter.Seq2[model.CentralTemplateConfig, error]
+	// TranscodingClaimDelete Delete transcoding capacity claim
+	// Delete transcoding capacity claim by device identifier.
+	TranscodingClaimDelete(ctx context.Context, id string) error
+	// TranscodingClaimGet Get transcoding capacity claim
+	// This method allows to get transcoding capacity claim by device identifier.
+	TranscodingClaimGet(ctx context.Context, id string) (model.CentralTranscodingClaim, error)
+	// TranscodingClaimSave Save transcoding capacity claim
+	// Create or update transcoding capacity claim. If you pass only a partial configuration, only the passed fields will be updated, not the whole claim.
+	TranscodingClaimSave(ctx context.Context, id string, body model.CentralTranscodingClaim) (model.CentralTranscodingClaim, error)
+	// TranscodingClaimsList List transcoding capacity claims
+	// Get list of all transcoding capacity claims. These claims are global across the entire cluster - same for all streamers.  Used by [Flussonic Central Layouter](https://flussonic.com/doc/api/layouter/) for stream placement decisions when hardware benchmarks are unavailable.
+	TranscodingClaimsList(ctx context.Context, query *TranscodingClaimsListQuery) (model.CentralTranscodingClaimsList, error)
+	// TranscodingClaimsListIterator iterates through all items using cursor pagination
+	TranscodingClaimsListIterator(ctx context.Context, query *TranscodingClaimsListQuery) iter.Seq2[model.CentralTranscodingClaim, error]
 }
 
 // AgentsListQuery represents query parameters for AgentsList method
@@ -573,6 +625,39 @@ func (q *BatchStreamerLayoutPreviewQuery) SetCursor(cursor *string) {
 	}
 }
 
+// CdnZonesListQuery represents query parameters for CdnZonesList method
+type CdnZonesListQuery struct {
+	// Properly encoded analog of offset, allowing to read next bunch of items. We do not offer common `offset` fields, use cursor for predictable fetching of quickly changing list of items. Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	Cursor string
+	// Limit select count in collection to N elements.
+	Limit int
+	// Comma-separated list of fields (including nested) that will be returned.
+	Select string
+	Extra  map[string]string
+}
+
+// ToQueryString converts CdnZonesListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *CdnZonesListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	if q.Limit != 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Select != "" {
+		values.Set("select", q.Select)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
 // CentralEventsListQuery represents query parameters for CentralEventsList method
 type CentralEventsListQuery struct {
 	Cursor string
@@ -854,6 +939,34 @@ func (q *ExternalEpisodesListQuery) SetCursor(cursor *string) {
 	}
 }
 
+// LayoutIterationsListQuery represents query parameters for LayoutIterationsList method
+type LayoutIterationsListQuery struct {
+	// Properly encoded analog of offset, allowing to read next bunch of items. We do not offer common `offset` fields, use cursor for predictable fetching of quickly changing list of items. Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	Cursor string
+	// Limit select count in collection to N elements.
+	Limit int
+	Extra map[string]string
+}
+
+// ToQueryString converts LayoutIterationsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *LayoutIterationsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	if q.Limit != 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
 // LoadBalancersListQuery represents query parameters for LoadBalancersList method
 type LoadBalancersListQuery struct {
 	// Properly encoded analog of offset, allowing to read next bunch of items. We do not offer common `offset` fields, use cursor for predictable fetching of quickly changing list of items. Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
@@ -1050,6 +1163,30 @@ func (q *SrtPortResolveQuery) ToQueryString() (string, error) {
 	}
 	values := url.Values{}
 	values.Set("mode", q.Mode)
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// StreamGetQuery represents query parameters for StreamGet method
+type StreamGetQuery struct {
+	// If this parameter is set to true, template name will appear even when using effective parameter.
+	AddTemplate bool
+	// If this parameter is set to true, the template will be applied to the stream configuration. Note that the `template` field will be excluded from the response.
+	Effective bool
+	Extra     map[string]string
+}
+
+// ToQueryString converts StreamGetQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *StreamGetQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	values.Set("add_template", strconv.FormatBool(q.AddTemplate))
+	values.Set("effective", strconv.FormatBool(q.Effective))
 	for key, value := range q.Extra {
 		values.Set(key, value)
 	}
@@ -1329,10 +1466,14 @@ func (q *StreamersListQuery) SetCursor(cursor *string) {
 
 // StreamsListQuery represents query parameters for StreamsList method
 type StreamsListQuery struct {
+	// If this parameter is set to true, template names will appear even when using effective parameter.
+	AddTemplate bool
 	// client ip address which may be important for balancing
 	ClientIp string
 	// A properly encoded equivalent of offset allowing you to read the next bunch of items.  We do not offer common `offset` fields, so please use cursor for predictable fetching of quickly changing list of items.
 	Cursor string
+	// If this parameter is set to true, templates will be applied to the stream configuration. Note that the `template` field will be excluded from the response.
+	Effective bool
 	// Set the parameter to true to get the layout.ingest_history field.
 	IncludeIngestHistory bool
 	// Limit the number of records in the selected collection to N elements. Default value is 100
@@ -1357,12 +1498,14 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 		return "", nil
 	}
 	values := url.Values{}
+	values.Set("add_template", strconv.FormatBool(q.AddTemplate))
 	if q.ClientIp != "" {
 		values.Set("client_ip", q.ClientIp)
 	}
 	if q.Cursor != "" {
 		values.Set("cursor", q.Cursor)
 	}
+	values.Set("effective", strconv.FormatBool(q.Effective))
 	values.Set("include_ingest_history", strconv.FormatBool(q.IncludeIngestHistory))
 	if q.Limit != 0 {
 		values.Set("limit", strconv.Itoa(q.Limit))
@@ -1390,6 +1533,126 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 
 // SetCursor sets the cursor for pagination.
 func (q *StreamsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// StreamsStatsListQuery represents query parameters for StreamsStatsList method
+type StreamsStatsListQuery struct {
+	// A properly encoded equivalent of offset allowing you to read the next bunch of items. We do not offer common `offset` fields, so please use cursor for predictable fetching of quickly changing list of items.
+	Cursor string
+	// Approximate batch size hint.  The actual number of returned records may differ from the requested value. The only guarantee is that `next` is returned when more records are available; pass it as `cursor` to continue.
+	Limit int
+	Extra map[string]string
+}
+
+// ToQueryString converts StreamsStatsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *StreamsStatsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	if q.Limit != 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// TemplatesListQuery represents query parameters for TemplatesList method
+type TemplatesListQuery struct {
+	// Properly encoded analog of offset, allowing to read next bunch of items. We do not offer common `offset` fields, use cursor for predictable fetching of quickly changing list of items. Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	Cursor string
+	// Limit select count in collection to N elements.
+	Limit int
+	// Comma-separated list of fields (including nested) that will be returned.
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts TemplatesListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *TemplatesListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	if q.Limit != 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *TemplatesListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// TranscodingClaimsListQuery represents query parameters for TranscodingClaimsList method
+type TranscodingClaimsListQuery struct {
+	// Properly encoded analog of offset, allowing to read next bunch of items. We do not offer common `offset` fields, use cursor for predictable fetching of quickly changing list of items. Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	Cursor string
+	// Limit select count in collection to N elements.
+	Limit int
+	// Comma-separated list of fields (including nested) that will be returned.
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts TranscodingClaimsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *TranscodingClaimsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	if q.Limit != 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *TranscodingClaimsListQuery) SetCursor(cursor *string) {
 	if cursor != nil {
 		q.Cursor = *cursor
 	} else {
@@ -1772,6 +2035,49 @@ func (c *Client) BatchUpdateStreamsLayouts(ctx context.Context, body model.Centr
 	return nil
 }
 
+// CdnZoneDelete Delete CDN zone
+// Delete a CDN zone.
+func (c *Client) CdnZoneDelete(ctx context.Context, name string) error {
+	path := fmt.Sprintf("/central/api/v3/cdn-zones/%s", name)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
+}
+
+// CdnZoneGet Get CDN zone
+// This method allows to get a single zone by name.
+func (c *Client) CdnZoneGet(ctx context.Context, name string) (model.CdnZone, error) {
+	path := fmt.Sprintf("/central/api/v3/cdn-zones/%s", name)
+	result := &model.CdnZoneImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CdnZoneSave Save CDN zone
+// Create or update a CDN zone.  If you pass only a partial configuration, only the passed fields will be updated, not the whole CDN zone.
+func (c *Client) CdnZoneSave(ctx context.Context, name string, body model.CdnZone) (model.CdnZone, error) {
+	path := fmt.Sprintf("/central/api/v3/cdn-zones/%s", name)
+	result := &model.CdnZoneImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CdnZonesList List CDN zones
+// This method allows to get the list of all CDN zones in Central.
+func (c *Client) CdnZonesList(ctx context.Context, query *CdnZonesListQuery) (model.CdnZonesList, error) {
+	path := "/central/api/v3/cdn-zones"
+	result := &model.CdnZonesListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 // CentralEventsList Get events of Central
 // This method allows to get the batch of events. Currently this method is not implemented yet. However, its schema can be used for understanding Central logging.
 func (c *Client) CentralEventsList(ctx context.Context, query *CentralEventsListQuery) (model.CentralEventsList, error) {
@@ -1945,6 +2251,28 @@ func (c *Client) ExternalEpisodesListIterator(ctx context.Context, hostname stri
 	return cursors.Iterator(ctx, func(ctx context.Context, query *ExternalEpisodesListQuery) (model.ExternalEpisodesList, error) {
 		return c.ExternalEpisodesList(ctx, hostname, query)
 	}, query)
+}
+
+// LayoutIterationGet Get layout iteration
+// Get layout iteration by its identifier.  A layout iteration is one complete Layouter cycle that processes all streams and decides which stream layouts should be changed. After the cycle, Layouter sends the resulting changes to Central with [batch_update_streams_layouts](https://flussonic.com/doc/api/layouter/#tag/stream/operation/batch_update_streams_layouts).  Central stores iteration information only when `batch_update_streams_layouts` receives `iteration_id`. The response contains aggregated summaries and relayouts saved from that Layouter cycle.
+func (c *Client) LayoutIterationGet(ctx context.Context, iteration_id string) (model.CentralLayoutIteration, error) {
+	path := fmt.Sprintf("/central/api/v3/streams/layouts/iterations/%s", iteration_id)
+	result := &model.CentralLayoutIterationImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// LayoutIterationsList List layout iterations
+// List stored layout iterations.  A layout iteration is one complete Layouter cycle that processes all streams and decides which stream layouts should be changed. After the cycle, Layouter sends the resulting changes to Central with [batch_update_streams_layouts](https://flussonic.com/doc/api/layouter/#tag/stream/operation/batch_update_streams_layouts).  Central stores iteration information only when `batch_update_streams_layouts` receives `iteration_id`. The list response contains iteration metadata and aggregated relayout counters.
+func (c *Client) LayoutIterationsList(ctx context.Context, query *LayoutIterationsListQuery) (model.CentralLayoutIterations, error) {
+	path := "/central/api/v3/streams/layouts/iterations"
+	result := &model.CentralLayoutIterationsImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 // LivenessProbe Liveness probe
@@ -2124,10 +2452,10 @@ func (c *Client) StreamDelete(ctx context.Context, name string) error {
 
 // StreamGet Get one stream
 // This method allows you to fetch a single stream.  The data returned in this method are the same as for `streams_list` operation.
-func (c *Client) StreamGet(ctx context.Context, name string) (model.CentralStreamConfig, error) {
+func (c *Client) StreamGet(ctx context.Context, name string, query *StreamGetQuery) (model.CentralStreamConfig, error) {
 	path := fmt.Sprintf("/central/api/v3/streams/%s", name)
 	result := &model.CentralStreamConfigImpl{}
-	if err := c.doGet(ctx, path, result); err != nil {
+	if err := c.doList(ctx, path, query, result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -2157,6 +2485,17 @@ func (c *Client) StreamSave(ctx context.Context, name string, body model.Central
 	path := fmt.Sprintf("/central/api/v3/streams/%s", name)
 	result := &model.CentralStreamConfigImpl{}
 	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// StreamerConfigExt Get configuration of the streamer
+// Return list of configured streams for the streamer
+func (c *Client) StreamerConfigExt(ctx context.Context, hostname string) (model.ExternalServerConfig, error) {
+	path := fmt.Sprintf("/central/api/v3/streamers/%s/config", hostname)
+	result := &model.ExternalServerConfigImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -2306,7 +2645,7 @@ func (c *Client) StreamsBatchUpdate(ctx context.Context, body any) error {
 }
 
 // StreamsList List streams
-// This API method is one of the most important in whole API, because it gives the list of all streams, including:  * configured (maybe not running at the moment) * running (including those that are created via template and do not have own disk configuration) * remote (available from other servers) * only recorded  You can pass any stream configuration options to the `q` query string for filtering,  not only those specified in the `select` parameters.  This method, as well as `stream_get`, will return the **effective stream configuration** with all templates, defaults included into the response. It is not exactly what you can see in your disk config. If you have configured this stream in disk file, then the original disk configuration can be found in the `config_on_disk` field.  Thus, what you get from this API call may differ from what you write to `stream_save` which is another important method for managing streams.
+// This API method is one of the most important in whole API, because it gives the list of all streams.  You can pass any stream configuration options to the `q` query string for filtering,  not only those specified in the `select` parameters.  **Important**: Filtering is always performed against the original stream configuration, without taking into account  template overlays.  By default, this method returns the **original stream configuration** with some runtime statistics included. Use the `effective` parameter to get the **effective stream configuration** with all templates and defaults applied  (runtime statistics will still be present).  Thus, what you get from this API call may differ from what you write to `stream_save` which is another important method for managing streams.
 func (c *Client) StreamsList(ctx context.Context, query *StreamsListQuery) (model.CentralStreamsList, error) {
 	path := "/central/api/v3/streams"
 	result := &model.CentralStreamsListImpl{}
@@ -2319,4 +2658,111 @@ func (c *Client) StreamsList(ctx context.Context, query *StreamsListQuery) (mode
 // StreamsListIterator iterates through all CentralStreamConfig items using cursor pagination.
 func (c *Client) StreamsListIterator(ctx context.Context, query *StreamsListQuery) iter.Seq2[model.CentralStreamConfig, error] {
 	return cursors.Iterator(ctx, c.StreamsList, query)
+}
+
+// StreamsStatsList List stream statistics
+// Returns stream runtime statistics stored by Central.  Pagination is forward-only. Batch size is approximate.  The only guarantee: if there are more records, the response includes `next`. Pass it as the `cursor` query parameter to read the next batch.
+func (c *Client) StreamsStatsList(ctx context.Context, query *StreamsStatsListQuery) (model.CentralStreamStatsList, error) {
+	path := "/central/api/v3/streams/stats"
+	result := &model.CentralStreamStatsListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TemplateDelete Delete the template
+// Delete the template by its name.
+func (c *Client) TemplateDelete(ctx context.Context, name string) error {
+	path := fmt.Sprintf("/central/api/v3/templates/%s", name)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
+}
+
+// TemplateGet Get the template
+// This method allows to get a single template by name.
+func (c *Client) TemplateGet(ctx context.Context, name string) (model.CentralTemplateConfig, error) {
+	path := fmt.Sprintf("/central/api/v3/templates/%s", name)
+	result := &model.CentralTemplateConfigImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TemplateSave Save the template
+// Create or update a template.  If you pass only a partial template configuration, only the passed fields will be updated, not the whole template.
+func (c *Client) TemplateSave(ctx context.Context, name string, body model.CentralTemplateConfig) (model.CentralTemplateConfig, error) {
+	path := fmt.Sprintf("/central/api/v3/templates/%s", name)
+	result := &model.CentralTemplateConfigImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TemplatesList List templates
+// This method allows to get the list of all templates in Central with all their settings.
+func (c *Client) TemplatesList(ctx context.Context, query *TemplatesListQuery) (model.CentralTemplatesList, error) {
+	path := "/central/api/v3/templates"
+	result := &model.CentralTemplatesListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TemplatesListIterator iterates through all CentralTemplateConfig items using cursor pagination.
+func (c *Client) TemplatesListIterator(ctx context.Context, query *TemplatesListQuery) iter.Seq2[model.CentralTemplateConfig, error] {
+	return cursors.Iterator(ctx, c.TemplatesList, query)
+}
+
+// TranscodingClaimDelete Delete transcoding capacity claim
+// Delete transcoding capacity claim by device identifier.
+func (c *Client) TranscodingClaimDelete(ctx context.Context, id string) error {
+	path := fmt.Sprintf("/central/api/v3/transcoding/claims/%s", id)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
+}
+
+// TranscodingClaimGet Get transcoding capacity claim
+// This method allows to get transcoding capacity claim by device identifier.
+func (c *Client) TranscodingClaimGet(ctx context.Context, id string) (model.CentralTranscodingClaim, error) {
+	path := fmt.Sprintf("/central/api/v3/transcoding/claims/%s", id)
+	result := &model.CentralTranscodingClaimImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TranscodingClaimSave Save transcoding capacity claim
+// Create or update transcoding capacity claim. If you pass only a partial configuration, only the passed fields will be updated, not the whole claim.
+func (c *Client) TranscodingClaimSave(ctx context.Context, id string, body model.CentralTranscodingClaim) (model.CentralTranscodingClaim, error) {
+	path := fmt.Sprintf("/central/api/v3/transcoding/claims/%s", id)
+	result := &model.CentralTranscodingClaimImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TranscodingClaimsList List transcoding capacity claims
+// Get list of all transcoding capacity claims. These claims are global across the entire cluster - same for all streamers.  Used by [Flussonic Central Layouter](https://flussonic.com/doc/api/layouter/) for stream placement decisions when hardware benchmarks are unavailable.
+func (c *Client) TranscodingClaimsList(ctx context.Context, query *TranscodingClaimsListQuery) (model.CentralTranscodingClaimsList, error) {
+	path := "/central/api/v3/transcoding/claims"
+	result := &model.CentralTranscodingClaimsListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// TranscodingClaimsListIterator iterates through all CentralTranscodingClaim items using cursor pagination.
+func (c *Client) TranscodingClaimsListIterator(ctx context.Context, query *TranscodingClaimsListQuery) iter.Seq2[model.CentralTranscodingClaim, error] {
+	return cursors.Iterator(ctx, c.TranscodingClaimsList, query)
 }

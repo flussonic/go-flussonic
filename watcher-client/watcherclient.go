@@ -22,12 +22,23 @@ import (
 
 // WatcherClient defines the interface for interacting with WatcherClient API.
 type WatcherClient interface {
+	// AccessLogList List access log entries
+	// Returns a paginated list of access log entries.
+	AccessLogList(ctx context.Context, query *AccessLogListQuery) (model.AccessLogList, error)
+	// AccessLogListIterator iterates through all items using cursor pagination
+	AccessLogListIterator(ctx context.Context, query *AccessLogListQuery) iter.Seq2[model.AccessLogEntry, error]
 	// AgentActivationTokenCreate Create activation token
 	// This method creates activation token for agent. This token used by mobile app in qr-code for wifi camera with agent for adding camera with agent in watcher.
 	AgentActivationTokenCreate(ctx context.Context, body model.AgentActivationTokenRequest) (model.AgentActivationToken, error)
 	// AgentActivationTokenGet Check activation token provisioned to watcher
 	// This method allows you to check that camera with agent was provisioned to watcher. If you got 404 on this method you - token not existing and you must create a new one to add camera with agent. If no camera_name field in response - camera not provisioned yet to watcher. If camera_name field in response - camera provisioned to watcher.
 	AgentActivationTokenGet(ctx context.Context, token string) (model.AgentActivationToken, error)
+	// Autologin Login using autologin token
+	// Authenticates a user using a previously generated autologin token. No authorization required.
+	Autologin(ctx context.Context, body model.AutologinRequest) (model.LoginInfoAdditional, error)
+	// AutologinGenerate Generate autologin token
+	// Generates a one-time token for automatic user login without credentials. Requires admin rights or permissions for the target user. The token is valid for 15 minutes by default.  The token can be used in two ways: - Via API: POST /autologin with the token in request body - Via URL: `{host}/watcher/client/#/auth/signin/auto?autologin_token={token}` for automatic browser login
+	AutologinGenerate(ctx context.Context, body model.AutologinGenerateRequest) (model.AutologinGenerateResponse, error)
 	// CameraAuthGet Get auth for camera
 	// Create or update a auth for camera by its name.
 	CameraAuthGet(ctx context.Context, name string) (model.Auth, error)
@@ -43,6 +54,11 @@ type WatcherClient interface {
 	// CameraReboot Reboot camera
 	// Reboot camera
 	CameraReboot(ctx context.Context, name string) error
+	// CameraUsagesList List camera usage in the current domain
+	// Returns camera usage data for billing integration for the current domain only. Available to domain admin.  Each entry represents a period when a camera was assigned to a specific preset (tariff plan). The preset is recorded at 00:00 UTC each day — if a preset changes multiple times during the day, only the one active at midnight is used for billing.  Response contains two plan identifiers: `plan_id` (from preset's `external_id`, for internal billing) and `billing_plan_id` (from preset's `billing_external_id`, for operator's own billing system).
+	CameraUsagesList(ctx context.Context, query *CameraUsagesListQuery) (model.CameraUsagesList, error)
+	// CameraUsagesListIterator iterates through all items using cursor pagination
+	CameraUsagesListIterator(ctx context.Context, query *CameraUsagesListQuery) iter.Seq2[model.CameraUsage, error]
 	// DeleteOrganizationPreset Delete preset from organization
 	// This method allows to remove a specific preset from organization.
 	DeleteOrganizationPreset(ctx context.Context, organization_id string, preset_id string) error
@@ -58,6 +74,11 @@ type WatcherClient interface {
 	// DeviceTokenSave Save a new device token
 	// Save a new device token in Watcher. You can read how to create it here: https://firebase.google.com/docs/cloud-messaging/android/client?hl=en#sample-register You must save and refresh token if you want to receive notifications about [camera events](#tag/profile/operation/event_subscription_create).
 	DeviceTokenSave(ctx context.Context, token string, body model.DeviceToken) (model.DeviceToken, error)
+	// DiscoveryDevicesList List cameras available for connection to NVR
+	// Discovers and returns a list of network devices (primarily cameras) that are available on the local network and can be connected to this NVR. The discovery process scans the network for devices using network protocols and ONVIF WS-Discovery. Each device in the response includes network configuration details (IP address, MAC address, hostname, DNS servers, netmask, gateway, DHCP status), ONVIF service information, and system time information. This endpoint is useful for identifying and configuring new cameras or other network devices that can be integrated into the NVR system.
+	DiscoveryDevicesList(ctx context.Context, organization_id string, nvr_id string, query *DiscoveryDevicesListQuery) (model.DiscoveryDevices, error)
+	// DiscoveryDevicesListIterator iterates through all items using cursor pagination
+	DiscoveryDevicesListIterator(ctx context.Context, organization_id string, nvr_id string, query *DiscoveryDevicesListQuery) iter.Seq2[model.DiscoveryDevice, error]
 	// EpisodeAddToFavorites Add episode to the favorites
 	// This method allows you to add an episode to the favorites.
 	EpisodeAddToFavorites(ctx context.Context, episode_id string) error
@@ -70,6 +91,9 @@ type WatcherClient interface {
 	// EpisodeGet Get episode
 	// This method allows you to fetch a registered episode
 	EpisodeGet(ctx context.Context, episode_id string, query *EpisodeGetQuery) (model.WatcherEpisode, error)
+	// EpisodeUpdate Update episode
+	// This method allows you to update the title and description of an episode.
+	EpisodeUpdate(ctx context.Context, episode_id string, query *EpisodeUpdateQuery, body model.EpisodeUpdate) (model.WatcherEpisode, error)
 	// EpisodesList List episodes
 	// This method allows you to fetch registered episodes
 	EpisodesList(ctx context.Context, query *EpisodesListQuery) (model.EpisodesList, error)
@@ -157,6 +181,14 @@ type WatcherClient interface {
 	// NotificationSend Send an arbitrary push notification
 	// Send an arbitrary push notification. This method sends test push notification to user.
 	NotificationSend(ctx context.Context, body any) error
+	// NvrActivationTokenCreate Create NVR activation token
+	// Creates a special activation token for NVR registration.  This token contains all the necessary NVR configuration parameters and can be used to simplify the connection process. The administrator of the main Watcher creates this token with all NVR parameters and passes it to the remote NVR administrator, who can then use only this token for registration without manually entering all the configuration details. When the agent is activated using this token, the NVR will be created automatically.  The token lifetime is 6 hours by default.
+	NvrActivationTokenCreate(ctx context.Context, organization_id string, body model.NvrActivationTokenRequest) (model.NvrActivationToken, error)
+	// NvrConfigGet Get NVR config
+	// Returns NVR configuration with streams list for the specific NVR. The NVR is identified by the API key used in the request. Note: Stream names in the response are the names used on the NVR, not on the main Watcher.
+	NvrConfigGet(ctx context.Context, query *NvrConfigGetQuery) (model.NvrConfig, error)
+	// NvrConfigGetIterator iterates through all items using cursor pagination
+	NvrConfigGetIterator(ctx context.Context, query *NvrConfigGetQuery) iter.Seq2[model.NvrStreamConfig, error]
 	// OrganizationCreate Create organization
 	// Create new organization
 	OrganizationCreate(ctx context.Context, body model.Organization) (model.Organization, error)
@@ -172,6 +204,42 @@ type WatcherClient interface {
 	// OrganizationInviteCreate Create organization invite key
 	// This method allows to create a single organizations invite key.  Using this key user can invite other users to the organization.  Only organization owner can create invite key.
 	OrganizationInviteCreate(ctx context.Context, organization_id string, body model.OrganizationInviteSetup) (model.OrganizationInviteKey, error)
+	// OrganizationNvrCreate Create new NVR
+	// Creates a new NVR registration in the organization.
+	OrganizationNvrCreate(ctx context.Context, organization_id string, body model.Nvr) (model.Nvr, error)
+	// OrganizationNvrDelete Unregister NVR
+	// Removes the NVR registration from the organization. This only removes the connection from the main Watcher; the remote NVR instance itself continues to operate independently and is not affected by this operation. After deletion, cameras and episodes from this NVR will no longer be accessible through the main Watcher.
+	OrganizationNvrDelete(ctx context.Context, organization_id string, nvr_id string) error
+	// OrganizationNvrEpisodeGet Get episode details from NVR
+	// Retrieves detailed information about a specific video analytics episode (event) from the NVR. This includes episode metadata, detected objects, timestamps, and associated video segments. The episode data is fetched from the remote NVR where it was originally processed and stored.
+	OrganizationNvrEpisodeGet(ctx context.Context, organization_id string, nvr_id string, episode_id string) (model.WatcherEpisode, error)
+	// OrganizationNvrEpisodesList List episodes from NVR
+	// Returns a list of video episodes (events) from the specified NVR. Episodes may include detected faces, vehicles, motion events, or other results that were processed on the remote NVR.  The episodes are stored on the remote NVR and retrieved on-demand.
+	OrganizationNvrEpisodesList(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrEpisodesListQuery) (model.EpisodesList, error)
+	// OrganizationNvrEpisodesListIterator iterates through all items using cursor pagination
+	OrganizationNvrEpisodesListIterator(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrEpisodesListQuery) iter.Seq2[model.WatcherEpisode, error]
+	// OrganizationNvrGet Get NVR details
+	// Retrieves detailed information about a specific NVR registered in the organization. This includes the NVR's API endpoint, authentication credentials, connection status,  and metadata such as title and notes.
+	OrganizationNvrGet(ctx context.Context, organization_id string, nvr_id string) (model.Nvr, error)
+	// OrganizationNvrSave Register or update NVR
+	// Registers a new NVR or updates an existing NVR's configuration in the organization.  To register a new NVR, provide the API URL, API key, and cluster key from the remote Watcher instance. The main Watcher will establish a connection to the remote NVR and begin polling it every 10 minutes to retrieve status information. The remote NVR operates independently and is unaware of this registration.  You can update connection parameters, title, notes, or agent configuration for existing NVRs.
+	OrganizationNvrSave(ctx context.Context, organization_id string, nvr_id string, body model.Nvr) (model.Nvr, error)
+	// OrganizationNvrStreamGet Get stream from NVR
+	// Retrieves detailed information about a specific video stream (camera) from the NVR. This includes stream configuration, playback URLs, and status information. Video playback is proxied through the main Watcher but the video archive remains stored on the remote NVR.
+	OrganizationNvrStreamGet(ctx context.Context, organization_id string, nvr_id string, name string) (model.StreamConfig, error)
+	// OrganizationNvrStreamsList List streams from NVR
+	// Returns a list of video streams (cameras) available on the specified NVR. This endpoint queries the remote NVR instance and retrieves its stream list. The streams are fetched in real-time from the remote NVR, allowing you to view cameras from remote locations through the unified main Watcher interface.
+	OrganizationNvrStreamsList(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrStreamsListQuery) (model.StreamsList, error)
+	// OrganizationNvrStreamsListIterator iterates through all items using cursor pagination
+	OrganizationNvrStreamsListIterator(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrStreamsListQuery) iter.Seq2[model.StreamConfig, error]
+	// OrganizationNvrSync Synchronize streams with NVR
+	// Synchronizes streams between the NVR and the main Watcher.  This operation fetches the current list of streams from the NVR and updates the main Watcher accordingly: - Adds new streams that appeared on the NVR - Removes streams that no longer exist on the NVR  This is useful when streams are added or removed directly on the NVR and you need to reflect these changes on the main Watcher.
+	OrganizationNvrSync(ctx context.Context, organization_id string, nvr_id string) (model.NvrSyncResponse, error)
+	// OrganizationNvrsList List NVRs in organization
+	// Returns a list of NVRs (Network Video Recorders) registered in the specified organization. Each NVR represents a remote Watcher instance that has been connected to this main Watcher. The list includes NVR configuration details such as API URL, connection status, and associated organization.
+	OrganizationNvrsList(ctx context.Context, organization_id string, query *OrganizationNvrsListQuery) (model.NvrList, error)
+	// OrganizationNvrsListIterator iterates through all items using cursor pagination
+	OrganizationNvrsListIterator(ctx context.Context, organization_id string, query *OrganizationNvrsListQuery) iter.Seq2[model.Nvr, error]
 	// OrganizationPresetSave Update organizations preset
 	// Save organization preset by its id or adds new preset to organization.
 	OrganizationPresetSave(ctx context.Context, organization_id string, body model.OrganizationPreset) (model.Preset, error)
@@ -216,9 +284,18 @@ type WatcherClient interface {
 	PersonsList(ctx context.Context, query *PersonsListQuery) (model.PersonsList, error)
 	// PersonsListIterator iterates through all items using cursor pagination
 	PersonsListIterator(ctx context.Context, query *PersonsListQuery) iter.Seq2[model.VisionPerson, error]
+	// PresetDelete Delete preset
+	// Marks the preset with the given ID as deleted, i.e. sets `is_deleted = true`. The deleted presets are not returned in the response to the preset list request but still are stored in the database.  The deleted preset can remain assigned to cameras and Organizations. This is necessary for the camera not to be left without a preset when you delete one because the preset is required for any camera. Consider reassigning presets for cameras and Organizations manually before deleting the preset.
+	PresetDelete(ctx context.Context, id string) error
 	// PresetGet Get one preset
 	// This method is used to get info about preset by its id.
 	PresetGet(ctx context.Context, id string) (model.Preset, error)
+	// PresetSave Update preset
+	// This method will update the existing preset with the specified id.
+	PresetSave(ctx context.Context, id string, body model.Preset) (model.Preset, error)
+	// PresetsCreate Create preset
+	// This method will create a new preset.
+	PresetsCreate(ctx context.Context, body model.Preset) (model.Preset, error)
 	// PresetsList List presets
 	// The presets in Watcher is a set of DVR and analytics parameters that you can use as a template when creating and configuring cameras. When you select a preset in the camera settings, the parameters from the preset are populated to the camera settings. A set of presets on the camera is defined by the set of presets selected for the camera's Organization. https://flussonic.com/doc/manage-presets-in-watcher-ui/  This method is used to get info about presets. If the `organization_id` is transferred this method will return presets only allowed in organization with that Id.
 	PresetsList(ctx context.Context, query *PresetsListQuery) (model.PresetsList, error)
@@ -262,8 +339,13 @@ type WatcherClient interface {
 	// StreamSave Save stream
 	// Create or update a stream by its name. If the stream doesn't exists in the disk config, it will be created.  If you try to update a stream that is started from a template by a user request having `named_by=user`, a new stream will be created in the disk config.  If you pass only a partial stream configuration, this field will be updated, not the whole stream.  To create a new stream the property `name` is required.  Pass the `"$reset": true` option to replace the stream configuration with the provided one.
 	StreamSave(ctx context.Context, name string, query *StreamSaveQuery, body model.StreamConfig) (model.StreamConfig, error)
+	// StreamsDiscoverCamera Probe a specific camera via ONVIF
+	// Connects to a specific camera by its IP address and retrieves stream information via ONVIF. Available to any user who has camera management permissions in at least one organization. Unlike the admin network scan, this does not start a background discovery session — it probes the given address immediately and returns the result.
+	StreamsDiscoverCamera(ctx context.Context, query *StreamsDiscoverCameraQuery, body model.OnvifDiscoverCameraRequest) (model.OnvifDiscoveredDevices, error)
+	// StreamsDiscoverCameraIterator iterates through all items using cursor pagination
+	StreamsDiscoverCameraIterator(ctx context.Context, query *StreamsDiscoverCameraQuery, body model.OnvifDiscoverCameraRequest) iter.Seq2[model.OnvifDiscoveredDevice, error]
 	// StreamsImport Import of streams
-	// This method allows you to easily add or update camera configurations. If a camera with the specified name exists, its settings will be updated; otherwise, a new camera will be created. This is useful for making simultaneous changes to multiple cameras, such as integrating billing or setting up different user configurations.  New cameras will be added or existing ones updated without affecting others.  Requests can be sent in CSV format.  Ensure the user has permission to edit cameras in the relevant organizations before submitting.  If errors occur, no changes will be made, preserving the original configuration.
+	// This method allows you to easily add or update camera configurations. If a camera with the specified name exists, its settings will be updated; otherwise, a new camera will be created. This is useful for making simultaneous changes to multiple cameras, such as integrating billing or setting up different user configurations.  New cameras will be added or existing ones updated without affecting others.  Requests can be sent in CSV format.  To import cameras to an NVR, include `nvr_id` and `nvr_settings_*` columns in the CSV row. In this case, Watcher creates a cloud stream linked to the specified NVR and stores the `nvr_settings_*` values in the NVR configuration returned by `GET /watcher/client-api/v3/nvrs/config`.  When `nvr_id` is provided, cloud input URLs are generated automatically from the NVR settings. The regular `inputs_*_url` columns are ignored for the cloud stream.  Ensure the user has permission to edit cameras in the relevant organizations before submitting.  If errors occur, no changes will be made, preserving the original configuration.
 	StreamsImport(ctx context.Context) (model.StreamsImportResponse, error)
 	// StreamsList List streams
 	// This API method is one of the most important in whole API, because it gives the list of all streams.  `streams_list` in Watcher Admin API: * can list all streams within the Watcher. * admin is not allowed to watch content from any cameras for security reasons.  `streams_list` in Watcher Client API: * return streams from organizations where you're member * prodives a playback token that allows play video from the camera.
@@ -294,6 +376,11 @@ type WatcherClient interface {
 	// UserGet Get a user
 	// This method allows you to fetch the user by its identifier
 	UserGet(ctx context.Context, user_id string) (model.User, error)
+	// UserNvrsList List NVRs accessible to current user
+	// Returns a list of all NVRs (Network Video Recorders) accessible to the current authenticated user. The list includes only NVRs from organizations where the user has access permissions. Each NVR represents a remote Watcher instance that has been connected to this main Watcher. The list includes NVR configuration details such as API URL, connection status, and associated organization.
+	UserNvrsList(ctx context.Context, query *UserNvrsListQuery) (model.NvrList, error)
+	// UserNvrsListIterator iterates through all items using cursor pagination
+	UserNvrsListIterator(ctx context.Context, query *UserNvrsListQuery) iter.Seq2[model.Nvr, error]
 	// UserOrganizationFoldersList Get user's folders in organization
 	// Get list of folders available for user in specific organization
 	UserOrganizationFoldersList(ctx context.Context, user_id string, organization_id string, query *UserOrganizationFoldersListQuery) (model.UserFolders, error)
@@ -343,6 +430,150 @@ type WatcherClient interface {
 	WebPushUnsubscribe(ctx context.Context, body model.WebPushSubscription) error
 }
 
+// AccessLogListQuery represents query parameters for AccessLogList method
+type AccessLogListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts AccessLogListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *AccessLogListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *AccessLogListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// CameraUsagesListQuery represents query parameters for CameraUsagesList method
+type CameraUsagesListQuery struct {
+	Cursor string
+	// Start date of the usage reporting period (inclusive). Format: YYYY-MM-DD (ISO 8601 date). Default is yesterday.
+	From string
+	// Filter by license identifier.
+	LicenseId string
+	Limit     int
+	Select    []string
+	Sort      []string
+	// End date of the usage reporting period (inclusive). Format: YYYY-MM-DD (ISO 8601 date). Default is the same as "from" date.
+	To    string
+	Extra map[string]string
+}
+
+// ToQueryString converts CameraUsagesListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *CameraUsagesListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.From != "" {
+		values.Set("from", q.From)
+	}
+	if q.LicenseId != "" {
+		values.Set("license_id", q.LicenseId)
+	}
+	if q.To != "" {
+		values.Set("to", q.To)
+	}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *CameraUsagesListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// DiscoveryDevicesListQuery represents query parameters for DiscoveryDevicesList method
+type DiscoveryDevicesListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts DiscoveryDevicesListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *DiscoveryDevicesListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *DiscoveryDevicesListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
 // EpisodeDeleteQuery represents query parameters for EpisodeDelete method
 type EpisodeDeleteQuery struct {
 	// Authorization token for unauthenticated access to the episode
@@ -389,6 +620,29 @@ func (q *EpisodeGetQuery) ToQueryString() (string, error) {
 	return values.Encode(), nil
 }
 
+// EpisodeUpdateQuery represents query parameters for EpisodeUpdate method
+type EpisodeUpdateQuery struct {
+	// Authorization token for unauthenticated access to the episode
+	Token string
+	Extra map[string]string
+}
+
+// ToQueryString converts EpisodeUpdateQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *EpisodeUpdateQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.Token != "" {
+		values.Set("token", q.Token)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
 // EpisodesListQuery represents query parameters for EpisodesList method
 type EpisodesListQuery struct {
 	Cursor string
@@ -405,7 +659,9 @@ type EpisodesListQuery struct {
 	Sort   []string
 	// Filter the collection by episode update time. This field is rather specific because it allows to have an update stream with new/updated episodes
 	UpdatedAtGt int
-	Extra       map[string]string
+	// Confidence level threshold for vehicle color filtering. This parameter is only used together with `vehicle_color` filter.
+	VehicleColorConfidenceLevel string
+	Extra                       map[string]string
 }
 
 // ToQueryString converts EpisodesListQuery to a valid query string.
@@ -429,6 +685,9 @@ func (q *EpisodesListQuery) ToQueryString() (string, error) {
 	}
 	if q.UpdatedAtGt != 0 {
 		values.Set("updated_at_gt", strconv.Itoa(q.UpdatedAtGt))
+	}
+	if q.VehicleColorConfidenceLevel != "" {
+		values.Set("vehicle_color_confidence_level", q.VehicleColorConfidenceLevel)
 	}
 	if len(q.Select) > 0 {
 		values.Set("select", strings.Join(q.Select, ","))
@@ -622,6 +881,178 @@ func (q *MosaicsListQuery) ToQueryString() (string, error) {
 
 // SetCursor sets the cursor for pagination.
 func (q *MosaicsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// NvrConfigGetQuery represents query parameters for NvrConfigGet method
+type NvrConfigGetQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts NvrConfigGetQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *NvrConfigGetQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *NvrConfigGetQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// OrganizationNvrEpisodesListQuery represents query parameters for OrganizationNvrEpisodesList method
+type OrganizationNvrEpisodesListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts OrganizationNvrEpisodesListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *OrganizationNvrEpisodesListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *OrganizationNvrEpisodesListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// OrganizationNvrStreamsListQuery represents query parameters for OrganizationNvrStreamsList method
+type OrganizationNvrStreamsListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts OrganizationNvrStreamsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *OrganizationNvrStreamsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *OrganizationNvrStreamsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// OrganizationNvrsListQuery represents query parameters for OrganizationNvrsList method
+type OrganizationNvrsListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts OrganizationNvrsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *OrganizationNvrsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *OrganizationNvrsListQuery) SetCursor(cursor *string) {
 	if cursor != nil {
 		q.Cursor = *cursor
 	} else {
@@ -938,6 +1369,49 @@ func (q *StreamSaveQuery) ToQueryString() (string, error) {
 	return values.Encode(), nil
 }
 
+// StreamsDiscoverCameraQuery represents query parameters for StreamsDiscoverCamera method
+type StreamsDiscoverCameraQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts StreamsDiscoverCameraQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *StreamsDiscoverCameraQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *StreamsDiscoverCameraQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
 // StreamsListQuery represents query parameters for StreamsList method
 type StreamsListQuery struct {
 	Cursor string
@@ -974,6 +1448,49 @@ func (q *StreamsListQuery) ToQueryString() (string, error) {
 
 // SetCursor sets the cursor for pagination.
 func (q *StreamsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// UserNvrsListQuery represents query parameters for UserNvrsList method
+type UserNvrsListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts UserNvrsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *UserNvrsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *UserNvrsListQuery) SetCursor(cursor *string) {
 	if cursor != nil {
 		q.Cursor = *cursor
 	} else {
@@ -1318,6 +1835,22 @@ func (c *Client) doList(ctx context.Context, path string, query interface{ ToQue
 	return c.base.Request(ctx, request, result)
 }
 
+// AccessLogList List access log entries
+// Returns a paginated list of access log entries.
+func (c *Client) AccessLogList(ctx context.Context, query *AccessLogListQuery) (model.AccessLogList, error) {
+	path := "/watcher/client-api/v3/access_log"
+	result := &model.AccessLogListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// AccessLogListIterator iterates through all AccessLogEntry items using cursor pagination.
+func (c *Client) AccessLogListIterator(ctx context.Context, query *AccessLogListQuery) iter.Seq2[model.AccessLogEntry, error] {
+	return cursors.Iterator(ctx, c.AccessLogList, query)
+}
+
 // AgentActivationTokenCreate Create activation token
 // This method creates activation token for agent. This token used by mobile app in qr-code for wifi camera with agent for adding camera with agent in watcher.
 func (c *Client) AgentActivationTokenCreate(ctx context.Context, body model.AgentActivationTokenRequest) (model.AgentActivationToken, error) {
@@ -1335,6 +1868,28 @@ func (c *Client) AgentActivationTokenGet(ctx context.Context, token string) (mod
 	path := fmt.Sprintf("/watcher/client-api/v3/agent_activation_token/%s", token)
 	result := &model.AgentActivationTokenImpl{}
 	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// Autologin Login using autologin token
+// Authenticates a user using a previously generated autologin token. No authorization required.
+func (c *Client) Autologin(ctx context.Context, body model.AutologinRequest) (model.LoginInfoAdditional, error) {
+	path := "/watcher/client-api/v3/autologin"
+	result := &model.LoginInfoAdditionalImpl{}
+	if err := c.doPost(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// AutologinGenerate Generate autologin token
+// Generates a one-time token for automatic user login without credentials. Requires admin rights or permissions for the target user. The token is valid for 15 minutes by default.  The token can be used in two ways: - Via API: POST /autologin with the token in request body - Via URL: `{host}/watcher/client/#/auth/signin/auto?autologin_token={token}` for automatic browser login
+func (c *Client) AutologinGenerate(ctx context.Context, body model.AutologinGenerateRequest) (model.AutologinGenerateResponse, error) {
+	path := "/watcher/client-api/v3/autologin/generate"
+	result := &model.AutologinGenerateResponseImpl{}
+	if err := c.doPost(ctx, path, body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -1394,6 +1949,22 @@ func (c *Client) CameraReboot(ctx context.Context, name string) error {
 	return nil
 }
 
+// CameraUsagesList List camera usage in the current domain
+// Returns camera usage data for billing integration for the current domain only. Available to domain admin.  Each entry represents a period when a camera was assigned to a specific preset (tariff plan). The preset is recorded at 00:00 UTC each day — if a preset changes multiple times during the day, only the one active at midnight is used for billing.  Response contains two plan identifiers: `plan_id` (from preset's `external_id`, for internal billing) and `billing_plan_id` (from preset's `billing_external_id`, for operator's own billing system).
+func (c *Client) CameraUsagesList(ctx context.Context, query *CameraUsagesListQuery) (model.CameraUsagesList, error) {
+	path := "/watcher/client-api/v3/usage/cameras"
+	result := &model.CameraUsagesListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CameraUsagesListIterator iterates through all CameraUsage items using cursor pagination.
+func (c *Client) CameraUsagesListIterator(ctx context.Context, query *CameraUsagesListQuery) iter.Seq2[model.CameraUsage, error] {
+	return cursors.Iterator(ctx, c.CameraUsagesList, query)
+}
+
 // DeleteOrganizationPreset Delete preset from organization
 // This method allows to remove a specific preset from organization.
 func (c *Client) DeleteOrganizationPreset(ctx context.Context, organization_id string, preset_id string) error {
@@ -1447,6 +2018,24 @@ func (c *Client) DeviceTokenSave(ctx context.Context, token string, body model.D
 	return result, nil
 }
 
+// DiscoveryDevicesList List cameras available for connection to NVR
+// Discovers and returns a list of network devices (primarily cameras) that are available on the local network and can be connected to this NVR. The discovery process scans the network for devices using network protocols and ONVIF WS-Discovery. Each device in the response includes network configuration details (IP address, MAC address, hostname, DNS servers, netmask, gateway, DHCP status), ONVIF service information, and system time information. This endpoint is useful for identifying and configuring new cameras or other network devices that can be integrated into the NVR system.
+func (c *Client) DiscoveryDevicesList(ctx context.Context, organization_id string, nvr_id string, query *DiscoveryDevicesListQuery) (model.DiscoveryDevices, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/discovery/devices", organization_id, nvr_id)
+	result := &model.DiscoveryDevicesImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// DiscoveryDevicesListIterator iterates through all DiscoveryDevice items using cursor pagination.
+func (c *Client) DiscoveryDevicesListIterator(ctx context.Context, organization_id string, nvr_id string, query *DiscoveryDevicesListQuery) iter.Seq2[model.DiscoveryDevice, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *DiscoveryDevicesListQuery) (model.DiscoveryDevices, error) {
+		return c.DiscoveryDevicesList(ctx, organization_id, nvr_id, query)
+	}, query)
+}
+
 // EpisodeAddToFavorites Add episode to the favorites
 // This method allows you to add an episode to the favorites.
 func (c *Client) EpisodeAddToFavorites(ctx context.Context, episode_id string) error {
@@ -1483,6 +2072,17 @@ func (c *Client) EpisodeGet(ctx context.Context, episode_id string, query *Episo
 	path := fmt.Sprintf("/watcher/client-api/v3/episodes/%s", episode_id)
 	result := &model.WatcherEpisodeImpl{}
 	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// EpisodeUpdate Update episode
+// This method allows you to update the title and description of an episode.
+func (c *Client) EpisodeUpdate(ctx context.Context, episode_id string, query *EpisodeUpdateQuery, body model.EpisodeUpdate) (model.WatcherEpisode, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/episodes/%s", episode_id)
+	result := &model.WatcherEpisodeImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -1830,6 +2430,33 @@ func (c *Client) NotificationSend(ctx context.Context, body any) error {
 	return nil
 }
 
+// NvrActivationTokenCreate Create NVR activation token
+// Creates a special activation token for NVR registration.  This token contains all the necessary NVR configuration parameters and can be used to simplify the connection process. The administrator of the main Watcher creates this token with all NVR parameters and passes it to the remote NVR administrator, who can then use only this token for registration without manually entering all the configuration details. When the agent is activated using this token, the NVR will be created automatically.  The token lifetime is 6 hours by default.
+func (c *Client) NvrActivationTokenCreate(ctx context.Context, organization_id string, body model.NvrActivationTokenRequest) (model.NvrActivationToken, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/nvr-activation-token", organization_id)
+	result := &model.NvrActivationTokenImpl{}
+	if err := c.doPost(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// NvrConfigGet Get NVR config
+// Returns NVR configuration with streams list for the specific NVR. The NVR is identified by the API key used in the request. Note: Stream names in the response are the names used on the NVR, not on the main Watcher.
+func (c *Client) NvrConfigGet(ctx context.Context, query *NvrConfigGetQuery) (model.NvrConfig, error) {
+	path := "/watcher/client-api/v3/nvrs/config"
+	result := &model.NvrConfigImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// NvrConfigGetIterator iterates through all NvrStreamConfig items using cursor pagination.
+func (c *Client) NvrConfigGetIterator(ctx context.Context, query *NvrConfigGetQuery) iter.Seq2[model.NvrStreamConfig, error] {
+	return cursors.Iterator(ctx, c.NvrConfigGet, query)
+}
+
 // OrganizationCreate Create organization
 // Create new organization
 func (c *Client) OrganizationCreate(ctx context.Context, body model.Organization) (model.Organization, error) {
@@ -1881,6 +2508,136 @@ func (c *Client) OrganizationInviteCreate(ctx context.Context, organization_id s
 		return nil, err
 	}
 	return result, nil
+}
+
+// OrganizationNvrCreate Create new NVR
+// Creates a new NVR registration in the organization.
+func (c *Client) OrganizationNvrCreate(ctx context.Context, organization_id string, body model.Nvr) (model.Nvr, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs", organization_id)
+	result := &model.NvrImpl{}
+	if err := c.doPost(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrDelete Unregister NVR
+// Removes the NVR registration from the organization. This only removes the connection from the main Watcher; the remote NVR instance itself continues to operate independently and is not affected by this operation. After deletion, cameras and episodes from this NVR will no longer be accessible through the main Watcher.
+func (c *Client) OrganizationNvrDelete(ctx context.Context, organization_id string, nvr_id string) error {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s", organization_id, nvr_id)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
+}
+
+// OrganizationNvrEpisodeGet Get episode details from NVR
+// Retrieves detailed information about a specific video analytics episode (event) from the NVR. This includes episode metadata, detected objects, timestamps, and associated video segments. The episode data is fetched from the remote NVR where it was originally processed and stored.
+func (c *Client) OrganizationNvrEpisodeGet(ctx context.Context, organization_id string, nvr_id string, episode_id string) (model.WatcherEpisode, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/episodes/%s", organization_id, nvr_id, episode_id)
+	result := &model.WatcherEpisodeImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrEpisodesList List episodes from NVR
+// Returns a list of video episodes (events) from the specified NVR. Episodes may include detected faces, vehicles, motion events, or other results that were processed on the remote NVR.  The episodes are stored on the remote NVR and retrieved on-demand.
+func (c *Client) OrganizationNvrEpisodesList(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrEpisodesListQuery) (model.EpisodesList, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/episodes", organization_id, nvr_id)
+	result := &model.EpisodesListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrEpisodesListIterator iterates through all WatcherEpisode items using cursor pagination.
+func (c *Client) OrganizationNvrEpisodesListIterator(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrEpisodesListQuery) iter.Seq2[model.WatcherEpisode, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *OrganizationNvrEpisodesListQuery) (model.EpisodesList, error) {
+		return c.OrganizationNvrEpisodesList(ctx, organization_id, nvr_id, query)
+	}, query)
+}
+
+// OrganizationNvrGet Get NVR details
+// Retrieves detailed information about a specific NVR registered in the organization. This includes the NVR's API endpoint, authentication credentials, connection status,  and metadata such as title and notes.
+func (c *Client) OrganizationNvrGet(ctx context.Context, organization_id string, nvr_id string) (model.Nvr, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s", organization_id, nvr_id)
+	result := &model.NvrImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrSave Register or update NVR
+// Registers a new NVR or updates an existing NVR's configuration in the organization.  To register a new NVR, provide the API URL, API key, and cluster key from the remote Watcher instance. The main Watcher will establish a connection to the remote NVR and begin polling it every 10 minutes to retrieve status information. The remote NVR operates independently and is unaware of this registration.  You can update connection parameters, title, notes, or agent configuration for existing NVRs.
+func (c *Client) OrganizationNvrSave(ctx context.Context, organization_id string, nvr_id string, body model.Nvr) (model.Nvr, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s", organization_id, nvr_id)
+	result := &model.NvrImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrStreamGet Get stream from NVR
+// Retrieves detailed information about a specific video stream (camera) from the NVR. This includes stream configuration, playback URLs, and status information. Video playback is proxied through the main Watcher but the video archive remains stored on the remote NVR.
+func (c *Client) OrganizationNvrStreamGet(ctx context.Context, organization_id string, nvr_id string, name string) (model.StreamConfig, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/streams/%s", organization_id, nvr_id, name)
+	result := &model.StreamConfigImpl{}
+	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrStreamsList List streams from NVR
+// Returns a list of video streams (cameras) available on the specified NVR. This endpoint queries the remote NVR instance and retrieves its stream list. The streams are fetched in real-time from the remote NVR, allowing you to view cameras from remote locations through the unified main Watcher interface.
+func (c *Client) OrganizationNvrStreamsList(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrStreamsListQuery) (model.StreamsList, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/streams", organization_id, nvr_id)
+	result := &model.StreamsListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrStreamsListIterator iterates through all StreamConfig items using cursor pagination.
+func (c *Client) OrganizationNvrStreamsListIterator(ctx context.Context, organization_id string, nvr_id string, query *OrganizationNvrStreamsListQuery) iter.Seq2[model.StreamConfig, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *OrganizationNvrStreamsListQuery) (model.StreamsList, error) {
+		return c.OrganizationNvrStreamsList(ctx, organization_id, nvr_id, query)
+	}, query)
+}
+
+// OrganizationNvrSync Synchronize streams with NVR
+// Synchronizes streams between the NVR and the main Watcher.  This operation fetches the current list of streams from the NVR and updates the main Watcher accordingly: - Adds new streams that appeared on the NVR - Removes streams that no longer exist on the NVR  This is useful when streams are added or removed directly on the NVR and you need to reflect these changes on the main Watcher.
+func (c *Client) OrganizationNvrSync(ctx context.Context, organization_id string, nvr_id string) (model.NvrSyncResponse, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs/%s/sync", organization_id, nvr_id)
+	result := &model.NvrSyncResponseImpl{}
+	if err := c.doPost(ctx, path, nil, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrsList List NVRs in organization
+// Returns a list of NVRs (Network Video Recorders) registered in the specified organization. Each NVR represents a remote Watcher instance that has been connected to this main Watcher. The list includes NVR configuration details such as API URL, connection status, and associated organization.
+func (c *Client) OrganizationNvrsList(ctx context.Context, organization_id string, query *OrganizationNvrsListQuery) (model.NvrList, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/organizations/%s/nvrs", organization_id)
+	result := &model.NvrListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// OrganizationNvrsListIterator iterates through all Nvr items using cursor pagination.
+func (c *Client) OrganizationNvrsListIterator(ctx context.Context, organization_id string, query *OrganizationNvrsListQuery) iter.Seq2[model.Nvr, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *OrganizationNvrsListQuery) (model.NvrList, error) {
+		return c.OrganizationNvrsList(ctx, organization_id, query)
+	}, query)
 }
 
 // OrganizationPresetSave Update organizations preset
@@ -2034,12 +2791,44 @@ func (c *Client) PersonsListIterator(ctx context.Context, query *PersonsListQuer
 	return cursors.Iterator(ctx, c.PersonsList, query)
 }
 
+// PresetDelete Delete preset
+// Marks the preset with the given ID as deleted, i.e. sets `is_deleted = true`. The deleted presets are not returned in the response to the preset list request but still are stored in the database.  The deleted preset can remain assigned to cameras and Organizations. This is necessary for the camera not to be left without a preset when you delete one because the preset is required for any camera. Consider reassigning presets for cameras and Organizations manually before deleting the preset.
+func (c *Client) PresetDelete(ctx context.Context, id string) error {
+	path := fmt.Sprintf("/watcher/client-api/v3/presets/%s", id)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
+}
+
 // PresetGet Get one preset
 // This method is used to get info about preset by its id.
 func (c *Client) PresetGet(ctx context.Context, id string) (model.Preset, error) {
 	path := fmt.Sprintf("/watcher/client-api/v3/presets/%s", id)
 	result := &model.PresetImpl{}
 	if err := c.doGet(ctx, path, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// PresetSave Update preset
+// This method will update the existing preset with the specified id.
+func (c *Client) PresetSave(ctx context.Context, id string, body model.Preset) (model.Preset, error) {
+	path := fmt.Sprintf("/watcher/client-api/v3/presets/%s", id)
+	result := &model.PresetImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// PresetsCreate Create preset
+// This method will create a new preset.
+func (c *Client) PresetsCreate(ctx context.Context, body model.Preset) (model.Preset, error) {
+	path := "/watcher/client-api/v3/presets"
+	result := &model.PresetImpl{}
+	if err := c.doPost(ctx, path, body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -2195,8 +2984,26 @@ func (c *Client) StreamSave(ctx context.Context, name string, query *StreamSaveQ
 	return result, nil
 }
 
+// StreamsDiscoverCamera Probe a specific camera via ONVIF
+// Connects to a specific camera by its IP address and retrieves stream information via ONVIF. Available to any user who has camera management permissions in at least one organization. Unlike the admin network scan, this does not start a background discovery session — it probes the given address immediately and returns the result.
+func (c *Client) StreamsDiscoverCamera(ctx context.Context, query *StreamsDiscoverCameraQuery, body model.OnvifDiscoverCameraRequest) (model.OnvifDiscoveredDevices, error) {
+	path := "/watcher/client-api/v3/streams/discover"
+	result := &model.OnvifDiscoveredDevicesImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// StreamsDiscoverCameraIterator iterates through all OnvifDiscoveredDevice items using cursor pagination.
+func (c *Client) StreamsDiscoverCameraIterator(ctx context.Context, query *StreamsDiscoverCameraQuery, body model.OnvifDiscoverCameraRequest) iter.Seq2[model.OnvifDiscoveredDevice, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *StreamsDiscoverCameraQuery) (model.OnvifDiscoveredDevices, error) {
+		return c.StreamsDiscoverCamera(ctx, query, body)
+	}, query)
+}
+
 // StreamsImport Import of streams
-// This method allows you to easily add or update camera configurations. If a camera with the specified name exists, its settings will be updated; otherwise, a new camera will be created. This is useful for making simultaneous changes to multiple cameras, such as integrating billing or setting up different user configurations.  New cameras will be added or existing ones updated without affecting others.  Requests can be sent in CSV format.  Ensure the user has permission to edit cameras in the relevant organizations before submitting.  If errors occur, no changes will be made, preserving the original configuration.
+// This method allows you to easily add or update camera configurations. If a camera with the specified name exists, its settings will be updated; otherwise, a new camera will be created. This is useful for making simultaneous changes to multiple cameras, such as integrating billing or setting up different user configurations.  New cameras will be added or existing ones updated without affecting others.  Requests can be sent in CSV format.  To import cameras to an NVR, include `nvr_id` and `nvr_settings_*` columns in the CSV row. In this case, Watcher creates a cloud stream linked to the specified NVR and stores the `nvr_settings_*` values in the NVR configuration returned by `GET /watcher/client-api/v3/nvrs/config`.  When `nvr_id` is provided, cloud input URLs are generated automatically from the NVR settings. The regular `inputs_*_url` columns are ignored for the cloud stream.  Ensure the user has permission to edit cameras in the relevant organizations before submitting.  If errors occur, no changes will be made, preserving the original configuration.
 func (c *Client) StreamsImport(ctx context.Context) (model.StreamsImportResponse, error) {
 	path := "/watcher/client-api/v3/streams/import"
 	result := &model.StreamsImportResponseImpl{}
@@ -2305,6 +3112,22 @@ func (c *Client) UserGet(ctx context.Context, user_id string) (model.User, error
 		return nil, err
 	}
 	return result, nil
+}
+
+// UserNvrsList List NVRs accessible to current user
+// Returns a list of all NVRs (Network Video Recorders) accessible to the current authenticated user. The list includes only NVRs from organizations where the user has access permissions. Each NVR represents a remote Watcher instance that has been connected to this main Watcher. The list includes NVR configuration details such as API URL, connection status, and associated organization.
+func (c *Client) UserNvrsList(ctx context.Context, query *UserNvrsListQuery) (model.NvrList, error) {
+	path := "/watcher/client-api/v3/nvrs"
+	result := &model.NvrListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// UserNvrsListIterator iterates through all Nvr items using cursor pagination.
+func (c *Client) UserNvrsListIterator(ctx context.Context, query *UserNvrsListQuery) iter.Seq2[model.Nvr, error] {
+	return cursors.Iterator(ctx, c.UserNvrsList, query)
 }
 
 // UserOrganizationFoldersList Get user's folders in organization

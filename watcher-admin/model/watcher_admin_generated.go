@@ -4,28 +4,11 @@ package model
 // agent_id
 type AgentID string
 
-// agent://ID identification for `via` configuration option
-type AgentURL string
-
 // auth_backend_name
 type AuthBackendName string
 
 // auth_token
 type AuthToken string
-
-// Balancing mode
-type BalancerConfigMode string
-
-const (
-	// Bandwidth usage
-	BalancerConfigModeUsage BalancerConfigMode = "usage"
-	// Total clients number
-	BalancerConfigModeClients BalancerConfigMode = "clients"
-	// Total output bitrate
-	BalancerConfigModeBitrate BalancerConfigMode = "bitrate"
-	// Streams number
-	BalancerConfigModeStreams BalancerConfigMode = "streams"
-)
 
 // byte
 type Byte string
@@ -35,6 +18,18 @@ type Bytes int
 
 // cache_name
 type CacheName string
+
+// Status of the healthcheck.
+type CentralHealthcheckStatusStatus string
+
+const (
+	// Peer is healthy.
+	//
+	CentralHealthcheckStatusStatusOk CentralHealthcheckStatusStatus = "ok"
+	// Peer has errors.
+	//
+	CentralHealthcheckStatusStatusError CentralHealthcheckStatusStatus = "error"
+)
 
 // Role of node
 type CentralNodeRoleRole string
@@ -90,6 +85,9 @@ const (
 	// Configuration server returned an error while resolving srt port.
 	ConfigExternalErrorStatusWhileSrtPortResolve ConfigExternalErrorStatusWhile = "srt_port_resolve"
 )
+
+// date
+type Date string
 
 // date_time
 type DateTime string
@@ -159,9 +157,6 @@ type ISO6391 string
 // input_url
 type InputURL string
 
-// interface_name
-type InterfaceName string
-
 // ipv4
 type Ipv4 string
 
@@ -207,6 +202,18 @@ type Milliseconds float64
 
 // network_port
 type NetworkPort int
+
+// Status of the healthcheck.
+type NvrHealthcheckStatusStatus string
+
+const (
+	// NVR is healthy.
+	//
+	NvrHealthcheckStatusStatusOk NvrHealthcheckStatusStatus = "ok"
+	// NVR has errors.
+	//
+	NvrHealthcheckStatusStatusError NvrHealthcheckStatusStatus = "error"
+)
 
 type OnOffAutoMode string
 
@@ -268,42 +275,6 @@ type SortIndex int
 // speed
 type Speed int
 
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-//
-// This parameter allows to manage subtitles in an output stream.
-type StreamInputMpegtsSpecificSubtitles string
-
-const (
-	// An output stream will have no subtitles track.
-	StreamInputMpegtsSpecificSubtitlesDrop StreamInputMpegtsSpecificSubtitles = "drop"
-	// An output stream will have a subtitles track in DVB, without conversion to text (default behavior).
-	StreamInputMpegtsSpecificSubtitlesAccept StreamInputMpegtsSpecificSubtitles = "accept"
-	// An output stream will have a track containing subtitles converted to a text format (WebVTT).
-	StreamInputMpegtsSpecificSubtitlesOcrReplace StreamInputMpegtsSpecificSubtitles = "ocr_replace"
-	// An output stream will have two tracks containing subtitles:
-	// the original track with subtitles in DVB and a new track with text subtitles.
-	//
-	StreamInputMpegtsSpecificSubtitlesOcrAdd StreamInputMpegtsSpecificSubtitles = "ocr_add"
-)
-
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-//
-// This parameter allows to manage subtitles in an output stream.
-type StreamInputSrtPublishSpecificSubtitles string
-
-const (
-	// An output stream will have no subtitles track.
-	StreamInputSrtPublishSpecificSubtitlesDrop StreamInputSrtPublishSpecificSubtitles = "drop"
-	// An output stream will have a subtitles track in DVB, without conversion to text (default behavior).
-	StreamInputSrtPublishSpecificSubtitlesAccept StreamInputSrtPublishSpecificSubtitles = "accept"
-	// An output stream will have a track containing subtitles converted to a text format (WebVTT).
-	StreamInputSrtPublishSpecificSubtitlesOcrReplace StreamInputSrtPublishSpecificSubtitles = "ocr_replace"
-	// An output stream will have two tracks containing subtitles:
-	// the original track with subtitles in DVB and a new track with text subtitles.
-	//
-	StreamInputSrtPublishSpecificSubtitlesOcrAdd StreamInputSrtPublishSpecificSubtitles = "ocr_add"
-)
-
 // ticks
 type Ticks float64
 
@@ -324,6 +295,10 @@ const (
 	// view of those cameras to which access is granted explicitly)
 	//
 	UserAdminAccessLevelGeneric UserAdminAccessLevel = "generic"
+	// Grants domain admin rights (allows to manage domain users, organizations,
+	// and domain settings, but not full system admin rights)
+	//
+	UserAdminAccessLevelDomainAdmin UserAdminAccessLevel = "domain_admin"
 	// Grants full rights (allows you to create organizations,
 	// use both admin ui and client ui, change domain settings)
 	//
@@ -337,6 +312,8 @@ type Utc int
 type UtcMs int
 
 // The algorithm used for video analytics.
+//
+// Deprecated. Use `detectors` instead.
 type VisionSpecAlg string
 
 const (
@@ -347,6 +324,8 @@ const (
 )
 
 // The algorithm used for video analytics.
+//
+// Deprecated. Use `detectors` instead.
 type VisionSpecPresetsAlg string
 
 const (
@@ -372,6 +351,8 @@ const (
 	CentralNodeLayoutDecisionReasonStreamerDvrSizeExceeded CentralNodeLayoutDecisionReason = "streamer_dvr_size_exceeded"
 	// Node is not available for transcoding.
 	CentralNodeLayoutDecisionReasonNodeNotAvailableForTranscoding CentralNodeLayoutDecisionReason = "node_not_available_for_transcoding"
+	// GPU transcoding exceeds claimed capacity.
+	CentralNodeLayoutDecisionReasonNodeTranscodingClaimsExceeded CentralNodeLayoutDecisionReason = "node_transcoding_claims_exceeded"
 	// Node is offline.
 	CentralNodeLayoutDecisionReasonNodeOffline CentralNodeLayoutDecisionReason = "node_offline"
 	// Bandwidth load exceeds the threshold for the streamer defined by
@@ -404,6 +385,15 @@ const (
 	// Estimated disk space load exceeds the threshold for the streamer's DVR.
 	//
 	CentralStreamLayoutChangeReasonStreamerDvrSizeExceeded CentralStreamLayoutChangeReason = "streamer_dvr_size_exceeded"
+	// Node is not available for transcoding.
+	//
+	CentralStreamLayoutChangeReasonNodeNotAvailableForTranscoding CentralStreamLayoutChangeReason = "node_not_available_for_transcoding"
+	// Node has an overloaded nvenc and can not operate properly.
+	//
+	CentralStreamLayoutChangeReasonNodeNvencPressure CentralStreamLayoutChangeReason = "node_nvenc_pressure"
+	// GPU transcoding exceeds claimed capacity.
+	//
+	CentralStreamLayoutChangeReasonNodeTranscodingClaimsExceeded CentralStreamLayoutChangeReason = "node_transcoding_claims_exceeded"
 	// Bandwidth load exceeds the threshold for the streamer defined by [total_bandwidth](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Ctotal_bandwidth).
 	//
 	CentralStreamLayoutChangeReasonStreamerTotalBandwidthExceeded CentralStreamLayoutChangeReason = "streamer_total_bandwidth_exceeded"
@@ -433,17 +423,6 @@ const (
 	CentralStreamLayoutOriginatorLayouter CentralStreamLayoutOriginator = "layouter"
 	// Layout was changed via something other.
 	CentralStreamLayoutOriginatorOther CentralStreamLayoutOriginator = "other"
-)
-
-type ChassisProduct string
-
-const (
-	// Basic coder with transcoding support
-	ChassisProductCoderTranscoder ChassisProduct = "coder_transcoder"
-	// Coder with video analytic support
-	ChassisProductCoderVision ChassisProduct = "coder_vision"
-	// Basic coder with transcoding support and DVB output
-	ChassisProductCoderDvb ChassisProduct = "coder_dvb"
 )
 
 // Collective status of certain object's metric.
@@ -480,13 +459,14 @@ const (
 type FrameAppCodec string
 
 const (
-	FrameAppCodecMpegts FrameAppCodec = "mpegts"
-	FrameAppCodecObject FrameAppCodec = "object"
-	FrameAppCodecEit    FrameAppCodec = "eit"
-	FrameAppCodecScte27 FrameAppCodec = "scte27"
-	FrameAppCodecScte35 FrameAppCodec = "scte35"
-	FrameAppCodecKlv    FrameAppCodec = "klv"
-	FrameAppCodecEmpty  FrameAppCodec = "empty"
+	FrameAppCodecMpegts  FrameAppCodec = "mpegts"
+	FrameAppCodecObject  FrameAppCodec = "object"
+	FrameAppCodecEit     FrameAppCodec = "eit"
+	FrameAppCodecScte27  FrameAppCodec = "scte27"
+	FrameAppCodecScte35  FrameAppCodec = "scte35"
+	FrameAppCodecKlv     FrameAppCodec = "klv"
+	FrameAppCodecEmpty   FrameAppCodec = "empty"
+	FrameAppCodecScte104 FrameAppCodec = "scte104"
 )
 
 type FrameAudioCodec string
@@ -613,22 +593,21 @@ const (
 	MediaQualityHigh   MediaQuality = "high"
 )
 
-type NotificationType string
-
-type OutputAudio string
+type NamedBy string
 
 const (
-	// Keep the original audio codec.
-	OutputAudioKeep OutputAudio = "keep"
-	// Keep AAC if available or transcode to AAC; delete other tracks if any.
-	OutputAudioAac OutputAudio = "aac"
-	// Add AAC if it was not available already while keeping the original track.
-	OutputAudioAddAac OutputAudio = "add_aac"
-	// Make silence in audio track by using AAC codec. Replace original non-AAC track to AAC.
-	OutputAudioAacSilence OutputAudio = "aac_silence"
-	// Make silence in audio track by using original audio codec.
-	OutputAudioKeepSilence OutputAudio = "keep_silence"
+	// Media is described in file on local disk
+	NamedByConfig NamedBy = "config"
+	// Media was started and configured by user request: play or publish
+	//
+	NamedByUser NamedBy = "user"
+	// Media was sourced from another streamer via `source` directive
+	NamedByRemote NamedBy = "remote"
+	// Media was configured via config_external backend
+	NamedByExternal NamedBy = "external"
 )
+
+type NotificationType string
 
 type Protocol string
 
@@ -750,6 +729,18 @@ const (
 	RaidDiskModeKeep RaidDiskMode = "keep"
 )
 
+type RaidDiskStatus string
+
+const (
+	// The disk is operating normally.
+	//
+	RaidDiskStatusActive RaidDiskStatus = "active"
+	// Flussonic has detected disk errors (EIO/EROFS).
+	// No data is written to this disk, but read attempts continue.
+	//
+	RaidDiskStatusDegraded RaidDiskStatus = "degraded"
+)
+
 // Reason of the error.
 type RequestErrorReason string
 
@@ -825,7 +816,6 @@ type TranscoderDevice string
 
 const (
 	TranscoderDeviceCpu   TranscoderDevice = "cpu"
-	TranscoderDeviceQsv   TranscoderDevice = "qsv"
 	TranscoderDeviceNvenc TranscoderDevice = "nvenc"
 	TranscoderDeviceCoder TranscoderDevice = "coder"
 )
@@ -914,8 +904,6 @@ const (
 	VisionDetectorQrCodes  VisionDetector = "qr-codes"
 	VisionDetectorHumans   VisionDetector = "humans"
 )
-
-type WebrtcPreferVideoCodec string
 
 type WebrtcTransport string
 
@@ -1124,9 +1112,9 @@ type Agent interface {
 	// Agents's metrics and other statistical information.
 	SetStats(WatcherAgentStats) Agent
 	// List of streams info that have this agent in their inputs
-	Streams() []any
+	Streams() []WatcherAgentConfigStreamsItem
 	// List of streams info that have this agent in their inputs
-	SetStreams([]any) Agent
+	SetStreams([]WatcherAgentConfigStreamsItem) Agent
 }
 
 type AgentConfigBase interface {
@@ -1456,46 +1444,6 @@ type AuthSpec interface {
 	SetURL(AuthURL) AuthSpec
 }
 
-type BalancerConfig interface {
-	// Balancing mode
-	Mode() *BalancerConfigMode
-	// Balancing mode
-	SetMode(BalancerConfigMode) BalancerConfig
-	// Globally unique balancer name.
-	// Format: media_name (media_name)
-	Name() *MediaName
-	// Globally unique balancer name.
-	// Format: media_name (media_name)
-	SetName(MediaName) BalancerConfig
-	// Balancer will distribute requests between these servers.
-	Servers() []BalancerServerConfig
-	// Balancer will distribute requests between these servers.
-	SetServers([]BalancerServerConfig) BalancerConfig
-}
-
-type BalancerServerConfig interface {
-	// Client will be redirected to the peer if its IP belongs to one of these countries.
-	Countries() []Iso3166
-	// Client will be redirected to the peer if its IP belongs to one of these countries.
-	SetCountries([]Iso3166) BalancerServerConfig
-	// This flag allows to redirect a request to this peer if "countries" list not matched.
-	CountriesDefault() *bool
-	// This flag allows to redirect a request to this peer if "countries" list not matched.
-	SetCountriesDefault(bool) BalancerServerConfig
-	// Maximum allowed bitrate, request is redirecting if current bitrate is lower.
-	// Format: speed (speed)
-	MaxBitrate() *Speed
-	// Maximum allowed bitrate, request is redirecting if current bitrate is lower.
-	// Format: speed (speed)
-	SetMaxBitrate(Speed) BalancerServerConfig
-	// Hostname of the peer. Can refer to globally defined peer.
-	// Format: server_name (server_name)
-	Name() *ServerName
-	// Hostname of the peer. Can refer to globally defined peer.
-	// Format: server_name (server_name)
-	SetName(ServerName) BalancerServerConfig
-}
-
 // Required: name
 type CacheConfig interface {
 	// A period (in seconds) back from the current moment during which the files are stored.
@@ -1625,7 +1573,105 @@ type CameraInfo interface {
 	SetSerialNumber(string) CameraInfo
 }
 
-type CameraTagWb interface {
+// Camera usage data for billing integration.
+type CameraUsage interface {
+	// The internal identifier of the organization in Watcher.
+	// Example: 12345
+	AccountID() *int
+	// The internal identifier of the organization in Watcher.
+	// Example: 12345
+	SetAccountID(int) CameraUsage
+	// The external identifier of the plan in the operator's own billing system.
+	// This value comes from the preset's billing_external_id field.
+	// Allows operators to bill their subscribers.
+	// Example: billing-plan-456
+	BillingPlanID() *string
+	// The external identifier of the plan in the operator's own billing system.
+	// This value comes from the preset's billing_external_id field.
+	// Allows operators to bill their subscribers.
+	// Example: billing-plan-456
+	SetBillingPlanID(string) CameraUsage
+	// The external identifier of the account in the operator's billing system.
+	// Example: 12345
+	ExternalAccountID() *string
+	// The external identifier of the account in the operator's billing system.
+	// Example: 12345
+	SetExternalAccountID(string) CameraUsage
+	// Start date of the period when the camera was active on this plan (inclusive).
+	// Format: YYYY-MM-DD (ISO 8601 date).
+	// Format: date (date)
+	// Example: 2025-01-01
+	From() *Date
+	// Start date of the period when the camera was active on this plan (inclusive).
+	// Format: YYYY-MM-DD (ISO 8601 date).
+	// Format: date (date)
+	// Example: 2025-01-01
+	SetFrom(Date) CameraUsage
+	// The identifier of the license.
+	// Example: 12345
+	LicenseID() *string
+	// The identifier of the license.
+	// Example: 12345
+	SetLicenseID(string) CameraUsage
+	// The external identifier of the plan in billing system.
+	// This value comes from the preset's external_id field.
+	// Example: episodes-30d-123
+	PlanID() *string
+	// The external identifier of the plan in billing system.
+	// This value comes from the preset's external_id field.
+	// Example: episodes-30d-123
+	SetPlanID(string) CameraUsage
+	// The unique identifier of the camera.
+	// Example: ag-123456
+	StreamName() *string
+	// The unique identifier of the camera.
+	// Example: ag-123456
+	SetStreamName(string) CameraUsage
+	// End date of the period when the camera was active on this plan (inclusive).
+	// Format: YYYY-MM-DD (ISO 8601 date).
+	// Format: date (date)
+	// Example: 2025-01-30
+	To() *Date
+	// End date of the period when the camera was active on this plan (inclusive).
+	// Format: YYYY-MM-DD (ISO 8601 date).
+	// Format: date (date)
+	// Example: 2025-01-30
+	SetTo(Date) CameraUsage
+}
+
+type CameraUsagesList interface {
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	EstimatedCount() *int
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	SetEstimatedCount(int) CameraUsagesList
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	Next() *string
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	SetNext(string) CameraUsagesList
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	Prev() *string
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	SetPrev(string) CameraUsagesList
+	// An object with a list of different timings measured during this API call.
+	Timing() any
+	// An object with a list of different timings measured during this API call.
+	SetTiming(any) CameraUsagesList
+	// List of camera usage entries.
+	Usage() []CameraUsage
+	// List of camera usage entries.
+	SetUsage([]CameraUsage) CameraUsagesList
+	// Collection returns the collection items
+	Collection() []CameraUsage
 }
 
 // Predictions for disk usage.
@@ -1644,6 +1690,82 @@ type CentralDiskPredictions interface {
 	// It can be greater than 100% if streamer can't store estimated amount of data.
 	// Format: percent (percent)
 	SetEstimatedDiskUsage(Percent) CentralDiskPredictions
+}
+
+// Status of Central healthcheck.
+type CentralHealthcheckStatus interface {
+	// List of healthcheck checks with their results.
+	Checks() CentralHealthcheckStatusChecks
+	// List of healthcheck checks with their results.
+	SetChecks(CentralHealthcheckStatusChecks) CentralHealthcheckStatus
+	// Status of the healthcheck.
+	Status() *CentralHealthcheckStatusStatus
+	// Status of the healthcheck.
+	SetStatus(CentralHealthcheckStatusStatus) CentralHealthcheckStatus
+	// Unix timestamp of the last status change.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	StatusChangedAt() *UtcMs
+	// Unix timestamp of the last status change.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	SetStatusChangedAt(UtcMs) CentralHealthcheckStatus
+}
+
+// List of healthcheck checks with their results.
+type CentralHealthcheckStatusChecks interface {
+	// `true` if peer has no `error` in
+	// [stats.config_external_status](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_external_status) field.
+	ConfigExternalOk() *bool
+	// `true` if peer has no `error` in
+	// [stats.config_external_status](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_external_status) field.
+	SetConfigExternalOk(bool) CentralHealthcheckStatusChecks
+	// `true` if peer has no `error` in
+	// [stats.config_error](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_error) field.
+	ConfigOk() *bool
+	// `true` if peer has no `error` in
+	// [stats.config_error](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_error) field.
+	SetConfigOk(bool) CentralHealthcheckStatusChecks
+	// List of errors details
+	ErrorsDetails() []CentralHealthcheckStatusChecksErrorsDetailsItem
+	// List of errors details
+	SetErrorsDetails([]CentralHealthcheckStatusChecksErrorsDetailsItem) CentralHealthcheckStatusChecks
+	// `true` if peer is reachable from central by its credentials
+	Reachable() *bool
+	// `true` if peer is reachable from central by its credentials
+	SetReachable(bool) CentralHealthcheckStatusChecks
+	// `true` if rproxy configuration is valid
+	RproxyOk() *bool
+	// `true` if rproxy configuration is valid
+	SetRproxyOk(bool) CentralHealthcheckStatusChecks
+	// `true` if peer is running
+	Running() *bool
+	// `true` if peer is running
+	SetRunning(bool) CentralHealthcheckStatusChecks
+	// `true` if peer has fewer "ok" to "error" transitions within the last hour than the [limit](https://flussonic.com/doc/api/central/#tag/config/operation/config_get/response%7Cstreamer_healthcheck_fails_threshold).
+	// If `false`, the limit is exceeded and the peer is marked offline until the one-hour sliding window clears enough errors to fall below the limit.
+	Stable() *bool
+	// `true` if peer has fewer "ok" to "error" transitions within the last hour than the [limit](https://flussonic.com/doc/api/central/#tag/config/operation/config_get/response%7Cstreamer_healthcheck_fails_threshold).
+	// If `false`, the limit is exceeded and the peer is marked offline until the one-hour sliding window clears enough errors to fall below the limit.
+	SetStable(bool) CentralHealthcheckStatusChecks
+	// `true` if server time is synchronized between peer and central
+	TimeSynchronized() *bool
+	// `true` if server time is synchronized between peer and central
+	SetTimeSynchronized(bool) CentralHealthcheckStatusChecks
+	// `true` if peer has a valid cluster key
+	ValidClusterKey() *bool
+	// `true` if peer has a valid cluster key
+	SetValidClusterKey(bool) CentralHealthcheckStatusChecks
+}
+
+// Error details
+type CentralHealthcheckStatusChecksErrorsDetailsItem interface {
+	// Error message
+	Error() *string
+	// Error message
+	SetError(string) CentralHealthcheckStatusChecksErrorsDetailsItem
+	// Failed healthcheck rule name
+	Rule() *string
+	// Failed healthcheck rule name
+	SetRule(string) CentralHealthcheckStatusChecksErrorsDetailsItem
 }
 
 type CentralNodeLayoutDecision interface {
@@ -1671,6 +1793,18 @@ type CentralNodeLayoutDecision interface {
 	Role() *CentralNodeRoleRole
 	// Role of node
 	SetRole(CentralNodeRoleRole) CentralNodeLayoutDecision
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	TranscoderDeviceID() *int
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	SetTranscoderDeviceID(int) CentralNodeLayoutDecision
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	TranscoderDeviceType() *TranscoderDevice
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	SetTranscoderDeviceType(TranscoderDevice) CentralNodeLayoutDecision
 }
 
 type CentralNodeRole interface {
@@ -1697,6 +1831,10 @@ type CentralStreamLayout interface {
 	DvrBackups() []ServerName
 	// Current nodes on which the dvr backup is saving
 	SetDvrBackups([]ServerName) CentralStreamLayout
+	// Streamers that have DVR archive for the stream.
+	DvrParts() []ServerName
+	// Streamers that have DVR archive for the stream.
+	SetDvrParts([]ServerName) CentralStreamLayout
 	// Hostname of current inference node on which stream analytics running.
 	// Format: server_name (server_name)
 	Inference() *ServerName
@@ -1715,6 +1853,12 @@ type CentralStreamLayout interface {
 	// History of layout ingest. This field includes only 5 last records.
 	// This field is only returned with explicit `include_ingest_history=true` query param.
 	SetIngestHistory([]CentralStreamLayoutBase) CentralStreamLayout
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	IterationID() *UUID
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	SetIterationID(UUID) CentralStreamLayout
 	// List of decisions made by [layouter](https://flussonic.com/doc/api/layouter/) for each node.
 	// These decisions are used to determine the final layout of the stream.
 	NodeLayoutDecisions() []CentralNodeLayoutDecision
@@ -1725,6 +1869,18 @@ type CentralStreamLayout interface {
 	Originator() *CentralStreamLayoutOriginator
 	// Service or admin user who changed the layout of the stream using an API call.
 	SetOriginator(CentralStreamLayoutOriginator) CentralStreamLayout
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	TranscoderDeviceID() *int
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	SetTranscoderDeviceID(int) CentralStreamLayout
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	TranscoderDeviceType() *TranscoderDevice
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	SetTranscoderDeviceType(TranscoderDevice) CentralStreamLayout
 }
 
 type CentralStreamLayoutBase interface {
@@ -1742,12 +1898,19 @@ type CentralStreamLayoutBase interface {
 	// Hostname of current ingest on which the stream is being captured
 	// Format: server_name (server_name)
 	SetIngest(ServerName) CentralStreamLayoutBase
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	IterationID() *UUID
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	SetIterationID(UUID) CentralStreamLayoutBase
 	// Service or admin user who changed the layout of the stream using an API call.
 	Originator() *CentralStreamLayoutOriginator
 	// Service or admin user who changed the layout of the stream using an API call.
 	SetOriginator(CentralStreamLayoutOriginator) CentralStreamLayoutBase
 }
 
+// Required: name
 type CentralStreamLayoutListItem interface {
 	// Reason why layout was changed
 	ChangeReason() *CentralStreamLayoutChangeReason
@@ -1765,6 +1928,10 @@ type CentralStreamLayoutListItem interface {
 	DvrBackups() []ServerName
 	// Current nodes on which the dvr backup is saving
 	SetDvrBackups([]ServerName) CentralStreamLayoutListItem
+	// Streamers that have DVR archive for the stream.
+	DvrParts() []ServerName
+	// Streamers that have DVR archive for the stream.
+	SetDvrParts([]ServerName) CentralStreamLayoutListItem
 	// Hostname of current inference node on which stream analytics running.
 	// Format: server_name (server_name)
 	Inference() *ServerName
@@ -1783,8 +1950,14 @@ type CentralStreamLayoutListItem interface {
 	// History of layout ingest. This field includes only 5 last records.
 	// This field is only returned with explicit `include_ingest_history=true` query param.
 	SetIngestHistory([]CentralStreamLayoutBase) CentralStreamLayoutListItem
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	IterationID() *UUID
+	// Layout iteration identifier.
+	// Format: uuid (uuid)
+	SetIterationID(UUID) CentralStreamLayoutListItem
 	// Name of the stream
-	Name() *string
+	Name() string
 	// Name of the stream
 	SetName(string) CentralStreamLayoutListItem
 	// List of decisions made by [layouter](https://flussonic.com/doc/api/layouter/) for each node.
@@ -1797,6 +1970,18 @@ type CentralStreamLayoutListItem interface {
 	Originator() *CentralStreamLayoutOriginator
 	// Service or admin user who changed the layout of the stream using an API call.
 	SetOriginator(CentralStreamLayoutOriginator) CentralStreamLayoutListItem
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	TranscoderDeviceID() *int
+	// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+	// Example: 0
+	SetTranscoderDeviceID(int) CentralStreamLayoutListItem
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	TranscoderDeviceType() *TranscoderDevice
+	// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+	// Example: nvenc
+	SetTranscoderDeviceType(TranscoderDevice) CentralStreamLayoutListItem
 }
 
 type CentralStreamLayoutPrediction interface {
@@ -1966,160 +2151,6 @@ type CertificateInfo interface {
 	SetPublicKey(string) CertificateInfo
 }
 
-type ChassisConfig interface {
-	// Private port for API requests to the chassis from coders.
-	APIPort() *ListenSpec
-	// Private port for API requests to the chassis from coders.
-	SetAPIPort(*ListenSpec) ChassisConfig
-	// Shows if auto restart of coders when (re)starting chassis is enabled.
-	AutoReboot() *bool
-	// Shows if auto restart of coders when (re)starting chassis is enabled.
-	SetAutoReboot(bool) ChassisConfig
-	// If `default_gateway` parameters are set the individual interfaces config,
-	// this gateway is only used for checking license and updates.
-	// Otherwise, it is used as gateway for all traffic.
-	// Example: streaming
-	DefaultGatewayInterface() *string
-	// If `default_gateway` parameters are set the individual interfaces config,
-	// this gateway is only used for checking license and updates.
-	// Otherwise, it is used as gateway for all traffic.
-	// Example: streaming
-	SetDefaultGatewayInterface(string) ChassisConfig
-	// Network interface for automatic reception of IP address from DHCP server.
-	// This interface will be used for launching coders.
-	// Format: interface_name (interface_name)
-	DhcpdIface() *InterfaceName
-	// Network interface for automatic reception of IP address from DHCP server.
-	// This interface will be used for launching coders.
-	// Format: interface_name (interface_name)
-	SetDhcpdIface(InterfaceName) ChassisConfig
-	// Source port for DHCP requests.
-	DhcpdPort() *ListenSpec
-	// Source port for DHCP requests.
-	SetDhcpdPort(*ListenSpec) ChassisConfig
-	// Destination port for DHCP requests.
-	DhcpdPortDest() *ListenSpec
-	// Destination port for DHCP requests.
-	SetDhcpdPortDest(*ListenSpec) ChassisConfig
-	// Directory to boot the device from. This is also where the firmware is downloaded on updates.
-	// Format: disk_path (disk_path)
-	FirmwareBootDir() *DiskPath
-	// Directory to boot the device from. This is also where the firmware is downloaded on updates.
-	// Format: disk_path (disk_path)
-	SetFirmwareBootDir(DiskPath) ChassisConfig
-	// URL for downloading firmware.
-	// Format: url (url)
-	FirmwareHost() *URL
-	// URL for downloading firmware.
-	// Format: url (url)
-	SetFirmwareHost(URL) ChassisConfig
-	// Firmware version installed on the device.
-	FirmwareVersion() *string
-	// Firmware version installed on the device.
-	SetFirmwareVersion(string) ChassisConfig
-	// The name of the chassis server.
-	// Format: server_name (server_name)
-	// Example: coder1.example.com
-	Hostname() *ServerName
-	// The name of the chassis server.
-	// Format: server_name (server_name)
-	// Example: coder1.example.com
-	SetHostname(ServerName) ChassisConfig
-	// Shows if LCD monitor capabilities are enabled in the firmware.
-	Lcd() *bool
-	// Shows if LCD monitor capabilities are enabled in the firmware.
-	SetLcd(bool) ChassisConfig
-	// List of NTP server host names or IP addresses
-	NtpServers() []string
-	// List of NTP server host names or IP addresses
-	SetNtpServers([]string) ChassisConfig
-	// Network interface for NTP daemon.
-	// Format: interface_name (interface_name)
-	NtpdIface() *InterfaceName
-	// Network interface for NTP daemon.
-	// Format: interface_name (interface_name)
-	SetNtpdIface(InterfaceName) ChassisConfig
-	// Port for NTP daemon.
-	NtpdPort() *ListenSpec
-	// Port for NTP daemon.
-	SetNtpdPort(*ListenSpec) ChassisConfig
-	// Coder product name
-	ProductName() *ChassisProduct
-	// Coder product name
-	SetProductName(ChassisProduct) ChassisConfig
-	// Timeout for restarting coders.
-	RestartCoderTimeout() *int
-	// Timeout for restarting coders.
-	SetRestartCoderTimeout(int) ChassisConfig
-	// Statistics of the chassis connections.
-	Stats() ChassisStats
-	// Statistics of the chassis connections.
-	SetStats(ChassisStats) ChassisConfig
-	// Port for TFTP used for loading program core to the coders.
-	TftpPort() *ListenSpec
-	// Port for TFTP used for loading program core to the coders.
-	SetTftpPort(*ListenSpec) ChassisConfig
-	// TFTP root directory.
-	// Format: disk_path (disk_path)
-	TftpRoot() *DiskPath
-	// TFTP root directory.
-	// Format: disk_path (disk_path)
-	SetTftpRoot(DiskPath) ChassisConfig
-	// Update channel specified in the config file.
-	UpdateChannel() *string
-	// Update channel specified in the config file.
-	SetUpdateChannel(string) ChassisConfig
-}
-
-type ChassisStats interface {
-	// MAC address of the manage0 interface.
-	HardwareID() *string
-	// MAC address of the manage0 interface.
-	SetHardwareID(string) ChassisStats
-	// Hostname of the server.
-	// Example: coder1.example.com
-	Hostname() *string
-	// Hostname of the server.
-	// Example: coder1.example.com
-	SetHostname(string) ChassisStats
-	// The chassis model name.
-	// Example: chassis_model
-	Model() *string
-	// The chassis model name.
-	// Example: chassis_model
-	SetModel(string) ChassisStats
-	// Deprecated field. Will be deleted at 24.10
-	// The latest available version of the firmware, if any. Deprecated. Last available version could be obtained from `chassis_firmwares_list`
-	NextVersion() *string
-	// Deprecated field. Will be deleted at 24.10
-	// The latest available version of the firmware, if any. Deprecated. Last available version could be obtained from `chassis_firmwares_list`
-	SetNextVersion(string) ChassisStats
-	// Whether a system clock synchronized with NTP server
-	NtpClockSynchronized() *bool
-	// Whether a system clock synchronized with NTP server
-	SetNtpClockSynchronized(bool) ChassisStats
-	// The serial number of the chassis.
-	// Example: 2174220024
-	SerialNumber() *string
-	// The serial number of the chassis.
-	// Example: 2174220024
-	SetSerialNumber(string) ChassisStats
-	// Chassis system time (in UTC milliseconds)
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	SystemTime() *UtcMs
-	// Chassis system time (in UTC milliseconds)
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	SetSystemTime(UtcMs) ChassisStats
-	// Deprecated field. Will be deleted at 24.10
-	// Full version number of the firmware. Deprecated. Version could be found at `chassis_config/firmware_version`
-	// Example: 21.09.1-234
-	Version() *string
-	// Deprecated field. Will be deleted at 24.10
-	// Full version number of the firmware. Deprecated. Version could be found at `chassis_config/firmware_version`
-	// Example: 21.09.1-234
-	SetVersion(string) ChassisStats
-}
-
 type ClosedCaptions interface {
 	// Language of closed captions.
 	// Example: eng
@@ -2233,10 +2264,16 @@ type ClusterHealthStreamerStats interface {
 	Config() ClusterHealthStreamerStatsConfig
 	// Streamer config info.
 	SetConfig(ClusterHealthStreamerStatsConfig) ClusterHealthStreamerStats
+	// Information about current external config status
+	ConfigExternalStatus() ConfigExternalErrorStatus
+	// Information about current external config status
+	SetConfigExternalStatus(ConfigExternalErrorStatus) ClusterHealthStreamerStats
 	// CPU usage info.
 	Cpu() ClusterHealthStreamerStatsCpu
 	// CPU usage info.
 	SetCpu(ClusterHealthStreamerStatsCpu) ClusterHealthStreamerStats
+	HealthcheckStatus() CentralHealthcheckStatus
+	SetHealthcheckStatus(CentralHealthcheckStatus) ClusterHealthStreamerStats
 	// Hostname of streamer.
 	// Format: server_name (server_name)
 	Hostname() ServerName
@@ -2251,6 +2288,10 @@ type ClusterHealthStreamerStats interface {
 	Network() ClusterHealthStreamerStatsNetwork
 	// Network IO info.
 	SetNetwork(ClusterHealthStreamerStatsNetwork) ClusterHealthStreamerStats
+	// Predictions of future stats based on the current state of the cluster.
+	Predictions() ClusterHealthStreamerStatsPredictions
+	// Predictions of future stats based on the current state of the cluster.
+	SetPredictions(ClusterHealthStreamerStatsPredictions) ClusterHealthStreamerStats
 	Status() *ClusterHealthStatus
 	SetStatus(ClusterHealthStatus) ClusterHealthStreamerStats
 	// Total disk usage info.
@@ -2369,6 +2410,12 @@ type ClusterHealthStreamerStatsNetworkOutKbit interface {
 	// Outbound network usage on the server.
 	// Format: speed (speed)
 	SetUsage(Speed) ClusterHealthStreamerStatsNetworkOutKbit
+}
+
+// Predictions of future stats based on the current state of the cluster.
+type ClusterHealthStreamerStatsPredictions interface {
+	Disk() CentralDiskPredictions
+	SetDisk(CentralDiskPredictions) ClusterHealthStreamerStatsPredictions
 }
 
 // Total disk usage info.
@@ -2590,12 +2637,26 @@ type DecklinkConfig interface {
 
 // Base information about domain
 type DomainBase interface {
+	// Domain code. Auto-generated if not set.
+	// Example: 54321
+	DomainCode() *string
+	// Domain code. Auto-generated if not set.
+	// Example: 54321
+	SetDomainCode(string) DomainBase
 	// Domain ID.
 	// Example: 123
 	ID() *int
 	// Domain ID.
 	// Example: 123
 	SetID(int) DomainBase
+	// Owner user ID.
+	// Example: 1
+	OwnerID() *int
+	// Owner user ID.
+	// Example: 1
+	SetOwnerID(int) DomainBase
+	Settings() DomainSettings
+	SetSettings(DomainSettings) DomainBase
 	// The name of the domain.
 	// Example: domain1
 	Title() *string
@@ -2612,6 +2673,48 @@ type DomainConfig interface {
 	SetAppearance(AppearanceConfig) DomainConfig
 	Mail() MailSpec
 	SetMail(MailSpec) DomainConfig
+}
+
+// Domain settings
+type DomainSettings interface {
+	// Locale id used as the default for this domain when a user has no personal locale
+	// and for UI fallbacks. Should match a locale id returned by
+	// `GET /domains/{id}/locales` in the Client API (for example `en` or `ru`).
+	// Example: en
+	DefaultLocale() *string
+	// Locale id used as the default for this domain when a user has no personal locale
+	// and for UI fallbacks. Should match a locale id returned by
+	// `GET /domains/{id}/locales` in the Client API (for example `en` or `ru`).
+	// Example: en
+	SetDefaultLocale(string) DomainSettings
+	// Default organization ID.
+	// Example: 1
+	DefaultOrganizationID() *int
+	// Default organization ID.
+	// Example: 1
+	SetDefaultOrganizationID(int) DomainSettings
+	// When enabled, the domain is provisioned with a demo user that uses the default
+	// credentials `demo` / `demo`. That account can access demo cameras so you can let
+	// visitors explore the interface and see representative footage without handing
+	// out production logins.
+	DemoAccessEnabled() *bool
+	// When enabled, the domain is provisioned with a demo user that uses the default
+	// credentials `demo` / `demo`. That account can access demo cameras so you can let
+	// visitors explore the interface and see representative footage without handing
+	// out production logins.
+	SetDemoAccessEnabled(bool) DomainSettings
+	// DNS names for domain. First should start with license_id.
+	// Example: [12345.example.com]
+	DNSNames() []string
+	// DNS names for domain. First should start with license_id.
+	// Example: [12345.example.com]
+	SetDNSNames([]string) DomainSettings
+	// Peeklio license ID.
+	// Example: 12345
+	LicenseID() *int
+	// Peeklio license ID.
+	// Example: 12345
+	SetLicenseID(int) DomainSettings
 }
 
 type DrmBase interface {
@@ -4545,6 +4648,7 @@ type DvrCapacityStats interface {
 	SetUsedIndex(Bytes) DvrCapacityStats
 }
 
+// Required: name, root
 type DvrConfig interface {
 	// The number of disks to write the archive.
 	Active() *int
@@ -4635,9 +4739,9 @@ type DvrConfig interface {
 	// Format: dvr_url (dvr_url)
 	SetRoot(DvrURL) DvrConfig
 	// The runtime statistics about DVR.
-	Stats() DvrStorageConfigStats
+	Stats() DvrConfigStats
 	// The runtime statistics about DVR.
-	SetStats(DvrStorageConfigStats) DvrConfig
+	SetStats(DvrConfigStats) DvrConfig
 	// Maximum disk consumption in bytes. When this limit is reached,
 	// the oldest segment of the recording will be overridden by later data.
 	// This option affects both continuous recording and locked episodes (see `episodes_url`).
@@ -4654,6 +4758,58 @@ type DvrConfig interface {
 	// Format: bytes (bytes)
 	// Example: 4e+11
 	SetStorageLimit(Bytes) DvrConfig
+}
+
+// The runtime statistics about DVR.
+type DvrConfigStats interface {
+	// The number of blobs on the disk that are enlisted in individual stream indexes.
+	// It must be equal to blobs_count_db and can be different in case of software
+	// or hardware errors.
+	BlobsCount() *int
+	// The number of blobs on the disk that are enlisted in individual stream indexes.
+	// It must be equal to blobs_count_db and can be different in case of software
+	// or hardware errors.
+	SetBlobsCount(int) DvrConfigStats
+	// The number of blobs on the disk according to centralized Raid DB that is
+	// used to allocate blobs across whole storage.
+	BlobsCountDb() *int
+	// The number of blobs on the disk according to centralized Raid DB that is
+	// used to allocate blobs across whole storage.
+	SetBlobsCountDb(int) DvrConfigStats
+	// The runtime DVR errors.
+	Errors() DvrStorageErrors
+	// The runtime DVR errors.
+	SetErrors(DvrStorageErrors) DvrConfigStats
+	// Disk capacity in bytes.
+	// Format: bytes (bytes)
+	Size() *Bytes
+	// Disk capacity in bytes.
+	// Format: bytes (bytes)
+	SetSize(Bytes) DvrConfigStats
+	// Disk utilization percentage.
+	// Format: percent (percent)
+	Usage() *Percent
+	// Disk utilization percentage.
+	// Format: percent (percent)
+	SetUsage(Percent) DvrConfigStats
+	// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
+	// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
+	// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
+	// database and repairing is required.
+	// Format: bytes (bytes)
+	Used() *Bytes
+	// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
+	// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
+	// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
+	// database and repairing is required.
+	// Format: bytes (bytes)
+	SetUsed(Bytes) DvrConfigStats
+	// Used disk space in bytes according to internal database index.
+	// Format: bytes (bytes)
+	UsedIndex() *Bytes
+	// Used disk space in bytes according to internal database index.
+	// Format: bytes (bytes)
+	SetUsedIndex(Bytes) DvrConfigStats
 }
 
 // Required: from, depth, ranges
@@ -4763,96 +4919,6 @@ type DvrRange interface {
 	SetOpenedAt(UtcMs) DvrRange
 }
 
-// Required: name, root
-type DvrStorageConfig interface {
-	// The number of disks to write the archive.
-	Active() *int
-	// The number of disks to write the archive.
-	SetActive(int) DvrStorageConfig
-	// RAID disks mounted on the server.
-	Disks() []RaidDiskConfig
-	// RAID disks mounted on the server.
-	SetDisks([]RaidDiskConfig) DvrStorageConfig
-	// A directory on an SSD disk where the data will be cached.
-	// Format: disk_path (disk_path)
-	Index() *DiskPath
-	// A directory on an SSD disk where the data will be cached.
-	// Format: disk_path (disk_path)
-	SetIndex(DiskPath) DvrStorageConfig
-	// DVR configuration name.
-	// Format: dvr_name (dvr_name)
-	Name() DvrName
-	// DVR configuration name.
-	// Format: dvr_name (dvr_name)
-	SetName(DvrName) DvrStorageConfig
-	// This value is present if RAID (redundant array of independent disks) is enabled. Learn more in [Flussonic RAID for DVR](https://flussonic.com/doc/extend-video-storage-on-fly/).
-	Raid() *DvrRaidLevel
-	// This value is present if RAID (redundant array of independent disks) is enabled. Learn more in [Flussonic RAID for DVR](https://flussonic.com/doc/extend-video-storage-on-fly/).
-	SetRaid(DvrRaidLevel) DvrStorageConfig
-	// A path where the DVR archive is stored.
-	// Format: dvr_url (dvr_url)
-	Root() DvrURL
-	// A path where the DVR archive is stored.
-	// Format: dvr_url (dvr_url)
-	SetRoot(DvrURL) DvrStorageConfig
-	// The runtime statistics about DVR.
-	Stats() DvrStorageConfigStats
-	// The runtime statistics about DVR.
-	SetStats(DvrStorageConfigStats) DvrStorageConfig
-}
-
-// The runtime statistics about DVR.
-type DvrStorageConfigStats interface {
-	// The number of blobs on the disk that are enlisted in individual stream indexes.
-	// It must be equal to blobs_count_db and can be different in case of software
-	// or hardware errors.
-	BlobsCount() *int
-	// The number of blobs on the disk that are enlisted in individual stream indexes.
-	// It must be equal to blobs_count_db and can be different in case of software
-	// or hardware errors.
-	SetBlobsCount(int) DvrStorageConfigStats
-	// The number of blobs on the disk according to centralized Raid DB that is
-	// used to allocate blobs across whole storage.
-	BlobsCountDb() *int
-	// The number of blobs on the disk according to centralized Raid DB that is
-	// used to allocate blobs across whole storage.
-	SetBlobsCountDb(int) DvrStorageConfigStats
-	// The runtime DVR errors.
-	Errors() DvrStorageErrors
-	// The runtime DVR errors.
-	SetErrors(DvrStorageErrors) DvrStorageConfigStats
-	// Disk capacity in bytes.
-	// Format: bytes (bytes)
-	Size() *Bytes
-	// Disk capacity in bytes.
-	// Format: bytes (bytes)
-	SetSize(Bytes) DvrStorageConfigStats
-	// Disk utilization percentage.
-	// Format: percent (percent)
-	Usage() *Percent
-	// Disk utilization percentage.
-	// Format: percent (percent)
-	SetUsage(Percent) DvrStorageConfigStats
-	// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
-	// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
-	// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
-	// database and repairing is required.
-	// Format: bytes (bytes)
-	Used() *Bytes
-	// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
-	// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
-	// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
-	// database and repairing is required.
-	// Format: bytes (bytes)
-	SetUsed(Bytes) DvrStorageConfigStats
-	// Used disk space in bytes according to internal database index.
-	// Format: bytes (bytes)
-	UsedIndex() *Bytes
-	// Used disk space in bytes according to internal database index.
-	// Format: bytes (bytes)
-	SetUsedIndex(Bytes) DvrStorageConfigStats
-}
-
 type DvrStorageErrors interface {
 	// Total number of collapsed segments while writing to the archive. Collapsed segments are pack of segments written together occur due to lack of storage performance.
 	CollapsedWriteCount() *int
@@ -4893,9 +4959,9 @@ type Error interface {
 	// a unique identifier for this particular occurrence of the problem
 	SetID(string) Error
 	// a meta object containing non-standard meta-information about the error.
-	Meta() map[string]string
+	Meta() map[string]any
 	// a meta object containing non-standard meta-information about the error.
-	SetMeta(map[string]string) Error
+	SetMeta(map[string]any) Error
 	// an object containing references to the source of the error
 	Source() ErrorSource
 	// an object containing references to the source of the error
@@ -5238,15 +5304,6 @@ type EventsList interface {
 	SetTiming(any) EventsList
 	// Collection returns the collection items
 	Collection() []Event
-}
-
-type FileProcessorConfig interface {
-	// The directory where Flussonic puts output files.
-	// Format: disk_path (disk_path)
-	Path() *DiskPath
-	// The directory where Flussonic puts output files.
-	// Format: disk_path (disk_path)
-	SetPath(DiskPath) FileProcessorConfig
 }
 
 // Update camera firmware
@@ -5647,6 +5704,10 @@ type InputCounters interface {
 	ErrorsLostPackets() *int
 	// RTP, MPEG-TS or other protocols have enough information to tell how many packets were lost
 	SetErrorsLostPackets(int) InputCounters
+	// Number of connection restarts when very long jump of stream timestamp detected.
+	ErrorsTSJumpRestarts() *int
+	// Number of connection restarts when very long jump of stream timestamp detected.
+	SetErrorsTSJumpRestarts(int) InputCounters
 	// how many times PAT was missing during 0,5 seconds or pid 0 misses PAT
 	// `PAT_error`
 	ErrorsTSPat() *int
@@ -5739,6 +5800,8 @@ type InputCounters interface {
 	SetSdi(InputSdiCounters) InputCounters
 	Srt() InputSrtCounters
 	SetSrt(InputSrtCounters) InputCounters
+	UDPMpegts() InputUDPMpegtsCounters
+	SetUDPMpegts(InputUDPMpegtsCounters) InputCounters
 	// Number of secondary inputs that have no problems.
 	// Example: 2
 	ValidSecondaryInputs() *int
@@ -5967,6 +6030,14 @@ type InputRTPCounters interface {
 	ErrorsLostPackets() *int
 	// RTP have enough information to tell how many packets were lost
 	SetErrorsLostPackets(int) InputRTPCounters
+	// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+	// Each increment represents a synchronization with potentially incorrect camera time.
+	// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+	ErrorsSrClockDeviation() *int
+	// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+	// Each increment represents a synchronization with potentially incorrect camera time.
+	// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+	SetErrorsSrClockDeviation(int) InputRTPCounters
 	// How many frames received for this channel
 	Frames() *int
 	// How many frames received for this channel
@@ -6302,6 +6373,10 @@ type InputStats interface {
 	ErrorsLostPackets() *int
 	// RTP, MPEG-TS or other protocols have enough information to tell how many packets were lost
 	SetErrorsLostPackets(int) InputStats
+	// Number of connection restarts when very long jump of stream timestamp detected.
+	ErrorsTSJumpRestarts() *int
+	// Number of connection restarts when very long jump of stream timestamp detected.
+	SetErrorsTSJumpRestarts(int) InputStats
 	// how many times PAT was missing during 0,5 seconds or pid 0 misses PAT
 	// `PAT_error`
 	ErrorsTSPat() *int
@@ -6436,6 +6511,8 @@ type InputStats interface {
 	// The time period during which no frames were received per each track according to `media_info`
 	// Example: [1284]
 	SetTSDelayPerTracks([]Ticks) InputStats
+	UDPMpegts() InputUDPMpegtsCounters
+	SetUDPMpegts(InputUDPMpegtsCounters) InputStats
 	// Deprecated field. Will be deleted at 25.03
 	// Final URL after redirects.
 	// Deprecated because was never actually used.
@@ -6476,11 +6553,29 @@ type InputStatsStopEventsItem interface {
 	SetTimestamp(UtcMs) InputStatsStopEventsItem
 }
 
-type IptvConfig interface {
-	// DB connection string.
-	Database() *string
-	// DB connection string.
-	SetDatabase(string) IptvConfig
+// Counters for MPEG-TS carried over a plain UDP input (including multicast).
+// Please note that if multiple streams use the same UDP multicast MPTS input,
+// counter values are repeated per stream (same receive on the wire).
+// Do not sum them across streams.
+type InputUDPMpegtsCounters interface {
+	// Total number of payload bytes read from the UDP socket for this input.
+	// Format: bytes (bytes)
+	Bytes() *Bytes
+	// Total number of payload bytes read from the UDP socket for this input.
+	// Format: bytes (bytes)
+	SetBytes(Bytes) InputUDPMpegtsCounters
+	// Number of UDP packets whose MPEG-TS payload length is **not** a multiple of 188 bytes.
+	NotAlignedPackets() *int
+	// Number of UDP packets whose MPEG-TS payload length is **not** a multiple of 188 bytes.
+	SetNotAlignedPackets(int) InputUDPMpegtsCounters
+	// Total number of UDP packets successfully received for this input.
+	Packets() *int
+	// Total number of UDP packets successfully received for this input.
+	SetPackets(int) InputUDPMpegtsCounters
+	// Number of UDP packets which are MPEG-TS over RTP (i.e. has 12-byte RTP header).
+	RTPPackets() *int
+	// Number of UDP packets which are MPEG-TS over RTP (i.e. has 12-byte RTP header).
+	SetRTPPackets(int) InputUDPMpegtsCounters
 }
 
 type LetsencryptRequest interface {
@@ -6801,6 +6896,18 @@ type MultiplexerStats interface {
 	// Bitrate of the MPTS stream, configured or autotuned.
 	// Format: speed (speed)
 	SetBitrate(Speed) MultiplexerStats
+	// Number of network errors between transponder and ECMG.
+	EcmgNetworkErrors() *int
+	// Number of network errors between transponder and ECMG.
+	SetEcmgNetworkErrors(int) MultiplexerStats
+	// Number of EMM received from EMMG.
+	EmmCount() *int
+	// Number of EMM received from EMMG.
+	SetEmmCount(int) MultiplexerStats
+	// Number of network errors between transponder and EMMG.
+	EmmgNetworkErrors() *int
+	// Number of network errors between transponder and EMMG.
+	SetEmmgNetworkErrors(int) MultiplexerStats
 	// The encoded bytes count.
 	// Format: bytes (bytes)
 	Encoded() *Bytes
@@ -6851,6 +6958,16 @@ type MultiplexerStats interface {
 	Programs() []TransponderProgramStats
 	// Per pid statistics for MPEG-TS encoding
 	SetPrograms([]TransponderProgramStats) MultiplexerStats
+	// Number of successfully completed key rotations.
+	RotatedKeysCount() *int
+	// Number of successfully completed key rotations.
+	SetRotatedKeysCount(int) MultiplexerStats
+	// Number of scrambled bytes.
+	// Format: bytes (bytes)
+	ScrambledBytes() *Bytes
+	// Number of scrambled bytes.
+	// Format: bytes (bytes)
+	SetScrambledBytes(Bytes) MultiplexerStats
 	// The stuff packets count.
 	Stuffing() *int
 	// The stuff packets count.
@@ -6885,6 +7002,249 @@ type MultiplexerStats interface {
 	SetTSOverflow(bool) MultiplexerStats
 }
 
+type NmosConfig interface {
+	// interface to which all receivers and senders will be bound
+	BindToDevice() *string
+	// interface to which all receivers and senders will be bound
+	SetBindToDevice(string) NmosConfig
+	// Whether NMOS is enabled for stream or not.
+	Enabled() *bool
+	// Whether NMOS is enabled for stream or not.
+	SetEnabled(bool) NmosConfig
+}
+
+type Nvr interface {
+	// NVR identifier
+	// Example: 1
+	ID() *int
+	// NVR identifier
+	// Example: 1
+	SetID(int) Nvr
+	// Additional note for the NVR
+	// Example: Note
+	Note() *string
+	// Additional note for the NVR
+	// Example: Note
+	SetNote(string) Nvr
+	// Organization information
+	Organization() OrganizationBase
+	// Organization information
+	SetOrganization(OrganizationBase) Nvr
+	Stats() NvrStats
+	SetStats(NvrStats) Nvr
+	Sync() NvrSyncSettings
+	SetSync(NvrSyncSettings) Nvr
+	// NVR title
+	// Example: NVR Title
+	Title() *string
+	// NVR title
+	// Example: NVR Title
+	SetTitle(string) Nvr
+	// User permissions for this NVR
+	UserPermissions() NvrPermissions
+	// User permissions for this NVR
+	SetUserPermissions(NvrPermissions) Nvr
+}
+
+type NvrBase interface {
+	// Additional note for the NVR
+	// Example: Note
+	Note() *string
+	// Additional note for the NVR
+	// Example: Note
+	SetNote(string) NvrBase
+	Stats() NvrStats
+	SetStats(NvrStats) NvrBase
+	// NVR title
+	// Example: NVR Title
+	Title() *string
+	// NVR title
+	// Example: NVR Title
+	SetTitle(string) NvrBase
+}
+
+// Status of NVR healthcheck. Updated every minute.
+type NvrHealthcheckStatus interface {
+	// List of healthcheck checks with their results.
+	Checks() NvrHealthcheckStatusChecks
+	// List of healthcheck checks with their results.
+	SetChecks(NvrHealthcheckStatusChecks) NvrHealthcheckStatus
+	// Status of the healthcheck.
+	Status() *NvrHealthcheckStatusStatus
+	// Status of the healthcheck.
+	SetStatus(NvrHealthcheckStatusStatus) NvrHealthcheckStatus
+	// Unix timestamp of the last status change.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	StatusChangedAt() *UtcMs
+	// Unix timestamp of the last status change.
+	// Format: utc_ms (Unix timestamp in milliseconds)
+	SetStatusChangedAt(UtcMs) NvrHealthcheckStatus
+}
+
+// List of healthcheck checks with their results.
+type NvrHealthcheckStatusChecks interface {
+	// `true` if NVR is reachable from cloud
+	Reachable() *bool
+	// `true` if NVR is reachable from cloud
+	SetReachable(bool) NvrHealthcheckStatusChecks
+}
+
+type NvrList interface {
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	EstimatedCount() *int
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	SetEstimatedCount(int) NvrList
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	Next() *string
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	SetNext(string) NvrList
+	// List of NVR.
+	Nvrs() []Nvr
+	// List of NVR.
+	SetNvrs([]Nvr) NvrList
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	Prev() *string
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	SetPrev(string) NvrList
+	// An object with a list of different timings measured during this API call.
+	Timing() any
+	// An object with a list of different timings measured during this API call.
+	SetTiming(any) NvrList
+	// Collection returns the collection items
+	Collection() []Nvr
+}
+
+// User permissions for NVR
+type NvrPermissions interface {
+	// Whether the user can edit NVR settings. Such as title, note, api key, etc.
+	CanEditSettings() *bool
+	// Whether the user can edit NVR settings. Such as title, note, api key, etc.
+	SetCanEditSettings(bool) NvrPermissions
+	// Whether the user can sync NVR with the Cloud
+	CanSync() *bool
+	// Whether the user can sync NVR with the Cloud
+	SetCanSync(bool) NvrPermissions
+}
+
+// NVR statistics
+type NvrStats interface {
+	HealthcheckStatus() NvrHealthcheckStatus
+	SetHealthcheckStatus(NvrHealthcheckStatus) NvrStats
+	Streams() NvrStreamsStats
+	SetStreams(NvrStreamsStats) NvrStats
+}
+
+type NvrStreamSettings interface {
+	// Audio settings for the stream.
+	Audio() NvrStreamSettingsAudio
+	// Audio settings for the stream.
+	SetAudio(NvrStreamSettingsAudio) NvrStreamSettings
+	// A publishable stream.
+	// Example: false
+	CanPublish() *bool
+	// A publishable stream.
+	// Example: false
+	SetCanPublish(bool) NvrStreamSettings
+	// Whether a stream is disabled. Disabled streams are inactive and do not run.
+	// Displayed only with the API calls.
+	// Example: false
+	Disabled() *bool
+	// Whether a stream is disabled. Disabled streams are inactive and do not run.
+	// Displayed only with the API calls.
+	// Example: false
+	SetDisabled(bool) NvrStreamSettings
+	// DVR configuraton.
+	Dvr() StreamDvrSpec
+	// DVR configuraton.
+	SetDvr(StreamDvrSpec) NvrStreamSettings
+	// List of stream inputs.
+	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
+	Inputs() []StreamInput
+	// List of stream inputs.
+	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
+	SetInputs([]StreamInput) NvrStreamSettings
+	// Onvif configuration
+	Onvif() StreamOnvifConfig
+	// Onvif configuration
+	SetOnvif(StreamOnvifConfig) NvrStreamSettings
+	// Whether a stream is `static` or not.
+	// If set to `True` the server will try to keep this stream running even if
+	// there are no viewers or errors encountered.
+	// Streamer restarts *all* `static` streams even if any internal errors occur
+	// and the `static` streams crash.
+	// Example: true
+	Static() *bool
+	// Whether a stream is `static` or not.
+	// If set to `True` the server will try to keep this stream running even if
+	// there are no viewers or errors encountered.
+	// Streamer restarts *all* `static` streams even if any internal errors occur
+	// and the `static` streams crash.
+	// Example: true
+	SetStatic(bool) NvrStreamSettings
+	// Video analytics parameters.
+	Vision() VisionSpec
+	// Video analytics parameters.
+	SetVision(VisionSpec) NvrStreamSettings
+}
+
+// Audio settings for the stream.
+type NvrStreamSettingsAudio interface {
+	// A flag showing if the audio is captured (false) or not (true) from the stream.
+	// Example: false
+	Disabled() *bool
+	// A flag showing if the audio is captured (false) or not (true) from the stream.
+	// Example: false
+	SetDisabled(bool) NvrStreamSettingsAudio
+	// Audio codec (the AAC codec is used by default).
+	TranscodeAudioCodec() *FrameAudioCodec
+	// Audio codec (the AAC codec is used by default).
+	SetTranscodeAudioCodec(FrameAudioCodec) NvrStreamSettingsAudio
+}
+
+// NVR streams statistics
+type NvrStreamsStats interface {
+	// Number of disabled streams
+	Disabled() *int
+	// Number of disabled streams
+	SetDisabled(int) NvrStreamsStats
+	// Number of streams with error
+	Error() *int
+	// Number of streams with error
+	SetError(int) NvrStreamsStats
+	// Number of running streams
+	Running() *int
+	// Number of running streams
+	SetRunning(int) NvrStreamsStats
+	// Total number of streams
+	Total() *int
+	// Total number of streams
+	SetTotal(int) NvrStreamsStats
+	// Number of waiting streams
+	Waiting() *int
+	// Number of waiting streams
+	SetWaiting(int) NvrStreamsStats
+}
+
+// NVR synchronization settings
+type NvrSyncSettings interface {
+	// Enables or disables automatic background synchronization of episodes with NVR.
+	// Example: true
+	Episodes() *bool
+	// Enables or disables automatic background synchronization of episodes with NVR.
+	// Example: true
+	SetEpisodes(bool) NvrSyncSettings
+}
+
 type OnOff interface {
 	Mode() *OnOffMode
 	SetMode(OnOffMode) OnOff
@@ -6893,6 +7253,175 @@ type OnOff interface {
 type OnOffAuto interface {
 	Mode() *OnOffAutoMode
 	SetMode(OnOffAutoMode) OnOffAuto
+}
+
+// Parameters for starting ONVIF camera discovery on the local network.
+type OnvifDiscoverRequest interface {
+	// IP address of a specific camera to probe via ONVIF. If omitted, a full network broadcast discovery is started.
+	// Example: 192.168.0.11
+	Address() *string
+	// IP address of a specific camera to probe via ONVIF. If omitted, a full network broadcast discovery is started.
+	// Example: 192.168.0.11
+	SetAddress(string) OnvifDiscoverRequest
+	// ONVIF login to authenticate with discovered cameras.
+	// Example: admin
+	Login() *string
+	// ONVIF login to authenticate with discovered cameras.
+	// Example: admin
+	SetLogin(string) OnvifDiscoverRequest
+	// ONVIF password to authenticate with discovered cameras.
+	// Example: admin
+	Password() *string
+	// ONVIF password to authenticate with discovered cameras.
+	// Example: admin
+	SetPassword(string) OnvifDiscoverRequest
+}
+
+// A camera discovered on the local network via the ONVIF protocol.
+type OnvifDiscoveredDevice interface {
+	// ONVIF device service endpoint URL. Present when the camera supports ONVIF —
+	// a non-empty value indicates that ONVIF services are available at this address.
+	// Example: http://192.168.1.100:80/onvif/device_service
+	Endpoint() *string
+	// ONVIF device service endpoint URL. Present when the camera supports ONVIF —
+	// a non-empty value indicates that ONVIF services are available at this address.
+	// Example: http://192.168.1.100:80/onvif/device_service
+	SetEndpoint(string) OnvifDiscoveredDevice
+	// Error message if the camera could not be probed.
+	Error() *string
+	// Error message if the camera could not be probed.
+	SetError(string) OnvifDiscoveredDevice
+	// IP address of the discovered camera.
+	// Example: 192.168.1.100
+	IP() *string
+	// IP address of the discovered camera.
+	// Example: 192.168.1.100
+	SetIP(string) OnvifDiscoveredDevice
+	// Whether this camera is already added to Watcher as a stream.
+	IsKnown() *bool
+	// Whether this camera is already added to Watcher as a stream.
+	SetIsKnown(bool) OnvifDiscoveredDevice
+	// Camera manufacturer name reported via ONVIF.
+	// Example: Hikvision
+	Manufacturer() *string
+	// Camera manufacturer name reported via ONVIF.
+	// Example: Hikvision
+	SetManufacturer(string) OnvifDiscoveredDevice
+	// Camera model name reported via ONVIF.
+	// Example: DS-2CD2143G2-I
+	Model() *string
+	// Camera model name reported via ONVIF.
+	// Example: DS-2CD2143G2-I
+	SetModel(string) OnvifDiscoveredDevice
+	// Whether the camera reports PTZ support via ONVIF. Note that this value is unreliable —
+	// many manufacturers use the same firmware for both PTZ and fixed camera models,
+	// so both may report PTZ support regardless of whether physical motors are present.
+	Ptz() *bool
+	// Whether the camera reports PTZ support via ONVIF. Note that this value is unreliable —
+	// many manufacturers use the same firmware for both PTZ and fixed camera models,
+	// so both may report PTZ support regardless of whether physical motors are present.
+	SetPtz(bool) OnvifDiscoveredDevice
+	// List of media streams (ONVIF profiles) available on this camera.
+	Streams() []OnvifDiscoveredStream
+	// List of media streams (ONVIF profiles) available on this camera.
+	SetStreams([]OnvifDiscoveredStream) OnvifDiscoveredDevice
+}
+
+type OnvifDiscoveredDevices interface {
+	// List of discovered cameras, each with their available streams.
+	Devices() []OnvifDiscoveredDevice
+	// List of discovered cameras, each with their available streams.
+	SetDevices([]OnvifDiscoveredDevice) OnvifDiscoveredDevices
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	EstimatedCount() *int
+	// Estimated total number of records for the query (regardless of the cursors).
+	// Example: 5
+	SetEstimatedCount(int) OnvifDiscoveredDevices
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	Next() *string
+	// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+	SetNext(string) OnvifDiscoveredDevices
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	Prev() *string
+	// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+	// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+	// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+	SetPrev(string) OnvifDiscoveredDevices
+	// An object with a list of different timings measured during this API call.
+	Timing() any
+	// An object with a list of different timings measured during this API call.
+	SetTiming(any) OnvifDiscoveredDevices
+	// Collection returns the collection items
+	Collection() []OnvifDiscoveredDevice
+}
+
+// A single stream (ONVIF media profile) available on a discovered camera.
+type OnvifDiscoveredStream interface {
+	// Video bitrate in kbps.
+	// Example: 2048
+	Bitrate() *int
+	// Video bitrate in kbps.
+	// Example: 2048
+	SetBitrate(int) OnvifDiscoveredStream
+	// Video codec used by this profile.
+	// Example: H264
+	Codec() *string
+	// Video codec used by this profile.
+	// Example: H264
+	SetCodec(string) OnvifDiscoveredStream
+	// Frames per second.
+	// Example: 25
+	FPS() *int
+	// Frames per second.
+	// Example: 25
+	SetFPS(int) OnvifDiscoveredStream
+	// Video frame height in pixels.
+	// Example: 1080
+	Height() *int
+	// Video frame height in pixels.
+	// Example: 1080
+	SetHeight(int) OnvifDiscoveredStream
+	// Snapshot URL for this profile, obtained via ONVIF GetSnapshotUri.
+	// Per the ONVIF standard this is profile-specific, but in practice many cameras
+	// return the same URL for all profiles.
+	// Example: http://192.168.1.100:80/snapshot.jpg
+	JpegURL() *string
+	// Snapshot URL for this profile, obtained via ONVIF GetSnapshotUri.
+	// Per the ONVIF standard this is profile-specific, but in practice many cameras
+	// return the same URL for all profiles.
+	// Example: http://192.168.1.100:80/snapshot.jpg
+	SetJpegURL(string) OnvifDiscoveredStream
+	// ONVIF media profile token.
+	// Example: Profile_1
+	Profile() *string
+	// ONVIF media profile token.
+	// Example: Profile_1
+	SetProfile(string) OnvifDiscoveredStream
+	// Human-readable name of the ONVIF profile.
+	// Example: Main Stream
+	ProfileName() *string
+	// Human-readable name of the ONVIF profile.
+	// Example: Main Stream
+	SetProfileName(string) OnvifDiscoveredStream
+	// RTSP stream URL for this profile.
+	// Example: rtsp://192.168.1.100:554/stream/main
+	StreamURL() *string
+	// RTSP stream URL for this profile.
+	// Example: rtsp://192.168.1.100:554/stream/main
+	SetStreamURL(string) OnvifDiscoveredStream
+	// Video frame width in pixels.
+	// Example: 1920
+	Width() *int
+	// Video frame width in pixels.
+	// Example: 1920
+	SetWidth(int) OnvifDiscoveredStream
 }
 
 // Required: id, title
@@ -6954,6 +7483,26 @@ type OrganizationPermissions interface {
 	// Is the user a member of the organization.
 	// Example: true
 	SetIsMember(bool) OrganizationPermissions
+	// Permissions related to nvr management.
+	Nvrs() OrganizationPermissionsNvrs
+	// Permissions related to nvr management.
+	SetNvrs(OrganizationPermissionsNvrs) OrganizationPermissions
+}
+
+// Permissions related to nvr management.
+type OrganizationPermissionsNvrs interface {
+	// An indicator of whether the user has control over the nvrs.
+	// Example: true
+	CanEdit() *bool
+	// An indicator of whether the user has control over the nvrs.
+	// Example: true
+	SetCanEdit(bool) OrganizationPermissionsNvrs
+	// An indicator of whether the user can view the nvrs.
+	// Example: true
+	CanView() *bool
+	// An indicator of whether the user can view the nvrs.
+	// Example: true
+	SetCanView(bool) OrganizationPermissionsNvrs
 }
 
 type OrganizationPreset interface {
@@ -6993,6 +7542,10 @@ type OutputMpegtsPids interface {
 	// (usually, all video tracks and then all audio tracks are numbered starting from 1).
 	// * `increment`: track PID = previous track PID + 1.
 	SetDefault(string) OutputMpegtsPids
+	// ECM simulcrypt pid
+	Ecm() *int
+	// ECM simulcrypt pid
+	SetEcm(int) OutputMpegtsPids
 	// Information about a particular media track.
 	Media() []TransponderPid
 	// Information about a particular media track.
@@ -7164,6 +7717,8 @@ type PeerStats interface {
 	Error() *string
 	// Description of an error, if any.
 	SetError(string) PeerStats
+	HealthcheckStatus() CentralHealthcheckStatus
+	SetHealthcheckStatus(CentralHealthcheckStatus) PeerStats
 	// Hostname of your server. Please, use FQDN, do not leave your Linux misconfigured.
 	// Example: openapi.flussonic.com
 	Hostname() *string
@@ -7445,6 +8000,12 @@ type PlayProtocolsSpec interface {
 
 // Required: id, title
 type Preset interface {
+	// External identifier for linking this preset to a tariff plan in the operator's own billing system.
+	// This ID allows operators to bill their subscribers using their own tariff plans.
+	BillingExternalID() *string
+	// External identifier for linking this preset to a tariff plan in the operator's own billing system.
+	// This ID allows operators to bill their subscribers using their own tariff plans.
+	SetBillingExternalID(string) Preset
 	// When this preset was marked as deleted
 	// Format: utc_ms (Unix timestamp in milliseconds)
 	// Example: 1.637095014573e+12
@@ -7454,9 +8015,15 @@ type Preset interface {
 	// Example: 1.637095014573e+12
 	SetDeletedAt(UtcMs) Preset
 	// DVR configuration
-	Dvr() StreamDvrSpec
+	Dvr() PresetDvr
 	// DVR configuration
-	SetDvr(StreamDvrSpec) Preset
+	SetDvr(PresetDvr) Preset
+	// External identifier for linking this preset to a tariff plan in the billing system.
+	// This ID is used in usage reports sent to billing.
+	ExternalID() *string
+	// External identifier for linking this preset to a tariff plan in the billing system.
+	// This ID is used in usage reports sent to billing.
+	SetExternalID(string) Preset
 	// Preset identifier
 	// Example: 7
 	ID() int
@@ -7510,9 +8077,99 @@ type Preset interface {
 	// Example: Example preset name
 	SetTitle(string) Preset
 	// Vision configuration
-	Vision() VisionSpecPresets
+	Vision() PresetVision
 	// Vision configuration
-	SetVision(VisionSpecPresets) Preset
+	SetVision(PresetVision) Preset
+}
+
+// DVR configuration
+type PresetDvr interface {
+	// Maximum disk consumption in percents. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// It important to understand that this is not a "per-stream" option, this option means
+	// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+	// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+	// empty.
+	// Format: percent (percent)
+	// Example: 98
+	DiskUsageLimit() *Percent
+	// Maximum disk consumption in percents. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// It important to understand that this is not a "per-stream" option, this option means
+	// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+	// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+	// empty.
+	// Format: percent (percent)
+	// Example: 98
+	SetDiskUsageLimit(Percent) PresetDvr
+	// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+	// will be saved for `expiration + episodes_expiration` seconds.
+	// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+	// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+	// response of `episodes_url`.
+	// Anything older than `expiration+episodes_expiration` seconds will
+	// be cleaned even if `episodes_url` does not respond.
+	// Format: seconds (seconds)
+	// Examples: 6.048e+06
+	EpisodesExpiration() *Seconds
+	// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+	// will be saved for `expiration + episodes_expiration` seconds.
+	// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+	// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+	// response of `episodes_url`.
+	// Anything older than `expiration+episodes_expiration` seconds will
+	// be cleaned even if `episodes_url` does not respond.
+	// Format: seconds (seconds)
+	// Examples: 6.048e+06
+	SetEpisodesExpiration(Seconds) PresetDvr
+	// Archive depth - a period (in seconds) back from the current moment during which the
+	// contigious part of archive is stored.
+	// As time goes, the parts of the recording which are older than the archive depth are deleted.
+	// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+	// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+	// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+	// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+	// Format: seconds (seconds)
+	// Examples: 604800
+	Expiration() *Seconds
+	// Archive depth - a period (in seconds) back from the current moment during which the
+	// contigious part of archive is stored.
+	// As time goes, the parts of the recording which are older than the archive depth are deleted.
+	// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+	// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+	// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+	// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+	// Format: seconds (seconds)
+	// Examples: 604800
+	SetExpiration(Seconds) PresetDvr
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
+	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+	// Example: 1
+	RedundancyFactor() *int
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
+	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+	// Example: 1
+	SetRedundancyFactor(int) PresetDvr
+	// Maximum disk consumption in bytes. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// This option affects both continuous recording and locked episodes (see `episodes_url`).
+	// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+	// to avoid deleting the recordings that should not be deleted.
+	// Format: bytes (bytes)
+	// Example: 4e+11
+	StorageLimit() *Bytes
+	// Maximum disk consumption in bytes. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// This option affects both continuous recording and locked episodes (see `episodes_url`).
+	// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+	// to avoid deleting the recordings that should not be deleted.
+	// Format: bytes (bytes)
+	// Example: 4e+11
+	SetStorageLimit(Bytes) PresetDvr
 }
 
 type PresetLastChange interface {
@@ -7560,6 +8217,24 @@ type PresetStats interface {
 	// Count of streams are currently using this preset.
 	// Example: 12
 	SetStreamsCount(int) PresetStats
+}
+
+// Vision configuration
+type PresetVision interface {
+	// Deprecated field. Will be deleted at 26.07
+	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
+	// Example: faces
+	Alg() *VisionSpecPresetsAlg
+	// Deprecated field. Will be deleted at 26.07
+	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
+	// Example: faces
+	SetAlg(VisionSpecPresetsAlg) PresetVision
+	// Vision detector type
+	DetectorType() *VisionDetector
+	// Vision detector type
+	SetDetectorType(VisionDetector) PresetVision
 }
 
 type PresetsList interface {
@@ -7708,10 +8383,10 @@ type PushCounters interface {
 	PusherRestarts() *int
 	// How many times pusher was restarted
 	SetPusherRestarts(int) PushCounters
-	// Number of retries since the last successful push.
-	ResentPackets() *int
-	// Number of retries since the last successful push.
-	SetResentPackets(int) PushCounters
+	// How many packets were retransmitted
+	RetransmittedPackets() *int
+	// How many packets were retransmitted
+	SetRetransmittedPackets(int) PushCounters
 	// Number of segments sent by this pusher.
 	Segments() *int
 	// Number of segments sent by this pusher.
@@ -7724,14 +8399,6 @@ type PushCounters interface {
 	Status() *PusherStatus
 	// State of the push session.
 	SetStatus(*PusherStatus) PushCounters
-	// Deprecated field. Will be deleted at 26.03
-	// The fillers bytes count for system traffic. Currently this field is always zero.
-	// Format: bytes (bytes)
-	SysFillersBytes() *Bytes
-	// Deprecated field. Will be deleted at 26.03
-	// The fillers bytes count for system traffic. Currently this field is always zero.
-	// Format: bytes (bytes)
-	SetSysFillersBytes(Bytes) PushCounters
 	// The payload bytes count for system traffic.
 	// Format: bytes (bytes)
 	SysPayloadBytes() *Bytes
@@ -7810,26 +8477,6 @@ type PushPidCounters interface {
 	FillerPackets() *int
 	// How many MPEG-TS packets with NAL fillers on this PID produced.
 	SetFillerPackets(int) PushPidCounters
-	// Deprecated field. Will be deleted at 25.11
-	// The filler bytes count.
-	// Use `filler_packets` instead.
-	// Format: bytes (bytes)
-	Fillers() *Bytes
-	// Deprecated field. Will be deleted at 25.11
-	// The filler bytes count.
-	// Use `filler_packets` instead.
-	// Format: bytes (bytes)
-	SetFillers(Bytes) PushPidCounters
-	// Deprecated field. Will be deleted at 25.11
-	// How many bytes were seen in NAL fillers.
-	// Use `filler_packets` instead.
-	// Format: bytes (bytes)
-	FillersBytes() *Bytes
-	// Deprecated field. Will be deleted at 25.11
-	// How many bytes were seen in NAL fillers.
-	// Use `filler_packets` instead.
-	// Format: bytes (bytes)
-	SetFillersBytes(Bytes) PushPidCounters
 	// Highest recorded level of the TS buffer.
 	// With too big values the HRD buffer may be filling up completely (overflow).
 	// Format: milliseconds (milliseconds)
@@ -7850,16 +8497,6 @@ type PushPidCounters interface {
 	Packets() *int
 	// How many MPEG-TS packets with 188 bytes on this PID produced.
 	SetPackets(int) PushPidCounters
-	// Deprecated field. Will be deleted at 25.11
-	// The payload bytes count.
-	// Use `payload_bytes` instead.
-	// Format: bytes (bytes)
-	Payload() *Bytes
-	// Deprecated field. Will be deleted at 25.11
-	// The payload bytes count.
-	// Use `payload_bytes` instead.
-	// Format: bytes (bytes)
-	SetPayload(Bytes) PushPidCounters
 	// The payload bytes count.
 	// Format: bytes (bytes)
 	PayloadBytes() *Bytes
@@ -7874,14 +8511,12 @@ type PushPidCounters interface {
 	Pnr() *int
 	// Program ID this PID belongs to.
 	SetPnr(int) PushPidCounters
-	// Deprecated field. Will be deleted at 25.11
-	// The stuff packets count.
-	// Use `stuffing_packets` instead.
-	Stuffing() *int
-	// Deprecated field. Will be deleted at 25.11
-	// The stuff packets count.
-	// Use `stuffing_packets` instead.
-	SetStuffing(int) PushPidCounters
+	// Total duration of media queued for this PID.
+	// Format: milliseconds (milliseconds)
+	QueuedTime() *Milliseconds
+	// Total duration of media queued for this PID.
+	// Format: milliseconds (milliseconds)
+	SetQueuedTime(Milliseconds) PushPidCounters
 	// How many NULL packets (PID 0x1FFF) inserted when no data is scheduled on this PID.
 	StuffingPackets() *int
 	// How many NULL packets (PID 0x1FFF) inserted when no data is scheduled on this PID.
@@ -7928,6 +8563,14 @@ type RTPCountersBase interface {
 	ErrorsLostPackets() *int
 	// RTP have enough information to tell how many packets were lost
 	SetErrorsLostPackets(int) RTPCountersBase
+	// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+	// Each increment represents a synchronization with potentially incorrect camera time.
+	// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+	ErrorsSrClockDeviation() *int
+	// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+	// Each increment represents a synchronization with potentially incorrect camera time.
+	// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+	SetErrorsSrClockDeviation(int) RTPCountersBase
 	// How many frames received for this channel
 	Frames() *int
 	// How many frames received for this channel
@@ -8041,6 +8684,12 @@ type RaidDiskConfigStats interface {
 	// The number of blobs on the disk according to centralized Raid DB that is
 	// used to allocate blobs across whole storage.
 	SetBlobsCountDb(int) RaidDiskConfigStats
+	// The block device name backing this disk mount point.
+	// Example: sda1
+	Device() *string
+	// The block device name backing this disk mount point.
+	// Example: sda1
+	SetDevice(string) RaidDiskConfigStats
 	// Errors of using the disk.
 	Errors() RaidDiskErrors
 	// Errors of using the disk.
@@ -8085,6 +8734,12 @@ type RaidDiskConfigStats interface {
 	// Disk capacity in bytes.
 	// Format: bytes (bytes)
 	SetSize(Bytes) RaidDiskConfigStats
+	// The runtime status of the disk, automatically assigned by Flussonic.
+	// Unlike `mode`, this field cannot be set via configuration.
+	Status() *RaidDiskStatus
+	// The runtime status of the disk, automatically assigned by Flussonic.
+	// Unlike `mode`, this field cannot be set via configuration.
+	SetStatus(RaidDiskStatus) RaidDiskConfigStats
 	// Disk utilization percentage.
 	// Format: percent (percent)
 	Usage() *Percent
@@ -8199,6 +8854,12 @@ type RaidDiskErrors interface {
 }
 
 type RaidDiskStats interface {
+	// The block device name backing this disk mount point.
+	// Example: sda1
+	Device() *string
+	// The block device name backing this disk mount point.
+	// Example: sda1
+	SetDevice(string) RaidDiskStats
 	// Errors of using the disk.
 	Errors() RaidDiskErrors
 	// Errors of using the disk.
@@ -8237,6 +8898,12 @@ type RaidDiskStats interface {
 	Mounted() *bool
 	// Whether the disk is mounted correctly.
 	SetMounted(bool) RaidDiskStats
+	// The runtime status of the disk, automatically assigned by Flussonic.
+	// Unlike `mode`, this field cannot be set via configuration.
+	Status() *RaidDiskStatus
+	// The runtime status of the disk, automatically assigned by Flussonic.
+	// Unlike `mode`, this field cannot be set via configuration.
+	SetStatus(RaidDiskStatus) RaidDiskStats
 }
 
 // Required: streampoint_key
@@ -8365,10 +9032,12 @@ type ServerConfigBase interface {
 	// Enables saving statistics on Nvidia performance.
 	// Example: true
 	SetNvidiaMonitor(bool) ServerConfigBase
+	// Deprecated field. Will be deleted at 26.06
 	// Directory to store Pulse statistics.
 	// Format: disk_path (disk_path)
 	// Example: /var/run/flussonic/pulsedb
 	Pulsedb() *DiskPath
+	// Deprecated field. Will be deleted at 26.06
 	// Directory to store Pulse statistics.
 	// Format: disk_path (disk_path)
 	// Example: /var/run/flussonic/pulsedb
@@ -8393,12 +9062,16 @@ type ServerConfigBase interface {
 	// Global SRT listening port. It is possible to use a single port for playback and publishing, but it is not compatible with clients.
 	// Consider configuring separate ports for playback and publishing for each stream.
 	SetSrt(*ListenSpec) ServerConfigBase
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	Srt2Play() SrtConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrt2Play(SrtConfig) ServerConfigBase
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	Srt2Publish() SrtConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrt2Publish(SrtConfig) ServerConfigBase
 	// SRT play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
@@ -8409,6 +9082,12 @@ type ServerConfigBase interface {
 	SrtPublish() SrtConfig
 	// SRT publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrtPublish(SrtConfig) ServerConfigBase
+	// Prefix of streaming api and all streaming requests that will be removed from the path
+	// while calculating stream name.
+	StreamingPrefix() *string
+	// Prefix of streaming api and all streaming requests that will be removed from the path
+	// while calculating stream name.
+	SetStreamingPrefix(string) ServerConfigBase
 	// Total server bandwidth.
 	// Format: speed (speed)
 	// Example: 1e+09
@@ -8446,10 +9125,6 @@ type ServerConfigFull interface {
 	AuthBackends() []AuthBackendConfig
 	// The configuration of auth backends
 	SetAuthBackends([]AuthBackendConfig) ServerConfigFull
-	// The configuration of the balancers.
-	Balancers() []BalancerConfig
-	// The configuration of the balancers.
-	SetBalancers([]BalancerConfig) ServerConfigFull
 	// The configuration of the cache.
 	Caches() []CacheConfig
 	// The configuration of the cache.
@@ -8458,10 +9133,6 @@ type ServerConfigFull interface {
 	CameraAlarm() CameraAlarmConfig
 	// The configuration of the camera alarms.
 	SetCameraAlarm(CameraAlarmConfig) ServerConfigFull
-	// The configuration of the chassis.
-	Chassis() ChassisConfig
-	// The configuration of the chassis.
-	SetChassis(ChassisConfig) ServerConfigFull
 	// Configuration of decklink SDI capture cards
 	Decklinks() []DecklinkConfig
 	// Configuration of decklink SDI capture cards
@@ -8478,38 +9149,14 @@ type ServerConfigFull interface {
 	EventSinks() []EventSinkConfig
 	// The configuration of event notifications
 	SetEventSinks([]EventSinkConfig) ServerConfigFull
-	// The configuration of the file processor.
-	FileProcessor() FileProcessorConfig
-	// The configuration of the file processor.
-	SetFileProcessor(FileProcessorConfig) ServerConfigFull
 	// List of HTTP prefixes that can be handled via call to remote http server
 	HTTPProxies() []HTTPProxyConfig
 	// List of HTTP prefixes that can be handled via call to remote http server
 	SetHTTPProxies([]HTTPProxyConfig) ServerConfigFull
-	// The configuration of the IPTV
-	Iptv() IptvConfig
-	// The configuration of the IPTV
-	SetIptv(IptvConfig) ServerConfigFull
-	// The configuration of peers in the cluster.
-	Peers() []PeerConfig
-	// The configuration of peers in the cluster.
-	SetPeers([]PeerConfig) ServerConfigFull
 	// The configuration of the port forwarding.
 	Rproxy() RproxyConfig
 	// The configuration of the port forwarding.
 	SetRproxy(RproxyConfig) ServerConfigFull
-	// The configuration of the video sources.
-	Sources() []SourceConfig
-	// The configuration of the video sources.
-	SetSources([]SourceConfig) ServerConfigFull
-	// The configuration of the streams.
-	Streams() []StreamConfig
-	// The configuration of the streams.
-	SetStreams([]StreamConfig) ServerConfigFull
-	// The configuration of the templates.
-	Templates() []TemplateConfig
-	// The configuration of the templates.
-	SetTemplates([]TemplateConfig) ServerConfigFull
 	// The configuration of the transponders.
 	Transponders() []TransponderConfig
 	// The configuration of the transponders.
@@ -8880,33 +9527,63 @@ type SharedTokensList interface {
 	Collection() []SharedToken
 }
 
-type SourceConfig interface {
-	// DVR configuraton.
-	Dvr() StreamDvrSpec
-	// DVR configuraton.
-	SetDvr(StreamDvrSpec) SourceConfig
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	Labels() map[string]UnixName
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	SetLabels(map[string]UnixName) SourceConfig
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	Pushes() []StreamPush
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	SetPushes([]StreamPush) SourceConfig
-	// Video analytics parameters.
-	Vision() VisionSpec
-	// Video analytics parameters.
-	SetVision(VisionSpec) SourceConfig
-}
-
-type SourceSpecificConfig interface {
-}
-
 type SrtConfig interface {
+	// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+	// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+	// The default value is `true`.
+	// Example: true
+	Enforcedencryption() *bool
+	// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+	// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+	// The default value is `true`.
+	// Example: true
+	SetEnforcedencryption(bool) SrtConfig
+	// The latency value for both directions of the socket.
+	// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+	// Actual value established after connection handshake.
+	// Increased value helps tolerate network losses and delays.
+	// Format: milliseconds (milliseconds)
+	// Example: 150
+	Latency() *Milliseconds
+	// The latency value for both directions of the socket.
+	// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+	// Actual value established after connection handshake.
+	// Increased value helps tolerate network losses and delays.
+	// Format: milliseconds (milliseconds)
+	// Example: 150
+	SetLatency(Milliseconds) SrtConfig
+	// The time, in seconds, that the socket waits for the unsent data before closing.
+	// The default value is 180.
+	// Format: seconds (seconds)
+	// Example: 15
+	Linger() *Seconds
+	// The time, in seconds, that the socket waits for the unsent data before closing.
+	// The default value is 180.
+	// Format: seconds (seconds)
+	// Example: 15
+	SetLinger(Seconds) SrtConfig
+	// The minimum SRT version that is required from the peer for SRT publication.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.1.0
+	Minversion() *string
+	// The minimum SRT version that is required from the peer for SRT publication.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.1.0
+	SetMinversion(string) SrtConfig
+	// The password for the encrypted transmission.
+	// Its length should be not less than 10 and not more than 79 characters.
+	// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+	// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+	// and decoded by Listener.
+	// Example: 9876543210
+	Passphrase() *string
+	// The password for the encrypted transmission.
+	// Its length should be not less than 10 and not more than 79 characters.
+	// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+	// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+	// and decoded by Listener.
+	// Example: 9876543210
+	SetPassphrase(string) SrtConfig
 	// Listening port or a `host:port` pair for the SRT configuration.
 	// Must be unique on the whole server.
 	// Example: 9050
@@ -8915,6 +9592,32 @@ type SrtConfig interface {
 	// Must be unique on the whole server.
 	// Example: 9050
 	SetPort(*ListenSpec) SrtConfig
+	// A string of maximum 512 characters set on the socket before the connection.
+	// This string is a part of a callback that is sent by the caller and regisered by the listener.
+	// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+	// Its format is `#!::` optionally followed by the parameters:
+	// * `r=` - stream name
+	// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+	// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+	// During SRT sessions the following parameters are automaticly added to streamid:
+	// * `s=` - the identifier of a session
+	// * `a=` - Flussonic version
+	// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+	// Example: #!::r=my-stream,m=publish
+	Streamid() *string
+	// A string of maximum 512 characters set on the socket before the connection.
+	// This string is a part of a callback that is sent by the caller and regisered by the listener.
+	// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+	// Its format is `#!::` optionally followed by the parameters:
+	// * `r=` - stream name
+	// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+	// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+	// During SRT sessions the following parameters are automaticly added to streamid:
+	// * `s=` - the identifier of a session
+	// * `a=` - Flussonic version
+	// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+	// Example: #!::r=my-stream,m=publish
+	SetStreamid(string) SrtConfig
 	// Data transmission timeout in seconds.
 	// If set to `false` then data transmission time is unlimited. This is a defalut behavior.
 	// Example: 10
@@ -8923,16 +9626,114 @@ type SrtConfig interface {
 	// If set to `false` then data transmission time is unlimited. This is a defalut behavior.
 	// Example: 10
 	SetTimeout(any) SrtConfig
+	// Required SRT version.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.3.0
+	Version() *string
+	// Required SRT version.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.3.0
+	SetVersion(string) SrtConfig
 }
 
 type SrtConfigBase interface {
+	// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+	// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+	// The default value is `true`.
+	// Example: true
+	Enforcedencryption() *bool
+	// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+	// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+	// The default value is `true`.
+	// Example: true
+	SetEnforcedencryption(bool) SrtConfigBase
+	// The latency value for both directions of the socket.
+	// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+	// Actual value established after connection handshake.
+	// Increased value helps tolerate network losses and delays.
+	// Format: milliseconds (milliseconds)
+	// Example: 150
+	Latency() *Milliseconds
+	// The latency value for both directions of the socket.
+	// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+	// Actual value established after connection handshake.
+	// Increased value helps tolerate network losses and delays.
+	// Format: milliseconds (milliseconds)
+	// Example: 150
+	SetLatency(Milliseconds) SrtConfigBase
+	// The time, in seconds, that the socket waits for the unsent data before closing.
+	// The default value is 180.
+	// Format: seconds (seconds)
+	// Example: 15
+	Linger() *Seconds
+	// The time, in seconds, that the socket waits for the unsent data before closing.
+	// The default value is 180.
+	// Format: seconds (seconds)
+	// Example: 15
+	SetLinger(Seconds) SrtConfigBase
+	// The minimum SRT version that is required from the peer for SRT publication.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.1.0
+	Minversion() *string
+	// The minimum SRT version that is required from the peer for SRT publication.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.1.0
+	SetMinversion(string) SrtConfigBase
+	// The password for the encrypted transmission.
+	// Its length should be not less than 10 and not more than 79 characters.
+	// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+	// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+	// and decoded by Listener.
+	// Example: 9876543210
+	Passphrase() *string
+	// The password for the encrypted transmission.
+	// Its length should be not less than 10 and not more than 79 characters.
+	// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+	// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+	// and decoded by Listener.
+	// Example: 9876543210
+	SetPassphrase(string) SrtConfigBase
+	// A string of maximum 512 characters set on the socket before the connection.
+	// This string is a part of a callback that is sent by the caller and regisered by the listener.
+	// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+	// Its format is `#!::` optionally followed by the parameters:
+	// * `r=` - stream name
+	// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+	// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+	// During SRT sessions the following parameters are automaticly added to streamid:
+	// * `s=` - the identifier of a session
+	// * `a=` - Flussonic version
+	// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+	// Example: #!::r=my-stream,m=publish
+	Streamid() *string
+	// A string of maximum 512 characters set on the socket before the connection.
+	// This string is a part of a callback that is sent by the caller and regisered by the listener.
+	// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+	// Its format is `#!::` optionally followed by the parameters:
+	// * `r=` - stream name
+	// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+	// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+	// During SRT sessions the following parameters are automaticly added to streamid:
+	// * `s=` - the identifier of a session
+	// * `a=` - Flussonic version
+	// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+	// Example: #!::r=my-stream,m=publish
+	SetStreamid(string) SrtConfigBase
+	// Required SRT version.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.3.0
+	Version() *string
+	// Required SRT version.
+	// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+	// Example: 1.3.0
+	SetVersion(string) SrtConfigBase
 }
 
 type StreamConfig interface {
 	// Audio settings for the stream.
-	Audio() WatcherStreamConfigAudio
+	Audio() StreamConfigAudio
 	// Audio settings for the stream.
-	SetAudio(WatcherStreamConfigAudio) StreamConfig
+	SetAudio(StreamConfigAudio) StreamConfig
 	// A publishable stream.
 	// Example: false
 	CanPublish() *bool
@@ -9025,7 +9826,7 @@ type StreamConfig interface {
 	// Note that the name could not be changed after the stream is created.
 	// Format: media_name (media_name)
 	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-	Name() MediaName
+	Name() *MediaName
 	// Globally unique stream name.
 	// Note that the name could not be changed after the stream is created.
 	// Format: media_name (media_name)
@@ -9033,10 +9834,18 @@ type StreamConfig interface {
 	SetName(MediaName) StreamConfig
 	// User's active notification subscriptions for this camera.
 	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-	Notifications() []WatcherStreamConfigNotificationsItem
+	Notifications() []StreamConfigNotificationsItem
 	// User's active notification subscriptions for this camera.
 	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-	SetNotifications([]WatcherStreamConfigNotificationsItem) StreamConfig
+	SetNotifications([]StreamConfigNotificationsItem) StreamConfig
+	// NVR identifier. If present, indicates that the stream was imported from the NVR with this ID.
+	NvrID() *int
+	// NVR identifier. If present, indicates that the stream was imported from the NVR with this ID.
+	SetNvrID(int) StreamConfig
+	// NVR-specific stream configuration. This field contains the stream configuration that may differ between NVR and Cloud. Common fields (title, comment, coordinates, postal_address) are not included here.
+	NvrSettings() NvrStreamSettings
+	// NVR-specific stream configuration. This field contains the stream configuration that may differ between NVR and Cloud. Common fields (title, comment, coordinates, postal_address) are not included here.
+	SetNvrSettings(NvrStreamSettings) StreamConfig
 	// Onvif configuration
 	Onvif() StreamOnvifConfig
 	// Onvif configuration
@@ -9113,74 +9922,25 @@ type StreamConfig interface {
 	SetVision(VisionSpec) StreamConfig
 }
 
-type StreamConfigAdditional interface {
-	// Stream's metrics and other statistical information.
-	Stats() StreamStats
-	// Stream's metrics and other statistical information.
-	SetStats(StreamStats) StreamConfigAdditional
-}
-
-type StreamConfigBase interface {
-	// Whether a stream is disabled. Disabled streams are inactive and do not run.
-	// Displayed only with the API calls.
+// Audio settings for the stream.
+type StreamConfigAudio interface {
+	// A flag showing if the audio is captured (false) or not (true) from the stream.
 	// Example: false
 	Disabled() *bool
-	// Whether a stream is disabled. Disabled streams are inactive and do not run.
-	// Displayed only with the API calls.
+	// A flag showing if the audio is captured (false) or not (true) from the stream.
 	// Example: false
-	SetDisabled(bool) StreamConfigBase
-	// Whether a stream is `static` or not.
-	// If set to `True` the server will try to keep this stream running even if
-	// there are no viewers or errors encountered.
-	// Streamer restarts *all* `static` streams even if any internal errors occur
-	// and the `static` streams crash.
-	// Example: true
-	Static() *bool
-	// Whether a stream is `static` or not.
-	// If set to `True` the server will try to keep this stream running even if
-	// there are no viewers or errors encountered.
-	// Streamer restarts *all* `static` streams even if any internal errors occur
-	// and the `static` streams crash.
-	// Example: true
-	SetStatic(bool) StreamConfigBase
-}
-
-type StreamConfigDeprecated interface {
-}
-
-type StreamConfigInput interface {
-	// List of stream inputs.
-	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-	Inputs() []StreamInput
-	// List of stream inputs.
-	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-	SetInputs([]StreamInput) StreamConfigInput
-}
-
-type StreamConfigMedia interface {
-	// DVR configuraton.
-	Dvr() StreamDvrSpec
-	// DVR configuraton.
-	SetDvr(StreamDvrSpec) StreamConfigMedia
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	Labels() map[string]UnixName
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	SetLabels(map[string]UnixName) StreamConfigMedia
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	Pushes() []StreamPush
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	SetPushes([]StreamPush) StreamConfigMedia
+	SetDisabled(bool) StreamConfigAudio
+	// Audio codec (the AAC codec is used by default).
+	TranscodeAudioCodec() *FrameAudioCodec
+	// Audio codec (the AAC codec is used by default).
+	SetTranscodeAudioCodec(FrameAudioCodec) StreamConfigAudio
 }
 
 type StreamConfigMultiedit interface {
 	// DVR configuration.
-	Dvr() StreamDvrSpec
+	Dvr() StreamConfigMultieditDvr
 	// DVR configuration.
-	SetDvr(StreamDvrSpec) StreamConfigMultiedit
+	SetDvr(StreamConfigMultieditDvr) StreamConfigMultiedit
 	// Rules of layout.
 	LayoutRules() StreamZoneConfig
 	// Rules of layout.
@@ -9195,39 +9955,102 @@ type StreamConfigMultiedit interface {
 	SetPresetID(int) StreamConfigMultiedit
 }
 
-type StreamConfigOnpremises interface {
-	// Video analytics parameters.
-	Vision() VisionSpec
-	// Video analytics parameters.
-	SetVision(VisionSpec) StreamConfigOnpremises
+// DVR configuration.
+type StreamConfigMultieditDvr interface {
+	// Maximum disk consumption in percents. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// It important to understand that this is not a "per-stream" option, this option means
+	// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+	// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+	// empty.
+	// Format: percent (percent)
+	// Example: 98
+	DiskUsageLimit() *Percent
+	// Maximum disk consumption in percents. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// It important to understand that this is not a "per-stream" option, this option means
+	// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+	// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+	// empty.
+	// Format: percent (percent)
+	// Example: 98
+	SetDiskUsageLimit(Percent) StreamConfigMultieditDvr
+	// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+	// will be saved for `expiration + episodes_expiration` seconds.
+	// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+	// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+	// response of `episodes_url`.
+	// Anything older than `expiration+episodes_expiration` seconds will
+	// be cleaned even if `episodes_url` does not respond.
+	// Format: seconds (seconds)
+	// Examples: 6.048e+06
+	EpisodesExpiration() *Seconds
+	// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+	// will be saved for `expiration + episodes_expiration` seconds.
+	// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+	// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+	// response of `episodes_url`.
+	// Anything older than `expiration+episodes_expiration` seconds will
+	// be cleaned even if `episodes_url` does not respond.
+	// Format: seconds (seconds)
+	// Examples: 6.048e+06
+	SetEpisodesExpiration(Seconds) StreamConfigMultieditDvr
+	// Archive depth - a period (in seconds) back from the current moment during which the
+	// contigious part of archive is stored.
+	// As time goes, the parts of the recording which are older than the archive depth are deleted.
+	// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+	// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+	// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+	// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+	// Format: seconds (seconds)
+	// Examples: 604800
+	Expiration() *Seconds
+	// Archive depth - a period (in seconds) back from the current moment during which the
+	// contigious part of archive is stored.
+	// As time goes, the parts of the recording which are older than the archive depth are deleted.
+	// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+	// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+	// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+	// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+	// Format: seconds (seconds)
+	// Examples: 604800
+	SetExpiration(Seconds) StreamConfigMultieditDvr
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
+	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+	// Example: 1
+	RedundancyFactor() *int
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
+	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+	// Example: 1
+	SetRedundancyFactor(int) StreamConfigMultieditDvr
+	// Maximum disk consumption in bytes. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// This option affects both continuous recording and locked episodes (see `episodes_url`).
+	// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+	// to avoid deleting the recordings that should not be deleted.
+	// Format: bytes (bytes)
+	// Example: 4e+11
+	StorageLimit() *Bytes
+	// Maximum disk consumption in bytes. When this limit is reached,
+	// the oldest segment of the recording will be overridden by later data.
+	// This option affects both continuous recording and locked episodes (see `episodes_url`).
+	// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+	// to avoid deleting the recordings that should not be deleted.
+	// Format: bytes (bytes)
+	// Example: 4e+11
+	SetStorageLimit(Bytes) StreamConfigMultieditDvr
 }
 
-// Required: name
-type StreamConfigSpecific interface {
-	// Human-readable description of the stream.
-	// Example: This is a test stream
-	Comment() *string
-	// Human-readable description of the stream.
-	// Example: This is a test stream
-	SetComment(string) StreamConfigSpecific
-	// Globally unique stream name.
-	// Note that the name could not be changed after the stream is created.
-	// Format: media_name (media_name)
-	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-	Name() MediaName
-	// Globally unique stream name.
-	// Note that the name could not be changed after the stream is created.
-	// Format: media_name (media_name)
-	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-	SetName(MediaName) StreamConfigSpecific
-	// Human-readable title of the stream. Provided for SDT MPEG-TS table or
-	// SDP RTSP title parameter.
-	// Example: Hockey channel
-	Title() *string
-	// Human-readable title of the stream. Provided for SDT MPEG-TS table or
-	// SDP RTSP title parameter.
-	// Example: Hockey channel
-	SetTitle(string) StreamConfigSpecific
+// Notification subscription details for a specific event type.
+type StreamConfigNotificationsItem interface {
+	EventTypes() EventTypes
+	SetEventTypes(EventTypes) StreamConfigNotificationsItem
+	NotificationType() *NotificationType
+	SetNotificationType(NotificationType) StreamConfigNotificationsItem
 }
 
 type StreamDvrSpec interface {
@@ -9289,11 +10112,15 @@ type StreamDvrSpec interface {
 	// Format: seconds (seconds)
 	// Examples: 604800
 	SetExpiration(Seconds) StreamDvrSpec
-	// How many servers will contain a copy of the DVR archive.
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
 	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
 	// Example: 1
 	RedundancyFactor() *int
-	// How many servers will contain a copy of the DVR archive.
+	// Number of additional copies of the DVR archive to guarantee.
+	// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+	// A value of `0` disables redundancy.
 	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
 	// Example: 1
 	SetRedundancyFactor(int) StreamDvrSpec
@@ -9315,171 +10142,9 @@ type StreamDvrSpec interface {
 	SetStorageLimit(Bytes) StreamDvrSpec
 }
 
-type StreamDvrSpecificSpec interface {
-	// How many servers will contain a copy of the DVR archive.
-	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
-	// Example: 1
-	RedundancyFactor() *int
-	// How many servers will contain a copy of the DVR archive.
-	// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
-	// Example: 1
-	SetRedundancyFactor(int) StreamDvrSpecificSpec
-}
-
-type StreamInputBase interface {
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	AllowIf() *string
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	SetAllowIf(string) StreamInputBase
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	AudioTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetAudioTimeout(Seconds) StreamInputBase
-	// Human-readable description of the input.
-	// Example: This is a test input
-	Comment() *string
-	// Human-readable description of the input.
-	// Example: This is a test input
-	SetComment(string) StreamInputBase
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	DenyIf() *string
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	SetDenyIf(string) StreamInputBase
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	FramesTimeout() *int
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	SetFramesTimeout(int) StreamInputBase
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	Headers() map[string]string
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	SetHeaders(map[string]string) StreamInputBase
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	MaxRetryTimeout() *Seconds
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	SetMaxRetryTimeout(Seconds) StreamInputBase
-	// Skip input start if the stream has no clients.
-	NoClientsReconnectDelay() *int
-	// Skip input start if the stream has no clients.
-	SetNoClientsReconnectDelay(int) StreamInputBase
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	OutputAudio() *OutputAudio
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	SetOutputAudio(OutputAudio) StreamInputBase
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	Priority() *int
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	SetPriority(int) StreamInputBase
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SourceTimeout() any
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SetSourceTimeout(any) StreamInputBase
-	// Detailed runtime information about the input.
-	Stats() InputStats
-	// Detailed runtime information about the input.
-	SetStats(InputStats) StreamInputBase
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	Timeout() *int
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	SetTimeout(int) StreamInputBase
-	// User agent. Can be modified if a protocol allows it.
-	UserAgent() *string
-	// User agent. Can be modified if a protocol allows it.
-	SetUserAgent(string) StreamInputBase
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	Via() *AgentURL
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	SetVia(AgentURL) StreamInputBase
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	VideoTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetVideoTimeout(Seconds) StreamInputBase
-}
-
+// Title: Demo source
+// Required: url
 type StreamInputFake interface {
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	AllowIf() *string
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	SetAllowIf(string) StreamInputFake
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	AudioTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetAudioTimeout(Seconds) StreamInputFake
 	// Bitrate of an artificially created test video stream.
 	// Applicable to the `fake://fake` URL.
 	// Format: speed (speed)
@@ -9488,100 +10153,12 @@ type StreamInputFake interface {
 	// Applicable to the `fake://fake` URL.
 	// Format: speed (speed)
 	SetBitrate(Speed) StreamInputFake
-	// Human-readable description of the input.
-	// Example: This is a test input
-	Comment() *string
-	// Human-readable description of the input.
-	// Example: This is a test input
-	SetComment(string) StreamInputFake
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	DenyIf() *string
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	SetDenyIf(string) StreamInputFake
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	FramesTimeout() *int
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	SetFramesTimeout(int) StreamInputFake
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	Headers() map[string]string
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	SetHeaders(map[string]string) StreamInputFake
 	// Height of an artificially created test video stream.
 	// Applicable to the `fake://fake` URL.
 	Height() *int
 	// Height of an artificially created test video stream.
 	// Applicable to the `fake://fake` URL.
 	SetHeight(int) StreamInputFake
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	MaxRetryTimeout() *Seconds
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	SetMaxRetryTimeout(Seconds) StreamInputFake
-	// Skip input start if the stream has no clients.
-	NoClientsReconnectDelay() *int
-	// Skip input start if the stream has no clients.
-	SetNoClientsReconnectDelay(int) StreamInputFake
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	OutputAudio() *OutputAudio
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	SetOutputAudio(OutputAudio) StreamInputFake
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	Priority() *int
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	SetPriority(int) StreamInputFake
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SourceTimeout() any
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SetSourceTimeout(any) StreamInputFake
-	// Detailed runtime information about the input.
-	Stats() InputStats
-	// Detailed runtime information about the input.
-	SetStats(InputStats) StreamInputFake
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	Timeout() *int
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	SetTimeout(int) StreamInputFake
 	// URL to get a demo stream.
 	// Format: input_url (input_url)
 	// Pattern: ^fake://.*$
@@ -9592,24 +10169,6 @@ type StreamInputFake interface {
 	// Pattern: ^fake://.*$
 	// Example: fake://fake
 	SetURL(InputURL) StreamInputFake
-	// User agent. Can be modified if a protocol allows it.
-	UserAgent() *string
-	// User agent. Can be modified if a protocol allows it.
-	SetUserAgent(string) StreamInputFake
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	Via() *AgentURL
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	SetVia(AgentURL) StreamInputFake
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	VideoTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetVideoTimeout(Seconds) StreamInputFake
 	// Width of an artificially created test video stream.
 	// Applicable to the `fake://fake` URL.
 	Width() *int
@@ -9618,169 +10177,9 @@ type StreamInputFake interface {
 	SetWidth(int) StreamInputFake
 }
 
+// Title: File
+// Required: url
 type StreamInputFile interface {
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	AllowIf() *string
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	SetAllowIf(string) StreamInputFile
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	AudioTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetAudioTimeout(Seconds) StreamInputFile
-	// The rules for handling the closed captions.
-	ClosedCaptions() map[string]string
-	// The rules for handling the closed captions.
-	SetClosedCaptions(map[string]string) StreamInputFile
-	// Human-readable description of the input.
-	// Example: This is a test input
-	Comment() *string
-	// Human-readable description of the input.
-	// Example: This is a test input
-	SetComment(string) StreamInputFile
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	DenyIf() *string
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	SetDenyIf(string) StreamInputFile
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	FramesTimeout() *int
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	SetFramesTimeout(int) StreamInputFile
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	Headers() map[string]string
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	SetHeaders(map[string]string) StreamInputFile
-	// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-	Languages() map[string]string
-	// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-	SetLanguages(map[string]string) StreamInputFile
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	MaxRetryTimeout() *Seconds
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	SetMaxRetryTimeout(Seconds) StreamInputFile
-	// Skip input start if the stream has no clients.
-	NoClientsReconnectDelay() *int
-	// Skip input start if the stream has no clients.
-	SetNoClientsReconnectDelay(int) StreamInputFile
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	OutputAudio() *OutputAudio
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	SetOutputAudio(OutputAudio) StreamInputFile
-	// Choose a specific PID to ingest from an MPEG-TS stream.
-	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-	// Example: [211]
-	Pids() []int
-	// Choose a specific PID to ingest from an MPEG-TS stream.
-	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-	// Example: [211]
-	SetPids([]int) StreamInputFile
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	Priority() *int
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	SetPriority(int) StreamInputFile
-	// Choose a program to ingest from an MPEG-TS stream.
-	// Example: [1]
-	Programs() []int
-	// Choose a program to ingest from an MPEG-TS stream.
-	// Example: [1]
-	SetPrograms([]int) StreamInputFile
-	// Deprecated field. Will be deleted at 23.09
-	// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-	// Deprecated since 22.12.
-	// Available ways to disable processing of SCTE-35 markers:
-	// 1. pids option to select tracks without SCTE-35 markers
-	// 2. hls_scte35 option from stream_config_media for hls output
-	// 3. performing appropriate tuning pids in the transponder
-	// Example: true
-	Scte35() *bool
-	// Deprecated field. Will be deleted at 23.09
-	// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-	// Deprecated since 22.12.
-	// Available ways to disable processing of SCTE-35 markers:
-	// 1. pids option to select tracks without SCTE-35 markers
-	// 2. hls_scte35 option from stream_config_media for hls output
-	// 3. performing appropriate tuning pids in the transponder
-	// Example: true
-	SetScte35(bool) StreamInputFile
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SourceTimeout() any
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SetSourceTimeout(any) StreamInputFile
-	// Detailed runtime information about the input.
-	Stats() InputStats
-	// Detailed runtime information about the input.
-	SetStats(InputStats) StreamInputFile
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	Subtitles() *StreamInputMpegtsSpecificSubtitles
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	SetSubtitles(StreamInputMpegtsSpecificSubtitles) StreamInputFile
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	Timeout() *int
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	SetTimeout(int) StreamInputFile
 	// URL to get a stream from file.
 	// Format: input_url (input_url)
 	// Pattern: ^file://.*$
@@ -9791,310 +10190,49 @@ type StreamInputFile interface {
 	// Pattern: ^file://.*$
 	// Example: file://vod/bunny.mp4
 	SetURL(InputURL) StreamInputFile
-	// User agent. Can be modified if a protocol allows it.
-	UserAgent() *string
-	// User agent. Can be modified if a protocol allows it.
-	SetUserAgent(string) StreamInputFile
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	Via() *AgentURL
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	SetVia(AgentURL) StreamInputFile
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	VideoTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetVideoTimeout(Seconds) StreamInputFile
 }
 
-type StreamInputMpegtsSpecific interface {
+// Title: M4F
+// Required: url
+type StreamInputM4f interface {
 	// The rules for handling the closed captions.
 	ClosedCaptions() map[string]string
 	// The rules for handling the closed captions.
-	SetClosedCaptions(map[string]string) StreamInputMpegtsSpecific
-	// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-	Languages() map[string]string
-	// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-	SetLanguages(map[string]string) StreamInputMpegtsSpecific
-	// Choose a specific PID to ingest from an MPEG-TS stream.
-	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-	// Example: [211]
-	Pids() []int
-	// Choose a specific PID to ingest from an MPEG-TS stream.
-	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-	// Example: [211]
-	SetPids([]int) StreamInputMpegtsSpecific
-	// Choose a program to ingest from an MPEG-TS stream.
-	// Example: [1]
-	Programs() []int
-	// Choose a program to ingest from an MPEG-TS stream.
-	// Example: [1]
-	SetPrograms([]int) StreamInputMpegtsSpecific
-	// Deprecated field. Will be deleted at 23.09
-	// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-	// Deprecated since 22.12.
-	// Available ways to disable processing of SCTE-35 markers:
-	// 1. pids option to select tracks without SCTE-35 markers
-	// 2. hls_scte35 option from stream_config_media for hls output
-	// 3. performing appropriate tuning pids in the transponder
-	// Example: true
-	Scte35() *bool
-	// Deprecated field. Will be deleted at 23.09
-	// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-	// Deprecated since 22.12.
-	// Available ways to disable processing of SCTE-35 markers:
-	// 1. pids option to select tracks without SCTE-35 markers
-	// 2. hls_scte35 option from stream_config_media for hls output
-	// 3. performing appropriate tuning pids in the transponder
-	// Example: true
-	SetScte35(bool) StreamInputMpegtsSpecific
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	Subtitles() *StreamInputMpegtsSpecificSubtitles
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	SetSubtitles(StreamInputMpegtsSpecificSubtitles) StreamInputMpegtsSpecific
+	SetClosedCaptions(map[string]string) StreamInputM4f
+	// URL to get a stream from m4f source.
+	// Format: input_url (input_url)
+	// Pattern: ^(m4f|m4fs)://.*$
+	// Examples: m4f://remote.host.com/example, m4fs://remote.host.com/example
+	URL() InputURL
+	// URL to get a stream from m4f source.
+	// Format: input_url (input_url)
+	// Pattern: ^(m4f|m4fs)://.*$
+	// Examples: m4f://remote.host.com/example, m4fs://remote.host.com/example
+	SetURL(InputURL) StreamInputM4f
 }
 
+// Title: M4S
+// Required: url
+type StreamInputM4s interface {
+	// The rules for handling the closed captions.
+	ClosedCaptions() map[string]string
+	// The rules for handling the closed captions.
+	SetClosedCaptions(map[string]string) StreamInputM4s
+	// URL to get a stream from m4s source.
+	// Format: input_url (input_url)
+	// Pattern: ^(m4s|m4ss)://.*$
+	// Examples: m4s://remote.host.com/example, m4ss://remote.host.com/example
+	URL() InputURL
+	// URL to get a stream from m4s source.
+	// Format: input_url (input_url)
+	// Pattern: ^(m4s|m4ss)://.*$
+	// Examples: m4s://remote.host.com/example, m4ss://remote.host.com/example
+	SetURL(InputURL) StreamInputM4s
+}
+
+// Title: Publish
+// Required: url
 type StreamInputPublish interface {
-	// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-	// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-	// The default value is 300 kbit/s.
-	// Example: 200
-	AbrCorrection() *int
-	// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-	// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-	// The default value is 300 kbit/s.
-	// Example: 200
-	SetAbrCorrection(int) StreamInputPublish
-	// The number of cycles of bitrate auto-adjustment.
-	// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-	// By default, `abr_cycles`=5.
-	// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-	// Example: 3
-	AbrCycles() *int
-	// The number of cycles of bitrate auto-adjustment.
-	// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-	// By default, `abr_cycles`=5.
-	// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-	// Example: 3
-	SetAbrCycles(int) StreamInputPublish
-	// Whether adaptive bitrate process is logged.
-	// Example: 1
-	AbrDebug() *int
-	// Whether adaptive bitrate process is logged.
-	// Example: 1
-	SetAbrDebug(int) StreamInputPublish
-	// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-	// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-	// Example: 2
-	AbrLossLower() *float64
-	// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-	// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-	// Example: 2
-	SetAbrLossLower(float64) StreamInputPublish
-	// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-	// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	// Example: 10
-	AbrLossUpper() *float64
-	// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-	// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	// Example: 10
-	SetAbrLossUpper(float64) StreamInputPublish
-	// Maximum bitrate for adjustment process, in kbit/s.
-	// Flussonic will keep the publication bitrate equal or below of the specified value.
-	// Example: 1000
-	AbrMaxBitrate() *int
-	// Maximum bitrate for adjustment process, in kbit/s.
-	// Flussonic will keep the publication bitrate equal or below of the specified value.
-	// Example: 1000
-	SetAbrMaxBitrate(int) StreamInputPublish
-	// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-	// Two options are possible:
-	// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-	// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-	// Example: 1
-	AbrMode() *int
-	// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-	// Two options are possible:
-	// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-	// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-	// Example: 1
-	SetAbrMode(int) StreamInputPublish
-	// A step of reducing the bitrate to the minimum.
-	// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	AbrStepdown() *float64
-	// A step of reducing the bitrate to the minimum.
-	// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	SetAbrStepdown(float64) StreamInputPublish
-	// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-	// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-	AbrStepup() *int
-	// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-	// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-	SetAbrStepup(int) StreamInputPublish
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	AllowIf() *string
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	SetAllowIf(string) StreamInputPublish
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	AudioTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetAudioTimeout(Seconds) StreamInputPublish
-	// Human-readable description of the input.
-	// Example: This is a test input
-	Comment() *string
-	// Human-readable description of the input.
-	// Example: This is a test input
-	SetComment(string) StreamInputPublish
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	DenyIf() *string
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	SetDenyIf(string) StreamInputPublish
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	FramesTimeout() *int
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	SetFramesTimeout(int) StreamInputPublish
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	Headers() map[string]string
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	SetHeaders(map[string]string) StreamInputPublish
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	MaxRetryTimeout() *Seconds
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	SetMaxRetryTimeout(Seconds) StreamInputPublish
-	// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-	// Example: 150
-	MinBitrate() *int
-	// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-	// Example: 150
-	SetMinBitrate(int) StreamInputPublish
-	// Skip input start if the stream has no clients.
-	NoClientsReconnectDelay() *int
-	// Skip input start if the stream has no clients.
-	SetNoClientsReconnectDelay(int) StreamInputPublish
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	OutputAudio() *OutputAudio
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	SetOutputAudio(OutputAudio) StreamInputPublish
-	// Deprecated field. Will be deleted at 24.11
-	// Choose one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	PreferCodec() *WebrtcPreferVideoCodec
-	// Deprecated field. Will be deleted at 24.11
-	// Choose one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	SetPreferCodec(WebrtcPreferVideoCodec) StreamInputPublish
-	// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	PreferVideoCodec() *WebrtcPreferVideoCodec
-	// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	SetPreferVideoCodec(WebrtcPreferVideoCodec) StreamInputPublish
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	Priority() *int
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	SetPriority(int) StreamInputPublish
-	// This option disables processing of SCTE-35 markers from SRT input stream.
-	// Example: true
-	Scte35() *bool
-	// This option disables processing of SCTE-35 markers from SRT input stream.
-	// Example: true
-	SetScte35(bool) StreamInputPublish
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SourceTimeout() any
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SetSourceTimeout(any) StreamInputPublish
-	// Detailed runtime information about the input.
-	Stats() InputStats
-	// Detailed runtime information about the input.
-	SetStats(InputStats) StreamInputPublish
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	Subtitles() *StreamInputSrtPublishSpecificSubtitles
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	SetSubtitles(StreamInputSrtPublishSpecificSubtitles) StreamInputPublish
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	Timeout() *int
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	SetTimeout(int) StreamInputPublish
-	// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-	// Example: udp
-	Transport() *WebrtcTransport
-	// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-	// Example: udp
-	SetTransport(WebrtcTransport) StreamInputPublish
 	// The publish:// URL used to indicate where this stream started in publish mode.
 	// You can publish videos to Flussonic using the following URLs:
 	// __RTSP__: rtsp://FLUSSONIC-IP/stream_name
@@ -10117,147 +10255,15 @@ type StreamInputPublish interface {
 	// Pattern: ^publish://.*$
 	// Example: publish://
 	SetURL(InputURL) StreamInputPublish
-	// User agent. Can be modified if a protocol allows it.
-	UserAgent() *string
-	// User agent. Can be modified if a protocol allows it.
-	SetUserAgent(string) StreamInputPublish
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	Via() *AgentURL
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	SetVia(AgentURL) StreamInputPublish
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	VideoTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetVideoTimeout(Seconds) StreamInputPublish
-	// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-	// Example: true
-	WebrtcAbr() *bool
-	// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-	// Example: true
-	SetWebrtcAbr(bool) StreamInputPublish
 }
 
+// Title: RTSP
+// Required: url
 type StreamInputRtsp interface {
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	AllowIf() *string
-	// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-	// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-	// If no such file, the input is allowed.
-	SetAllowIf(string) StreamInputRtsp
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	AudioTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetAudioTimeout(Seconds) StreamInputRtsp
-	// Human-readable description of the input.
-	// Example: This is a test input
-	Comment() *string
-	// Human-readable description of the input.
-	// Example: This is a test input
-	SetComment(string) StreamInputRtsp
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	DenyIf() *string
-	// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-	// This option allows you to manage inputs without API requests.
-	// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-	// The `/path/to/file` file contains only the digit `1`.
-	// That means that the first input will not be used when you play the stream, so the second one will.
-	// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-	// If no such file, the input is allowed.
-	SetDenyIf(string) StreamInputRtsp
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	FramesTimeout() *int
-	// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-	// This period of time must be smaller than `source_timeout`.
-	// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-	// Example: 3
-	SetFramesTimeout(int) StreamInputRtsp
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	Headers() map[string]string
-	// Request headers as key-value pairs.
-	// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-	SetHeaders(map[string]string) StreamInputRtsp
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	MaxRetryTimeout() *Seconds
-	// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-	// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-	// Format: seconds (seconds)
-	// Example: 30
-	SetMaxRetryTimeout(Seconds) StreamInputRtsp
-	// Skip input start if the stream has no clients.
-	NoClientsReconnectDelay() *int
-	// Skip input start if the stream has no clients.
-	SetNoClientsReconnectDelay(int) StreamInputRtsp
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	OutputAudio() *OutputAudio
-	// Enables transcoding of the published audio to another codec.
-	// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-	SetOutputAudio(OutputAudio) StreamInputRtsp
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	Priority() *int
-	// The priority that Media Server takes into account when switching to another source.
-	// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-	// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-	// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-	// Example: 1
-	SetPriority(int) StreamInputRtsp
 	// Whether to force UDP to capture a video from RTSP cameras.
 	RTP() *string
 	// Whether to force UDP to capture a video from RTSP cameras.
 	SetRTP(string) StreamInputRtsp
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SourceTimeout() any
-	// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-	// Example: 20
-	SetSourceTimeout(any) StreamInputRtsp
-	// Detailed runtime information about the input.
-	Stats() InputStats
-	// Detailed runtime information about the input.
-	SetStats(InputStats) StreamInputRtsp
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	Timeout() *int
-	// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-	// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-	// Example: 10
-	SetTimeout(int) StreamInputRtsp
 	// URL to connect to the RTSP source and get the stream.
 	// Format: input_url (input_url)
 	// Pattern: ^(rtsp|rtsps|rtsp-udp|rtsp2)://.*$
@@ -10268,159 +10274,14 @@ type StreamInputRtsp interface {
 	// Pattern: ^(rtsp|rtsps|rtsp-udp|rtsp2)://.*$
 	// Examples: rtsp-udp://remote.host.com/example, rtsp2://remote.host.com/example, rtsp://remote.host.com/example, rtsps://remote.host.com/example
 	SetURL(InputURL) StreamInputRtsp
-	// User agent. Can be modified if a protocol allows it.
-	UserAgent() *string
-	// User agent. Can be modified if a protocol allows it.
-	SetUserAgent(string) StreamInputRtsp
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	Via() *AgentURL
-	// Agent ID. Used as a proxy to connect to the input server.
-	// Format: agent_url (agent://ID identification for `via` configuration option)
-	SetVia(AgentURL) StreamInputRtsp
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	VideoTimeout() *Seconds
-	// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-	// Format: seconds (seconds)
-	// Example: 20
-	SetVideoTimeout(Seconds) StreamInputRtsp
 	// Whether to wait for the full RTP time synchronization before the processing of frames from the RTSP camera.
+	// This option also disables the correction of the time received from the camera; the time from the camera is used as is.
+	// Warning: if the camera provides unsynchronized time with the streamer, there will be problems with the archive.
 	WaitRtcp() *bool
 	// Whether to wait for the full RTP time synchronization before the processing of frames from the RTSP camera.
+	// This option also disables the correction of the time received from the camera; the time from the camera is used as is.
+	// Warning: if the camera provides unsynchronized time with the streamer, there will be problems with the archive.
 	SetWaitRtcp(bool) StreamInputRtsp
-}
-
-type StreamInputSrtPublishSpecific interface {
-	// This option disables processing of SCTE-35 markers from SRT input stream.
-	// Example: true
-	Scte35() *bool
-	// This option disables processing of SCTE-35 markers from SRT input stream.
-	// Example: true
-	SetScte35(bool) StreamInputSrtPublishSpecific
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	Subtitles() *StreamInputSrtPublishSpecificSubtitles
-	// Deprecated field. Will be deleted at 25.03
-	// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-	// This parameter allows to manage subtitles in an output stream.
-	// Example: drop
-	SetSubtitles(StreamInputSrtPublishSpecificSubtitles) StreamInputSrtPublishSpecific
-}
-
-// Title: WebRTC
-type StreamInputWebrtcPublishSpecific interface {
-	// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-	// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-	// The default value is 300 kbit/s.
-	// Example: 200
-	AbrCorrection() *int
-	// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-	// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-	// The default value is 300 kbit/s.
-	// Example: 200
-	SetAbrCorrection(int) StreamInputWebrtcPublishSpecific
-	// The number of cycles of bitrate auto-adjustment.
-	// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-	// By default, `abr_cycles`=5.
-	// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-	// Example: 3
-	AbrCycles() *int
-	// The number of cycles of bitrate auto-adjustment.
-	// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-	// By default, `abr_cycles`=5.
-	// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-	// Example: 3
-	SetAbrCycles(int) StreamInputWebrtcPublishSpecific
-	// Whether adaptive bitrate process is logged.
-	// Example: 1
-	AbrDebug() *int
-	// Whether adaptive bitrate process is logged.
-	// Example: 1
-	SetAbrDebug(int) StreamInputWebrtcPublishSpecific
-	// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-	// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-	// Example: 2
-	AbrLossLower() *float64
-	// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-	// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-	// Example: 2
-	SetAbrLossLower(float64) StreamInputWebrtcPublishSpecific
-	// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-	// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	// Example: 10
-	AbrLossUpper() *float64
-	// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-	// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	// Example: 10
-	SetAbrLossUpper(float64) StreamInputWebrtcPublishSpecific
-	// Maximum bitrate for adjustment process, in kbit/s.
-	// Flussonic will keep the publication bitrate equal or below of the specified value.
-	// Example: 1000
-	AbrMaxBitrate() *int
-	// Maximum bitrate for adjustment process, in kbit/s.
-	// Flussonic will keep the publication bitrate equal or below of the specified value.
-	// Example: 1000
-	SetAbrMaxBitrate(int) StreamInputWebrtcPublishSpecific
-	// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-	// Two options are possible:
-	// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-	// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-	// Example: 1
-	AbrMode() *int
-	// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-	// Two options are possible:
-	// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-	// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-	// Example: 1
-	SetAbrMode(int) StreamInputWebrtcPublishSpecific
-	// A step of reducing the bitrate to the minimum.
-	// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	AbrStepdown() *float64
-	// A step of reducing the bitrate to the minimum.
-	// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-	SetAbrStepdown(float64) StreamInputWebrtcPublishSpecific
-	// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-	// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-	AbrStepup() *int
-	// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-	// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-	SetAbrStepup(int) StreamInputWebrtcPublishSpecific
-	// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-	// Example: 150
-	MinBitrate() *int
-	// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-	// Example: 150
-	SetMinBitrate(int) StreamInputWebrtcPublishSpecific
-	// Deprecated field. Will be deleted at 24.11
-	// Choose one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	PreferCodec() *WebrtcPreferVideoCodec
-	// Deprecated field. Will be deleted at 24.11
-	// Choose one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	SetPreferCodec(WebrtcPreferVideoCodec) StreamInputWebrtcPublishSpecific
-	// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	PreferVideoCodec() *WebrtcPreferVideoCodec
-	// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-	// Example: av1
-	SetPreferVideoCodec(WebrtcPreferVideoCodec) StreamInputWebrtcPublishSpecific
-	// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-	// Example: udp
-	Transport() *WebrtcTransport
-	// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-	// Example: udp
-	SetTransport(WebrtcTransport) StreamInputWebrtcPublishSpecific
-	// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-	// Example: true
-	WebrtcAbr() *bool
-	// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-	// Example: true
-	SetWebrtcAbr(bool) StreamInputWebrtcPublishSpecific
 }
 
 type StreamOnvifConfig interface {
@@ -10480,94 +10341,9 @@ type StreamPreset interface {
 	SetTitle(string) StreamPreset
 }
 
-type StreamPushBase interface {
-	// Human-readable description of the pusher.
-	// Example: This is a test push
-	Comment() *string
-	// Human-readable description of the pusher.
-	// Example: This is a test push
-	SetComment(string) StreamPushBase
-	// Disable pushing the stream.
-	// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-	// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-	Disabled() *bool
-	// Disable pushing the stream.
-	// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-	// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-	SetDisabled(bool) StreamPushBase
-	// The maximum number of times *Flussonic* retries to push the stream.
-	RetryLimit() *int
-	// The maximum number of times *Flussonic* retries to push the stream.
-	SetRetryLimit(int) StreamPushBase
-	// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-	// It is an interval in seconds, 5 seconds by default.
-	// You can increase this value to reduce server load.
-	// Format: seconds (seconds)
-	// Example: 7
-	RetryTimeout() *Seconds
-	// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-	// It is an interval in seconds, 5 seconds by default.
-	// You can increase this value to reduce server load.
-	// Format: seconds (seconds)
-	// Example: 7
-	SetRetryTimeout(Seconds) StreamPushBase
-	// Detailed runtime information about the push.
-	Stats() PushCounters
-	// Detailed runtime information about the push.
-	SetStats(PushCounters) StreamPushBase
-	// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-	// Format: seconds (seconds)
-	// Example: 10
-	Timeout() *Seconds
-	// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-	// Format: seconds (seconds)
-	// Example: 10
-	SetTimeout(Seconds) StreamPushBase
-}
-
+// Title: RTMP
+// Required: url
 type StreamPushRtmp interface {
-	// Human-readable description of the pusher.
-	// Example: This is a test push
-	Comment() *string
-	// Human-readable description of the pusher.
-	// Example: This is a test push
-	SetComment(string) StreamPushRtmp
-	// Disable pushing the stream.
-	// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-	// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-	Disabled() *bool
-	// Disable pushing the stream.
-	// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-	// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-	SetDisabled(bool) StreamPushRtmp
-	// The maximum number of times *Flussonic* retries to push the stream.
-	RetryLimit() *int
-	// The maximum number of times *Flussonic* retries to push the stream.
-	SetRetryLimit(int) StreamPushRtmp
-	// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-	// It is an interval in seconds, 5 seconds by default.
-	// You can increase this value to reduce server load.
-	// Format: seconds (seconds)
-	// Example: 7
-	RetryTimeout() *Seconds
-	// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-	// It is an interval in seconds, 5 seconds by default.
-	// You can increase this value to reduce server load.
-	// Format: seconds (seconds)
-	// Example: 7
-	SetRetryTimeout(Seconds) StreamPushRtmp
-	// Detailed runtime information about the push.
-	Stats() PushCounters
-	// Detailed runtime information about the push.
-	SetStats(PushCounters) StreamPushRtmp
-	// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-	// Format: seconds (seconds)
-	// Example: 10
-	Timeout() *Seconds
-	// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-	// Format: seconds (seconds)
-	// Example: 10
-	SetTimeout(Seconds) StreamPushRtmp
 	// RTMP URL where to push.
 	// You can publish to RTMP servers. Usually it is a social network streaming.
 	// Format: input_url (input_url)
@@ -10619,6 +10395,10 @@ type StreamStats interface {
 	DvrInfo() DvrInfo
 	// The information about the recorded DVR archive.
 	SetDvrInfo(DvrInfo) StreamStats
+	// Per-input runtime statistics.
+	Inputs() []InputStats
+	// Per-input runtime statistics.
+	SetInputs([]InputStats) StreamStats
 	// The time when the last time frame was sent to the stream output (in UTC).
 	// Format: utc_ms (Unix timestamp in milliseconds)
 	// Example: 1.636383841974e+12
@@ -10717,6 +10497,14 @@ type Streamer interface {
 	// Format: url (url)
 	// Example: http://streamer.local:8080
 	SetAPIURL(URL) Streamer
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	CdnZone() *string
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	SetCdnZone(string) Streamer
 	// Maximal number of streams.
 	// Example: 5
 	ChannelLimit() *int
@@ -10799,6 +10587,7 @@ type Streamer interface {
 	SetZones([]string) Streamer
 }
 
+// Required: cluster_key, role, hostname
 type StreamerConfig interface {
 	// The URL for provisioning of configuration from the managing server to the streamer.
 	// This URL does not have to be public but must be accessible from the managing server.
@@ -10814,6 +10603,14 @@ type StreamerConfig interface {
 	// Format: url (url)
 	// Example: http://streamer.local:8080
 	SetAPIURL(URL) StreamerConfig
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	CdnZone() *string
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	SetCdnZone(string) StreamerConfig
 	// Maximal number of streams.
 	// Example: 5
 	ChannelLimit() *int
@@ -10823,7 +10620,7 @@ type StreamerConfig interface {
 	// The key for authorization for inter-Flussonic connections.
 	// All cluster peers should have the same cluster key.
 	// Example: xS6i6Q3DCc5nEvnu
-	ClusterKey() *string
+	ClusterKey() string
 	// The key for authorization for inter-Flussonic connections.
 	// All cluster peers should have the same cluster key.
 	// Example: xS6i6Q3DCc5nEvnu
@@ -10841,7 +10638,7 @@ type StreamerConfig interface {
 	// if API URL is not specified.
 	// Format: server_name (server_name)
 	// Example: peer.example.com
-	Hostname() *ServerName
+	Hostname() ServerName
 	// Streamer's identifier in the cluster.
 	// The managing server may try using this hostname to access the streamer
 	// if API URL is not specified.
@@ -10871,7 +10668,7 @@ type StreamerConfig interface {
 	// Example: http://public.example.com
 	SetPublicPayloadURL(URL) StreamerConfig
 	// Role of node
-	Role() *CentralNodeRoleRole
+	Role() CentralNodeRoleRole
 	// Role of node
 	SetRole(CentralNodeRoleRole) StreamerConfig
 	// Statistics on peers in the cluster.
@@ -10904,10 +10701,6 @@ type StreamerConfigConfig interface {
 	AuthToken() *AuthToken
 	// Configure key name of query string key-value pair for token authentication
 	SetAuthToken(AuthToken) StreamerConfigConfig
-	// The configuration of the balancers.
-	Balancers() []BalancerConfig
-	// The configuration of the balancers.
-	SetBalancers([]BalancerConfig) StreamerConfigConfig
 	// The configuration of the cache.
 	Caches() []CacheConfig
 	// The configuration of the cache.
@@ -10916,10 +10709,6 @@ type StreamerConfigConfig interface {
 	CameraAlarm() CameraAlarmConfig
 	// The configuration of the camera alarms.
 	SetCameraAlarm(CameraAlarmConfig) StreamerConfigConfig
-	// The configuration of the chassis.
-	Chassis() ChassisConfig
-	// The configuration of the chassis.
-	SetChassis(ChassisConfig) StreamerConfigConfig
 	// The cluster key to unite several servers with the same key into a cluster.
 	// Example: xS6i6Q3DCc5nEvnu
 	ClusterKey() *string
@@ -10946,10 +10735,6 @@ type StreamerConfigConfig interface {
 	EventSinks() []EventSinkConfig
 	// The configuration of event notifications
 	SetEventSinks([]EventSinkConfig) StreamerConfigConfig
-	// The configuration of the file processor.
-	FileProcessor() FileProcessorConfig
-	// The configuration of the file processor.
-	SetFileProcessor(FileProcessorConfig) StreamerConfigConfig
 	// Use your own GeoIP database.
 	// Format: disk_path (disk_path)
 	// Example: /usr/share/GeoIP/GeoLite2-City.mmdb
@@ -10962,10 +10747,6 @@ type StreamerConfigConfig interface {
 	HTTPProxies() []HTTPProxyConfig
 	// List of HTTP prefixes that can be handled via call to remote http server
 	SetHTTPProxies([]HTTPProxyConfig) StreamerConfigConfig
-	// The configuration of the IPTV
-	Iptv() IptvConfig
-	// The configuration of the IPTV
-	SetIptv(IptvConfig) StreamerConfigConfig
 	// The configuration of network listeners.
 	Listeners() Listeners
 	// The configuration of network listeners.
@@ -10994,14 +10775,12 @@ type StreamerConfigConfig interface {
 	// Enables saving statistics on Nvidia performance.
 	// Example: true
 	SetNvidiaMonitor(bool) StreamerConfigConfig
-	// The configuration of peers in the cluster.
-	Peers() []PeerConfig
-	// The configuration of peers in the cluster.
-	SetPeers([]PeerConfig) StreamerConfigConfig
+	// Deprecated field. Will be deleted at 26.06
 	// Directory to store Pulse statistics.
 	// Format: disk_path (disk_path)
 	// Example: /var/run/flussonic/pulsedb
 	Pulsedb() *DiskPath
+	// Deprecated field. Will be deleted at 26.06
 	// Directory to store Pulse statistics.
 	// Format: disk_path (disk_path)
 	// Example: /var/run/flussonic/pulsedb
@@ -11024,22 +10803,22 @@ type StreamerConfigConfig interface {
 	// Format: disk_path (disk_path)
 	// Example: /var/run/flussonic/session_log
 	SetSessionLog(DiskPath) StreamerConfigConfig
-	// The configuration of the video sources.
-	Sources() []SourceConfig
-	// The configuration of the video sources.
-	SetSources([]SourceConfig) StreamerConfigConfig
 	// Global SRT listening port. It is possible to use a single port for playback and publishing, but it is not compatible with clients.
 	// Consider configuring separate ports for playback and publishing for each stream.
 	Srt() *ListenSpec
 	// Global SRT listening port. It is possible to use a single port for playback and publishing, but it is not compatible with clients.
 	// Consider configuring separate ports for playback and publishing for each stream.
 	SetSrt(*ListenSpec) StreamerConfigConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	Srt2Play() SrtConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrt2Play(SrtConfig) StreamerConfigConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	Srt2Publish() SrtConfig
+	// Deprecated field. Will be deleted at 26.09
 	// SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrt2Publish(SrtConfig) StreamerConfigConfig
 	// SRT play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
@@ -11050,14 +10829,12 @@ type StreamerConfigConfig interface {
 	SrtPublish() SrtConfig
 	// SRT publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 	SetSrtPublish(SrtConfig) StreamerConfigConfig
-	// The configuration of the streams.
-	Streams() []StreamConfig
-	// The configuration of the streams.
-	SetStreams([]StreamConfig) StreamerConfigConfig
-	// The configuration of the templates.
-	Templates() []TemplateConfig
-	// The configuration of the templates.
-	SetTemplates([]TemplateConfig) StreamerConfigConfig
+	// Prefix of streaming api and all streaming requests that will be removed from the path
+	// while calculating stream name.
+	StreamingPrefix() *string
+	// Prefix of streaming api and all streaming requests that will be removed from the path
+	// while calculating stream name.
+	SetStreamingPrefix(string) StreamerConfigConfig
 	// Total server bandwidth.
 	// Format: speed (speed)
 	// Example: 1e+09
@@ -11117,6 +10894,14 @@ type StreamerLayoutPrediction interface {
 	// Format: url (url)
 	// Example: http://streamer.local:8080
 	SetAPIURL(URL) StreamerLayoutPrediction
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	CdnZone() *string
+	// CDN zone name. Allows you to manage playback balancing.
+	// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+	// If no zone fits, the client is sent to the origin streamer.
+	SetCdnZone(string) StreamerLayoutPrediction
 	// Maximal number of streams.
 	// Example: 5
 	ChannelLimit() *int
@@ -11317,6 +11102,18 @@ type SystemConfig interface {
 	Database() Database
 	// The configuration of database connection
 	SetDatabase(Database) SystemConfig
+	// This parameter enables the API v2. If set to false, the Watcher will reject requests to the API v2. This config will be removed in the future release, you need to migrate to [API v3](https://flussonic.com/doc/watcher/api/) .
+	// Example: false
+	IsAPIV2Enabled() *bool
+	// This parameter enables the API v2. If set to false, the Watcher will reject requests to the API v2. This config will be removed in the future release, you need to migrate to [API v3](https://flussonic.com/doc/watcher/api/) .
+	// Example: false
+	SetIsAPIV2Enabled(bool) SystemConfig
+	// This parameter enables the NVR menu. If set to true, the watcher will show the NVR menu in the main menu by default. Otherwise it will be shown only if the watcher has at least one NVR registered.
+	// Example: false
+	IsNvrEnabled() *bool
+	// This parameter enables the NVR menu. If set to true, the watcher will show the NVR menu in the main menu by default. Otherwise it will be shown only if the watcher has at least one NVR registered.
+	// Example: false
+	SetIsNvrEnabled(bool) SystemConfig
 	// Issued license key
 	LicenseKey() *string
 	// Issued license key
@@ -11398,65 +11195,21 @@ type TSVersions interface {
 	SetSdt(int) TSVersions
 }
 
-type TemplateConfig interface {
-	// Whether a stream is disabled. Disabled streams are inactive and do not run.
-	// Displayed only with the API calls.
-	// Example: false
-	Disabled() *bool
-	// Whether a stream is disabled. Disabled streams are inactive and do not run.
-	// Displayed only with the API calls.
-	// Example: false
-	SetDisabled(bool) TemplateConfig
-	// DVR configuraton.
-	Dvr() StreamDvrSpec
-	// DVR configuraton.
-	SetDvr(StreamDvrSpec) TemplateConfig
-	// List of stream inputs.
-	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-	Inputs() []StreamInput
-	// List of stream inputs.
-	// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-	SetInputs([]StreamInput) TemplateConfig
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	Labels() map[string]UnixName
-	// Stream labels in key value format.
-	// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-	SetLabels(map[string]UnixName) TemplateConfig
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	Pushes() []StreamPush
-	// A list of pushes. When a server initiates the connection and sends a stream
-	// to other server(s), it is called a `push`.
-	SetPushes([]StreamPush) TemplateConfig
-	// Whether a stream is `static` or not.
-	// If set to `True` the server will try to keep this stream running even if
-	// there are no viewers or errors encountered.
-	// Streamer restarts *all* `static` streams even if any internal errors occur
-	// and the `static` streams crash.
-	// Example: true
-	Static() *bool
-	// Whether a stream is `static` or not.
-	// If set to `True` the server will try to keep this stream running even if
-	// there are no viewers or errors encountered.
-	// Streamer restarts *all* `static` streams even if any internal errors occur
-	// and the `static` streams crash.
-	// Example: true
-	SetStatic(bool) TemplateConfig
-	// Video analytics parameters.
-	Vision() VisionSpec
-	// Video analytics parameters.
-	SetVision(VisionSpec) TemplateConfig
-}
-
-type TemplateConfigSpecific interface {
-}
-
 type ThumbnailsSpec interface {
+	// Hardware device identifier used for thumbnail generation.
+	Deviceid() *TcDeviceid
+	// Hardware device identifier used for thumbnail generation.
+	SetDeviceid(*TcDeviceid) ThumbnailsSpec
 	// Whether to generate thumbnails from the video stream.
 	Enabled() any
 	// Whether to generate thumbnails from the video stream.
 	SetEnabled(any) ThumbnailsSpec
+	// Thumbnailer hardware type.
+	// Example: cpu
+	Hw() *TranscoderDevice
+	// Thumbnailer hardware type.
+	// Example: cpu
+	SetHw(TranscoderDevice) ThumbnailsSpec
 }
 
 type TlsCertificate interface {
@@ -12024,6 +11777,241 @@ type TrackInfoBaseConfigurable interface {
 	// Human-readable localized title of the track.
 	// Example: Video1
 	SetTitle(string) TrackInfoBaseConfigurable
+}
+
+type TrackInfoFull interface {
+	// Actual average FPS - the number of frames diplayed per second (calculated for the last 200 frames).
+	// The higher FPS is, the smoother the video playback is.
+	// Usually, standard values of FPS for films and video are used in different countries (for example, in Russia and Europe it is 25 FPS).
+	AvgFPS() *float64
+	// Actual average FPS - the number of frames diplayed per second (calculated for the last 200 frames).
+	// The higher FPS is, the smoother the video playback is.
+	// Usually, standard values of FPS for films and video are used in different countries (for example, in Russia and Europe it is 25 FPS).
+	SetAvgFPS(float64) TrackInfoFull
+	// Average GOP size (expressed in number of frames) of the last 1000-2000 frames.
+	// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+	// If this value is floating, this means that your transcoder is working in flexible GOP size mode and some players may have problems.
+	// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+	// Example: 25
+	AvgGop() *int
+	// Average GOP size (expressed in number of frames) of the last 1000-2000 frames.
+	// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+	// If this value is floating, this means that your transcoder is working in flexible GOP size mode and some players may have problems.
+	// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+	// Example: 25
+	SetAvgGop(int) TrackInfoFull
+	// Bandwidth necessary to transfer this track.
+	// This is slightly grater than bitrate because transport (e.g. MPEG TS) adds some overhead
+	// Format: speed (speed)
+	// Example: 2600
+	Bandwidth() *Speed
+	// Bandwidth necessary to transfer this track.
+	// This is slightly grater than bitrate because transport (e.g. MPEG TS) adds some overhead
+	// Format: speed (speed)
+	// Example: 2600
+	SetBandwidth(Speed) TrackInfoFull
+	// Average number of B-frames in a GOP. B-frames contain links to keyframes and P-frames before and after themselves.
+	// B-frames help to compress the video. However, some players impose limitations on this number: usually no more than 2 B-frames are used.
+	// This value also defines the GOP structure - the repeated pattern of frames after the keyframe: P, BP, BBP, BBBP, or BBBBP.
+	// Example: 3
+	Bframes() *int
+	// Average number of B-frames in a GOP. B-frames contain links to keyframes and P-frames before and after themselves.
+	// B-frames help to compress the video. However, some players impose limitations on this number: usually no more than 2 B-frames are used.
+	// This value also defines the GOP structure - the repeated pattern of frames after the keyframe: P, BP, BBP, BBBP, or BBBBP.
+	// Example: 3
+	SetBframes(int) TrackInfoFull
+	// Bitrate of the track in kbit/s.
+	// When using sdtv/hdtv/uhdtv transcoder target, for video tracks
+	// this field sets the desired transport bandwidth instead of raw video bitrate.
+	// Format: speed (speed)
+	// Example: 2543
+	Bitrate() *Speed
+	// Bitrate of the track in kbit/s.
+	// When using sdtv/hdtv/uhdtv transcoder target, for video tracks
+	// this field sets the desired transport bandwidth instead of raw video bitrate.
+	// Format: speed (speed)
+	// Example: 2543
+	SetBitrate(Speed) TrackInfoFull
+	// The number of audio channels.
+	// Example: 2
+	Channels() *int
+	// The number of audio channels.
+	// Example: 2
+	SetChannels(int) TrackInfoFull
+	// Parameters of closed captions.
+	ClosedCaptions() []ClosedCaptions
+	// Parameters of closed captions.
+	SetClosedCaptions([]ClosedCaptions) TrackInfoFull
+	// Codec of the track. Different codecs do **not** get the same track.
+	// Example: h264
+	Codec() *FrameCodec
+	// Codec of the track. Different codecs do **not** get the same track.
+	// Example: h264
+	SetCodec(FrameCodec) TrackInfoFull
+	// Content of the track (audio, video, or text).
+	Content() FrameContent
+	// Content of the track (audio, video, or text).
+	SetContent(FrameContent) TrackInfoFull
+	// Frame rate (frames per second) - the speed at which a sequence of images is displayed on a screen.
+	// Higher frame rates capture more images per second, which makes for smoother video.
+	// The standard frame rate for color television in the Phase Alternating Line (PAL) format is 25 fps.
+	// The standard frame rate for color television in the National Television System Committee (NTSC) format is 29,97 fps
+	// (a little bit lower than the original frame rate of black and white NTSC television, equal to 30 fps.)
+	// If interlaced TV is used, two fields of each frame (with odd-numbered lines and with even-numbered lines) are displayed consequently,
+	// but the frame rate is actually not doubled (50 half-frames are still equal to 25 original frames).
+	FPS() *float64
+	// Frame rate (frames per second) - the speed at which a sequence of images is displayed on a screen.
+	// Higher frame rates capture more images per second, which makes for smoother video.
+	// The standard frame rate for color television in the Phase Alternating Line (PAL) format is 25 fps.
+	// The standard frame rate for color television in the National Television System Committee (NTSC) format is 29,97 fps
+	// (a little bit lower than the original frame rate of black and white NTSC television, equal to 30 fps.)
+	// If interlaced TV is used, two fields of each frame (with odd-numbered lines and with even-numbered lines) are displayed consequently,
+	// but the frame rate is actually not doubled (50 half-frames are still equal to 25 original frames).
+	SetFPS(float64) TrackInfoFull
+	// For video track, it is the time between the beginning of a frame and the beginning of the next frame.
+	// This parameter is important for some protocols. Normally, frame duration is a difference between timestamps of two neighbouring frames.
+	// However, sometimes (when the connection is broken) video breakups are possible.
+	// As result, the delta between two consequent frame timestamps will not be equal to the frame duration.
+	// This situation is considered as a frame gap and is handled differently across different protocols.
+	// Format: ticks (ticks)
+	FrameDuration() *Ticks
+	// For video track, it is the time between the beginning of a frame and the beginning of the next frame.
+	// This parameter is important for some protocols. Normally, frame duration is a difference between timestamps of two neighbouring frames.
+	// However, sometimes (when the connection is broken) video breakups are possible.
+	// As result, the delta between two consequent frame timestamps will not be equal to the frame duration.
+	// This situation is considered as a frame gap and is handled differently across different protocols.
+	// Format: ticks (ticks)
+	SetFrameDuration(Ticks) TrackInfoFull
+	// The number of frames in a group of pictures (GOP).
+	// The encoder will create all GOPs of an exactly identical size - as specified in this option.
+	// A bigger GOP can be good for video compression but it can result in big zap-time (the duration of time between changing a channel and displaying a new channel.)
+	GopSize() *int
+	// The number of frames in a group of pictures (GOP).
+	// The encoder will create all GOPs of an exactly identical size - as specified in this option.
+	// A bigger GOP can be good for video compression but it can result in big zap-time (the duration of time between changing a channel and displaying a new channel.)
+	SetGopSize(int) TrackInfoFull
+	// The picture height in pixels on the display where it will be played by a player.
+	// If you need to insert a web-player into a web page, use this value for choosing the player size.
+	// Format: pixels (pixels)
+	Height() *Pixels
+	// The picture height in pixels on the display where it will be played by a player.
+	// If you need to insert a web-player into a web page, use this value for choosing the player size.
+	// Format: pixels (pixels)
+	SetHeight(Pixels) TrackInfoFull
+	// Indicates if progressive scanning method is used for all frames of the track
+	IsProgressive() *bool
+	// Indicates if progressive scanning method is used for all frames of the track
+	SetIsProgressive(bool) TrackInfoFull
+	// Language value of the track, if applicable.
+	// Example: eng
+	Language() *string
+	// Language value of the track, if applicable.
+	// Example: eng
+	SetLanguage(string) TrackInfoFull
+	// Last GOP size (expressed in number of frames).
+	// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+	// If this value is floating, this means that your transcoder is working in a flexible GOP size mode and some players may have problems.
+	// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+	// Example: 28
+	LastGop() *int
+	// Last GOP size (expressed in number of frames).
+	// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+	// If this value is floating, this means that your transcoder is working in a flexible GOP size mode and some players may have problems.
+	// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+	// Example: 28
+	SetLastGop(int) TrackInfoFull
+	// The size of the length field for H264 bitstream without start codes.
+	LengthSize() *int
+	// The size of the length field for H264 bitstream without start codes.
+	SetLengthSize(int) TrackInfoFull
+	// A set of constraints that indicate a degree of required decoder performance.
+	// This parameter is used for compatibility with old devices.
+	Level() *string
+	// A set of constraints that indicate a degree of required decoder performance.
+	// This parameter is used for compatibility with old devices.
+	SetLevel(string) TrackInfoFull
+	// The number of I-frames to be used for encoding.
+	NumRefsFrames() *int
+	// The number of I-frames to be used for encoding.
+	SetNumRefsFrames(int) TrackInfoFull
+	// This parameter sets PIDs values for outgoing MPEG-TS streams.
+	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
+	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
+	// Tracks are numbered starting from one. The code a1=123 sets a PID value for the first audio track.
+	// It is possible to set the base index for the tracks of a certain type using the 0 (zero) index.
+	// For example, t0=100 sets PID=101 for the first track, 102 for the second, and so on.
+	// Numbers can be given in decimal form (by default) or hexadecimal with 16# prefix.
+	Pid() *int
+	// This parameter sets PIDs values for outgoing MPEG-TS streams.
+	// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
+	// It is possible to set PID values for PMT, SDT, video, and audio tracks.
+	// Tracks are numbered starting from one. The code a1=123 sets a PID value for the first audio track.
+	// It is possible to set the base index for the tracks of a certain type using the 0 (zero) index.
+	// For example, t0=100 sets PID=101 for the first track, 102 for the second, and so on.
+	// Numbers can be given in decimal form (by default) or hexadecimal with 16# prefix.
+	SetPid(int) TrackInfoFull
+	// The color model of the video.
+	PixFmt() *FrameVideoPixFmt
+	// The color model of the video.
+	SetPixFmt(FrameVideoPixFmt) TrackInfoFull
+	// The picture width in pixels of the original video before transcoding.
+	// Format: pixels (pixels)
+	PixelHeight() *Pixels
+	// The picture width in pixels of the original video before transcoding.
+	// Format: pixels (pixels)
+	SetPixelHeight(Pixels) TrackInfoFull
+	// The picture width in pixels of the original video before transcoding.
+	// Format: pixels (pixels)
+	PixelWidth() *Pixels
+	// The picture width in pixels of the original video before transcoding.
+	// Format: pixels (pixels)
+	SetPixelWidth(Pixels) TrackInfoFull
+	// A specific codec-dependent profile of the output video.
+	// The profile allows to assume if the track can be played on a particular device.
+	Profile() *string
+	// A specific codec-dependent profile of the output video.
+	// The profile allows to assume if the track can be played on a particular device.
+	SetProfile(string) TrackInfoFull
+	// Sample rate, in hertz -
+	// the number of samples per second taken from a continuous signal to make a discrete or digital signal.
+	// Example: 8000
+	SampleRate() *int
+	// Sample rate, in hertz -
+	// the number of samples per second taken from a continuous signal to make a discrete or digital signal.
+	// Example: 8000
+	SetSampleRate(int) TrackInfoFull
+	// The second number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+	// SAR is used for creating non-anamorphic video from anamorphic video.
+	SarHeight() *int
+	// The second number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+	// SAR is used for creating non-anamorphic video from anamorphic video.
+	SetSarHeight(int) TrackInfoFull
+	// The first number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+	// SAR is used for creating non-anamorphic video from anamorphic video.
+	SarWidth() *int
+	// The first number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+	// SAR is used for creating non-anamorphic video from anamorphic video.
+	SetSarWidth(int) TrackInfoFull
+	// Human-readable localized title of the track.
+	// Example: Video1
+	Title() *string
+	// Human-readable localized title of the track.
+	// Example: Video1
+	SetTitle(string) TrackInfoFull
+	// Track identifier assigned by Flussonic.
+	// Example: v1
+	TrackID() any
+	// Track identifier assigned by Flussonic.
+	// Example: v1
+	SetTrackID(any) TrackInfoFull
+	// The picture width in pixels on the display where it will be played by a player.
+	// If you need to insert a web-player into a web page, use this value for choosing the player size.
+	// Format: pixels (pixels)
+	Width() *Pixels
+	// The picture width in pixels on the display where it will be played by a player.
+	// If you need to insert a web-player into a web page, use this value for choosing the player size.
+	// Format: pixels (pixels)
+	SetWidth(Pixels) TrackInfoFull
 }
 
 type TrackInfoMetadata interface {
@@ -12633,6 +12621,10 @@ type TranscoderDeviceStats interface {
 	// The type of the device used for transcoding.
 	// Example: cpu
 	SetType(TranscoderDevice) TranscoderDeviceStats
+	// The UUID of the transcoder device.
+	UUID() *string
+	// The UUID of the transcoder device.
+	SetUUID(string) TranscoderDeviceStats
 }
 
 // Required: name
@@ -12673,13 +12665,13 @@ type TransponderConfig interface {
 	Others() []TransponderOther
 	// The list of other transponders on the network.
 	SetOthers([]TransponderOther) TransponderConfig
-	// The length of multiplexer input buffer.
+	// The length of the multiplexer input buffer.
 	// The higher value makes the multiplexer more robust to non-uniform inputs.
 	// The lower value reduces input-to-output latency, but requires more stable bitrate (CBR) on input.
 	// Format: milliseconds (milliseconds)
 	// Example: 800
 	Prebuffer() *Milliseconds
-	// The length of multiplexer input buffer.
+	// The length of the multiplexer input buffer.
 	// The higher value makes the multiplexer more robust to non-uniform inputs.
 	// The lower value reduces input-to-output latency, but requires more stable bitrate (CBR) on input.
 	// Format: milliseconds (milliseconds)
@@ -12723,10 +12715,18 @@ type TransponderConfig interface {
 	Versions() TSVersions
 	// Versions of PSI tables.
 	SetVersions(TSVersions) TransponderConfig
-	// The size of the video buffer for the transponder.
-	VideoBuffer() *int
-	// The size of the video buffer for the transponder.
-	SetVideoBuffer(int) TransponderConfig
+	// Target maximum video buffering time.
+	// Lower values reduce latency, but require more stable transport and decoder behavior.
+	// The minimum safe value depends on bitrate, frame sizes, transport conditions, and decoder behavior.
+	// Format: milliseconds (milliseconds)
+	// Example: 1000
+	VideoBuffer() *Milliseconds
+	// Target maximum video buffering time.
+	// Lower values reduce latency, but require more stable transport and decoder behavior.
+	// The minimum safe value depends on bitrate, frame sizes, transport conditions, and decoder behavior.
+	// Format: milliseconds (milliseconds)
+	// Example: 1000
+	SetVideoBuffer(Milliseconds) TransponderConfig
 }
 
 type TransponderEit interface {
@@ -12997,6 +12997,12 @@ type User interface {
 	// Format: email (email)
 	// Example: user@example.com
 	SetEmail(Email) User
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	ExternalID() *string
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	SetExternalID(string) User
 	// The user's full name.
 	Fullname() *string
 	// The user's full name.
@@ -13140,6 +13146,12 @@ type UserBase interface {
 	// Format: email (email)
 	// Example: user@example.com
 	SetEmail(Email) UserBase
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	ExternalID() *string
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	SetExternalID(string) UserBase
 	// The user's full name.
 	Fullname() *string
 	// The user's full name.
@@ -13207,6 +13219,12 @@ type UserCreate interface {
 	// Format: email (email)
 	// Example: user@example.com
 	SetEmail(Email) UserCreate
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	ExternalID() *string
+	// Subscriber identifier in an external system (e.g. billing).
+	// Only the administrator or domain owner can edit this field.
+	SetExternalID(string) UserCreate
 	// The user's full name.
 	Fullname() *string
 	// The user's full name.
@@ -13406,21 +13424,29 @@ type VisionPoint interface {
 }
 
 type VisionSpec interface {
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	Alg() *VisionSpecAlg
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	SetAlg(VisionSpecAlg) VisionSpec
+	// Deprecated field. Will be deleted at 26.07
 	// This parameter allows you to select specific polygonal area(s) for detection.
 	// By default, it is empty, and the recognition system searches over the entire camera field of view.
 	// Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 	// The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+	// Deprecated. Use `detectors` instead.
 	Areas() *string
+	// Deprecated field. Will be deleted at 26.07
 	// This parameter allows you to select specific polygonal area(s) for detection.
 	// By default, it is empty, and the recognition system searches over the entire camera field of view.
 	// Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 	// The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+	// Deprecated. Use `detectors` instead.
 	SetAreas(string) VisionSpec
 	// Configuration of videoanalytics modules.
 	// This configuration supersedes `alg` and `areas` parameters.
@@ -13433,10 +13459,14 @@ type VisionSpec interface {
 }
 
 type VisionSpecPresets interface {
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	Alg() *VisionSpecPresetsAlg
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	SetAlg(VisionSpecPresetsAlg) VisionSpecPresets
 }
@@ -13612,9 +13642,92 @@ type WatcherAgentConfig interface {
 	// Agents's metrics and other statistical information.
 	SetStats(WatcherAgentStats) WatcherAgentConfig
 	// List of streams info that have this agent in their inputs
-	Streams() []any
+	Streams() []WatcherAgentConfigStreamsItem
 	// List of streams info that have this agent in their inputs
-	SetStreams([]any) WatcherAgentConfig
+	SetStreams([]WatcherAgentConfigStreamsItem) WatcherAgentConfig
+}
+
+type WatcherAgentConfigStreamsItem interface {
+	// Human-readable description of the stream.
+	// Example: This is a test stream
+	Comment() *string
+	// Human-readable description of the stream.
+	// Example: This is a test stream
+	SetComment(string) WatcherAgentConfigStreamsItem
+	// Globally unique stream name.
+	// Note that the name could not be changed after the stream is created.
+	// Format: media_name (media_name)
+	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
+	Name() *MediaName
+	// Globally unique stream name.
+	// Note that the name could not be changed after the stream is created.
+	// Format: media_name (media_name)
+	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
+	SetName(MediaName) WatcherAgentConfigStreamsItem
+	// Where the stream is initialized: config, user play/publication, or remote
+	// cluster server.
+	// Example: config
+	NamedBy() *NamedBy
+	// Where the stream is initialized: config, user play/publication, or remote
+	// cluster server.
+	// Example: config
+	SetNamedBy(NamedBy) WatcherAgentConfigStreamsItem
+	// NMOS configuration.
+	Nmos() NmosConfig
+	// NMOS configuration.
+	SetNmos(NmosConfig) WatcherAgentConfigStreamsItem
+	// Organization information.
+	Organization() OrganizationBase
+	// Organization information.
+	SetOrganization(OrganizationBase) WatcherAgentConfigStreamsItem
+	// Position of the stream in order of streams in the config file, if declared.
+	// Format: sort_index (sort_index)
+	// Example: 2
+	Position() *SortIndex
+	// Position of the stream in order of streams in the config file, if declared.
+	// Format: sort_index (sort_index)
+	// Example: 2
+	SetPosition(SortIndex) WatcherAgentConfigStreamsItem
+	// How often to re-check secondary inputs. If this option is not set than check is never performed.
+	// Format: seconds (seconds)
+	// Example: 120
+	RecheckSecondaryInputsInterval() *Seconds
+	// How often to re-check secondary inputs. If this option is not set than check is never performed.
+	// Format: seconds (seconds)
+	// Example: 120
+	SetRecheckSecondaryInputsInterval(Seconds) WatcherAgentConfigStreamsItem
+	// Deprecated field. Will be deleted at 24.06
+	// Stream name was resolved via `srt_port_resolve` call.
+	// See [endpoint](https://flussonic.com/doc/api/config-external/#tag/srt/operation/srt_port_resolve)
+	// and [listener](https://flussonic.com/doc/api/reference/#tag/config/operation/config_save%7Cbody%7Clisteners%7Csrt)
+	// for feature description.
+	// This parameter now lives in `stats` object.
+	// Example: false
+	SrtPortResolve() *bool
+	// Deprecated field. Will be deleted at 24.06
+	// Stream name was resolved via `srt_port_resolve` call.
+	// See [endpoint](https://flussonic.com/doc/api/config-external/#tag/srt/operation/srt_port_resolve)
+	// and [listener](https://flussonic.com/doc/api/reference/#tag/config/operation/config_save%7Cbody%7Clisteners%7Csrt)
+	// for feature description.
+	// This parameter now lives in `stats` object.
+	// Example: false
+	SetSrtPortResolve(bool) WatcherAgentConfigStreamsItem
+	// Template of the stream.
+	// Format: media_name (media_name)
+	// Example: sports-hd
+	Template() *MediaName
+	// Template of the stream.
+	// Format: media_name (media_name)
+	// Example: sports-hd
+	SetTemplate(MediaName) WatcherAgentConfigStreamsItem
+	// Human-readable title of the stream. Provided for SDT MPEG-TS table or
+	// SDP RTSP title parameter.
+	// Example: Hockey channel
+	Title() *string
+	// Human-readable title of the stream. Provided for SDT MPEG-TS table or
+	// SDP RTSP title parameter.
+	// Example: Hockey channel
+	SetTitle(string) WatcherAgentConfigStreamsItem
 }
 
 type WatcherAgentControlConnection interface {
@@ -13859,137 +13972,6 @@ type WatcherStatusChecksErrorsDetailsItem interface {
 	SetError(string) WatcherStatusChecksErrorsDetailsItem
 }
 
-type WatcherStreamConfig interface {
-	// Audio settings for the stream.
-	Audio() WatcherStreamConfigAudio
-	// Audio settings for the stream.
-	SetAudio(WatcherStreamConfigAudio) WatcherStreamConfig
-	// A publishable stream.
-	// Example: false
-	CanPublish() *bool
-	// A publishable stream.
-	// Example: false
-	SetCanPublish(bool) WatcherStreamConfig
-	// Camera coordinates on a map or a floor plan.
-	Coordinates() MapSpec
-	// Camera coordinates on a map or a floor plan.
-	SetCoordinates(MapSpec) WatcherStreamConfig
-	// The date and time when the steam was created.
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	// Example: 1.672531199e+12
-	CreatedAt() *UtcMs
-	// The date and time when the steam was created.
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	// Example: 1.672531199e+12
-	SetCreatedAt(UtcMs) WatcherStreamConfig
-	// Domain the stream belongs to.
-	Domain() DomainBase
-	// Domain the stream belongs to.
-	SetDomain(DomainBase) WatcherStreamConfig
-	// Duration of the firmware update. If this field is present, the update process is ongoing.
-	// Format: milliseconds (milliseconds)
-	FirmwareUpdateDuration() *Milliseconds
-	// Duration of the firmware update. If this field is present, the update process is ongoing.
-	// Format: milliseconds (milliseconds)
-	SetFirmwareUpdateDuration(Milliseconds) WatcherStreamConfig
-	// Folder identificator.
-	FolderID() *int
-	// Folder identificator.
-	SetFolderID(int) WatcherStreamConfig
-	// Information about the latest changes made to the camera configuration.
-	LastChange() AuditLogRecord
-	// Information about the latest changes made to the camera configuration.
-	SetLastChange(AuditLogRecord) WatcherStreamConfig
-	// The time when the last episode occurred.
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	// Examples: 1.637094994e+12
-	LastEpisodeAt() *UtcMs
-	// The time when the last episode occurred.
-	// Format: utc_ms (Unix timestamp in milliseconds)
-	// Examples: 1.637094994e+12
-	SetLastEpisodeAt(UtcMs) WatcherStreamConfig
-	// Layouts information
-	Layout() CentralStreamLayout
-	// Layouts information
-	SetLayout(CentralStreamLayout) WatcherStreamConfig
-	// Rules of layout.
-	LayoutRules() StreamZoneConfig
-	// Rules of layout.
-	SetLayoutRules(StreamZoneConfig) WatcherStreamConfig
-	// Deprecated field. Will be deleted at 24.12
-	// Camera coordinates on a map or a floor plan. Deprecated. Use coordinates instead.
-	MapCoordinates() MapSpec
-	// Deprecated field. Will be deleted at 24.12
-	// Camera coordinates on a map or a floor plan. Deprecated. Use coordinates instead.
-	SetMapCoordinates(MapSpec) WatcherStreamConfig
-	// User's active notification subscriptions for this camera.
-	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-	Notifications() []WatcherStreamConfigNotificationsItem
-	// User's active notification subscriptions for this camera.
-	// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-	SetNotifications([]WatcherStreamConfigNotificationsItem) WatcherStreamConfig
-	// Onvif configuration
-	Onvif() StreamOnvifConfig
-	// Onvif configuration
-	SetOnvif(StreamOnvifConfig) WatcherStreamConfig
-	// Organization the stream belongs to.
-	Organization() OrganizationStream
-	// Organization the stream belongs to.
-	SetOrganization(OrganizationStream) WatcherStreamConfig
-	// Deprecated field. Will be deleted at 25.11
-	// ID of the organization the stream belongs to.
-	// Only organization owner or domain administrator could change it.
-	// Example: 9
-	OrganizationID() *int
-	// Deprecated field. Will be deleted at 25.11
-	// ID of the organization the stream belongs to.
-	// Only organization owner or domain administrator could change it.
-	// Example: 9
-	SetOrganizationID(int) WatcherStreamConfig
-	// Contains path to stream as a list.
-	// Each item of the list can be interpreted as a node in a folders tree.
-	Path() []StreamPathItem
-	// Contains path to stream as a list.
-	// Each item of the list can be interpreted as a node in a folders tree.
-	SetPath([]StreamPathItem) WatcherStreamConfig
-	// Camera adress on a map.
-	PostalAddress() *string
-	// Camera adress on a map.
-	SetPostalAddress(string) WatcherStreamConfig
-	// Preset settings.
-	Preset() StreamPreset
-	// Preset settings.
-	SetPreset(StreamPreset) WatcherStreamConfig
-	// Deprecated field. Will be deleted at 26.01
-	// Preset identificator.
-	PresetID() *int
-	// Deprecated field. Will be deleted at 26.01
-	// Preset identificator.
-	SetPresetID(int) WatcherStreamConfig
-}
-
-// Audio settings for the stream.
-type WatcherStreamConfigAudio interface {
-	// A flag showing if the audio is captured (false) or not (true) from the stream.
-	// Example: false
-	Disabled() *bool
-	// A flag showing if the audio is captured (false) or not (true) from the stream.
-	// Example: false
-	SetDisabled(bool) WatcherStreamConfigAudio
-	// Audio codec (the AAC codec is used by default).
-	TranscodeAudioCodec() *FrameAudioCodec
-	// Audio codec (the AAC codec is used by default).
-	SetTranscodeAudioCodec(FrameAudioCodec) WatcherStreamConfigAudio
-}
-
-// Notification subscription details for a specific event type.
-type WatcherStreamConfigNotificationsItem interface {
-	EventTypes() EventTypes
-	SetEventTypes(EventTypes) WatcherStreamConfigNotificationsItem
-	NotificationType() *NotificationType
-	SetNotificationType(NotificationType) WatcherStreamConfigNotificationsItem
-}
-
 type WebLogoSpec interface {
 	// Change the position of the logo to the bottom.
 	Bottom() *int
@@ -14143,22 +14125,22 @@ type APICallImpl struct {
 }
 
 type APICallEventImpl struct {
-	PayloadValue     *string       `json:"payload,omitempty" validate:"omitempty"`
-	QsValue          *string       `json:"qs,omitempty" validate:"omitempty"`
-	UtcMsValue       *UtcMs        `json:"utc_ms,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue   *DateTime     `json:"created_at,omitempty" validate:"omitempty"`
+	DurationValue    *Microseconds `json:"duration,omitempty" validate:"omitempty"`
+	EventValue       string        `json:"event" validate:"required"`
 	EventIDValue     *int          `json:"event_id,omitempty" validate:"omitempty"`
 	IPValue          *IP           `json:"ip,omitempty" validate:"omitempty"`
 	OperationIDValue *string       `json:"operation_id,omitempty" validate:"omitempty"`
-	DurationValue    *Microseconds `json:"duration,omitempty" validate:"omitempty"`
 	OriginatorValue  *string       `json:"originator,omitempty" validate:"omitempty"`
-	CreatedAtValue   *DateTime     `json:"created_at,omitempty" validate:"omitempty"`
 	PathValue        *string       `json:"path,omitempty" validate:"omitempty"`
+	PayloadValue     *string       `json:"payload,omitempty" validate:"omitempty"`
+	QsValue          *string       `json:"qs,omitempty" validate:"omitempty"`
 	RequestIDValue   *string       `json:"request_id,omitempty" validate:"omitempty"`
 	ServerValue      *string       `json:"server,omitempty" validate:"omitempty"`
 	StatusValue      *int          `json:"status,omitempty" validate:"omitempty"`
 	TraceIDValue     *UUID         `json:"trace_id,omitempty" validate:"omitempty"`
 	UserAgentValue   *string       `json:"user_agent,omitempty" validate:"omitempty"`
-	EventValue       string        `json:"event" validate:"required"`
+	UtcMsValue       *UtcMs        `json:"utc_ms,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 // Required: login, password
@@ -14168,12 +14150,12 @@ type AdminCredentialsImpl struct {
 }
 
 type AgentImpl struct {
-	IDValue      *string                `json:"id,omitempty" validate:"omitempty"`
-	KeyValue     *string                `json:"key,omitempty" validate:"omitempty"`
-	ModelValue   *string                `json:"model,omitempty" validate:"omitempty"`
-	SerialValue  *string                `json:"serial,omitempty" validate:"omitempty"`
-	StatsValue   *WatcherAgentStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty,dive"`
+	IDValue      *string                              `json:"id,omitempty" validate:"omitempty"`
+	KeyValue     *string                              `json:"key,omitempty" validate:"omitempty"`
+	ModelValue   *string                              `json:"model,omitempty" validate:"omitempty"`
+	SerialValue  *string                              `json:"serial,omitempty" validate:"omitempty"`
+	StatsValue   *WatcherAgentStatsImpl               `json:"stats,omitempty" validate:"omitempty"`
+	StreamsValue []*WatcherAgentConfigStreamsItemImpl `json:"streams,omitempty" validate:"omitempty,dive"`
 }
 
 type AgentConfigBaseImpl struct {
@@ -14185,11 +14167,11 @@ type AgentConfigBaseImpl struct {
 }
 
 type AgentsListImpl struct {
-	TimingValue         any          `json:"timing,omitempty" validate:"omitempty"`
+	AgentsValue         []*AgentImpl `json:"agents,omitempty" validate:"omitempty,dive"`
 	EstimatedCountValue *int         `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string      `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string      `json:"prev,omitempty" validate:"omitempty"`
-	AgentsValue         []*AgentImpl `json:"agents,omitempty" validate:"omitempty,dive"`
+	TimingValue         any          `json:"timing,omitempty" validate:"omitempty"`
 }
 
 // Users apikey for access via API.
@@ -14213,7 +14195,7 @@ type AppearanceConfigColorsImpl struct {
 }
 
 type AuditLogRecordImpl struct {
-	CreatedAtValue *UtcMs  `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue *UtcMs  `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	UserValue      *string `json:"user,omitempty" validate:"omitempty"`
 }
 
@@ -14226,9 +14208,8 @@ type AuthImpl struct {
 
 // Required: name
 type AuthBackendConfigImpl struct {
-	AllowDefaultValue   *bool                 `json:"allow_default,omitempty" validate:"omitempty"`
-	NameValue           AuthBackendName       `json:"name" validate:"required"`
 	AllowCountriesValue []string              `json:"allow_countries,omitempty" validate:"omitempty,dive"`
+	AllowDefaultValue   *bool                 `json:"allow_default,omitempty" validate:"omitempty"`
 	AllowIpsValue       []string              `json:"allow_ips,omitempty" validate:"omitempty,dive"`
 	AllowTokensValue    []string              `json:"allow_tokens,omitempty" validate:"omitempty,dive"`
 	AllowUasValue       []string              `json:"allow_uas,omitempty" validate:"omitempty,dive"`
@@ -14237,6 +14218,7 @@ type AuthBackendConfigImpl struct {
 	DenyIpsValue        []string              `json:"deny_ips,omitempty" validate:"omitempty,dive"`
 	DenyTokensValue     []string              `json:"deny_tokens,omitempty" validate:"omitempty,dive"`
 	DenyUasValue        []string              `json:"deny_uas,omitempty" validate:"omitempty,dive"`
+	NameValue           AuthBackendName       `json:"name" validate:"required"`
 }
 
 // Required: url
@@ -14245,36 +14227,23 @@ type AuthBackendURLImpl struct {
 }
 
 type AuthSpecImpl struct {
-	ExtraValue               map[string]string `json:"extra,omitempty" validate:"omitempty,dive"`
-	MaxSessionsValue         *int              `json:"max_sessions,omitempty" validate:"omitempty"`
-	SoftLimitationValue      *bool             `json:"soft_limitation,omitempty" validate:"omitempty"`
-	URLValue                 *AuthURL          `json:"url,omitempty" validate:"omitempty"`
 	AllowedCountriesValue    []Iso3166         `json:"allowed_countries,omitempty" validate:"omitempty,dive"`
 	DisallowedCountriesValue []Iso3166         `json:"disallowed_countries,omitempty" validate:"omitempty,dive"`
 	DomainsValue             []string          `json:"domains,omitempty" validate:"omitempty,dive"`
+	ExtraValue               map[string]string `json:"extra,omitempty" validate:"omitempty,dive"`
+	MaxSessionsValue         *int              `json:"max_sessions,omitempty" validate:"omitempty"`
 	SessionKeysValue         []SessionKey      `json:"session_keys,omitempty" validate:"omitempty,dive,oneof=ip name proto token"`
-}
-
-type BalancerConfigImpl struct {
-	ModeValue    *BalancerConfigMode         `json:"mode,omitempty" validate:"omitempty,oneof=usage clients bitrate streams"`
-	NameValue    *MediaName                  `json:"name,omitempty" validate:"omitempty"`
-	ServersValue []*BalancerServerConfigImpl `json:"servers,omitempty" validate:"omitempty,dive"`
-}
-
-type BalancerServerConfigImpl struct {
-	CountriesDefaultValue *bool       `json:"countries_default,omitempty" validate:"omitempty"`
-	MaxBitrateValue       *Speed      `json:"max_bitrate,omitempty" validate:"omitempty"`
-	NameValue             *ServerName `json:"name,omitempty" validate:"omitempty"`
-	CountriesValue        []Iso3166   `json:"countries,omitempty" validate:"omitempty,dive"`
+	SoftLimitationValue      *bool             `json:"soft_limitation,omitempty" validate:"omitempty"`
+	URLValue                 *AuthURL          `json:"url,omitempty" validate:"omitempty"`
 }
 
 // Required: name
 type CacheConfigImpl struct {
 	ExpirationValue   *Seconds  `json:"expiration,omitempty" validate:"omitempty"`
 	MissesValue       *int      `json:"misses,omitempty" validate:"omitempty"`
+	NameValue         CacheName `json:"name" validate:"required"`
 	PathValue         *DiskPath `json:"path,omitempty" validate:"omitempty"`
 	StorageLimitValue *Bytes    `json:"storage_limit,omitempty" validate:"omitempty"`
-	NameValue         CacheName `json:"name" validate:"required"`
 }
 
 type CacheSpecImpl struct {
@@ -14285,8 +14254,8 @@ type CacheSpecImpl struct {
 }
 
 type CameraAlarmConfigImpl struct {
-	ListenValue *ListenSpec `json:"listen,omitempty" validate:"omitempty"`
 	CatchValue  []string    `json:"catch,omitempty" validate:"omitempty,dive"`
+	ListenValue *ListenSpec `json:"listen,omitempty" validate:"omitempty"`
 }
 
 type CameraConfigImpl struct {
@@ -14303,7 +14272,24 @@ type CameraInfoImpl struct {
 	SerialNumberValue *string `json:"serial_number,omitempty" validate:"omitempty"`
 }
 
-type CameraTagWbImpl struct {
+// Camera usage data for billing integration.
+type CameraUsageImpl struct {
+	AccountIDValue         *int    `json:"account_id,omitempty" validate:"omitempty"`
+	BillingPlanIDValue     *string `json:"billing_plan_id,omitempty" validate:"omitempty"`
+	ExternalAccountIDValue *string `json:"external_account_id,omitempty" validate:"omitempty"`
+	FromValue              *Date   `json:"from,omitempty" validate:"omitempty"`
+	LicenseIDValue         *string `json:"license_id,omitempty" validate:"omitempty"`
+	PlanIDValue            *string `json:"plan_id,omitempty" validate:"omitempty"`
+	StreamNameValue        *string `json:"stream_name,omitempty" validate:"omitempty"`
+	ToValue                *Date   `json:"to,omitempty" validate:"omitempty"`
+}
+
+type CameraUsagesListImpl struct {
+	EstimatedCountValue *int               `json:"estimated_count,omitempty" validate:"omitempty"`
+	NextValue           *string            `json:"next,omitempty" validate:"omitempty"`
+	PrevValue           *string            `json:"prev,omitempty" validate:"omitempty"`
+	TimingValue         any                `json:"timing,omitempty" validate:"omitempty"`
+	UsageValue          []*CameraUsageImpl `json:"usage,omitempty" validate:"omitempty,dive"`
 }
 
 // Predictions for disk usage.
@@ -14311,11 +14297,39 @@ type CentralDiskPredictionsImpl struct {
 	EstimatedDiskUsageValue *Percent `json:"estimated_disk_usage,omitempty" validate:"omitempty,min=0,max=100"`
 }
 
+// Status of Central healthcheck.
+type CentralHealthcheckStatusImpl struct {
+	ChecksValue          *CentralHealthcheckStatusChecksImpl `json:"checks,omitempty" validate:"omitempty"`
+	StatusValue          *CentralHealthcheckStatusStatus     `json:"status,omitempty" validate:"omitempty,oneof=ok error"`
+	StatusChangedAtValue *UtcMs                              `json:"status_changed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+}
+
+// List of healthcheck checks with their results.
+type CentralHealthcheckStatusChecksImpl struct {
+	ConfigExternalOkValue *bool                                                  `json:"config_external_ok,omitempty" validate:"omitempty"`
+	ConfigOkValue         *bool                                                  `json:"config_ok,omitempty" validate:"omitempty"`
+	ErrorsDetailsValue    []*CentralHealthcheckStatusChecksErrorsDetailsItemImpl `json:"errors_details,omitempty" validate:"omitempty,dive"`
+	ReachableValue        *bool                                                  `json:"reachable,omitempty" validate:"omitempty"`
+	RproxyOkValue         *bool                                                  `json:"rproxy_ok,omitempty" validate:"omitempty"`
+	RunningValue          *bool                                                  `json:"running,omitempty" validate:"omitempty"`
+	StableValue           *bool                                                  `json:"stable,omitempty" validate:"omitempty"`
+	TimeSynchronizedValue *bool                                                  `json:"time_synchronized,omitempty" validate:"omitempty"`
+	ValidClusterKeyValue  *bool                                                  `json:"valid_cluster_key,omitempty" validate:"omitempty"`
+}
+
+// Error details
+type CentralHealthcheckStatusChecksErrorsDetailsItemImpl struct {
+	ErrorValue *string `json:"error,omitempty" validate:"omitempty"`
+	RuleValue  *string `json:"rule,omitempty" validate:"omitempty"`
+}
+
 type CentralNodeLayoutDecisionImpl struct {
-	HostnameValue     *ServerName                       `json:"hostname,omitempty" validate:"omitempty"`
-	NodeDecisionValue *bool                             `json:"node_decision,omitempty" validate:"omitempty"`
-	RoleValue         *CentralNodeRoleRole              `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
-	ReasonsValue      []CentralNodeLayoutDecisionReason `json:"reasons,omitempty" validate:"omitempty,dive,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_channel_limit_exceeded streamer_dvr_size_exceeded node_not_available_for_transcoding node_offline streamer_total_bandwidth_exceeded namespace_mismatch"`
+	HostnameValue             *ServerName                       `json:"hostname,omitempty" validate:"omitempty"`
+	NodeDecisionValue         *bool                             `json:"node_decision,omitempty" validate:"omitempty"`
+	ReasonsValue              []CentralNodeLayoutDecisionReason `json:"reasons,omitempty" validate:"omitempty,dive,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_channel_limit_exceeded streamer_dvr_size_exceeded node_not_available_for_transcoding node_transcoding_claims_exceeded node_offline streamer_total_bandwidth_exceeded namespace_mismatch"`
+	RoleValue                 *CentralNodeRoleRole              `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
+	TranscoderDeviceIDValue   *int                              `json:"transcoder_device_id,omitempty" validate:"omitempty"`
+	TranscoderDeviceTypeValue *TranscoderDevice                 `json:"transcoder_device_type,omitempty" validate:"omitempty"`
 }
 
 type CentralNodeRoleImpl struct {
@@ -14323,56 +14337,66 @@ type CentralNodeRoleImpl struct {
 }
 
 type CentralStreamLayoutImpl struct {
-	ChangeReasonValue        *CentralStreamLayoutChangeReason `json:"change_reason,omitempty" validate:"omitempty,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_become_offline stream_disabled node_deleted node_channel_limit_exceeded multistream_agent_ingest_conflict streamer_dvr_size_exceeded streamer_total_bandwidth_exceeded preferred_labels_better_match not_distributed dvr_redundancy_adjust node_cpu_pressure relayout_by_api namespace_mismatch"`
-	CreatedAtValue           *UtcMs                           `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	InferenceValue           *ServerName                      `json:"inference,omitempty" validate:"omitempty"`
-	IngestValue              *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
-	OriginatorValue          *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
-	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
-	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
-	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
+	ChangeReasonValue         *CentralStreamLayoutChangeReason `json:"change_reason,omitempty" validate:"omitempty,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_become_offline stream_disabled node_deleted node_channel_limit_exceeded multistream_agent_ingest_conflict streamer_dvr_size_exceeded node_not_available_for_transcoding node_nvenc_pressure node_transcoding_claims_exceeded streamer_total_bandwidth_exceeded preferred_labels_better_match not_distributed dvr_redundancy_adjust node_cpu_pressure relayout_by_api namespace_mismatch"`
+	CreatedAtValue            *UtcMs                           `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DvrBackupsValue           []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
+	DvrPartsValue             []ServerName                     `json:"dvr_parts,omitempty" validate:"omitempty,dive"`
+	InferenceValue            *ServerName                      `json:"inference,omitempty" validate:"omitempty"`
+	IngestValue               *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
+	IngestHistoryValue        []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
+	IterationIDValue          *UUID                            `json:"iteration_id,omitempty" validate:"omitempty"`
+	NodeLayoutDecisionsValue  []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
+	OriginatorValue           *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
+	TranscoderDeviceIDValue   *int                             `json:"transcoder_device_id,omitempty" validate:"omitempty"`
+	TranscoderDeviceTypeValue *TranscoderDevice                `json:"transcoder_device_type,omitempty" validate:"omitempty"`
 }
 
 type CentralStreamLayoutBaseImpl struct {
-	CreatedAtValue  *UtcMs                         `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	IngestValue     *ServerName                    `json:"ingest,omitempty" validate:"omitempty"`
-	OriginatorValue *CentralStreamLayoutOriginator `json:"originator,omitempty" validate:"omitempty"`
+	CreatedAtValue   *UtcMs                         `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	IngestValue      *ServerName                    `json:"ingest,omitempty" validate:"omitempty"`
+	IterationIDValue *UUID                          `json:"iteration_id,omitempty" validate:"omitempty"`
+	OriginatorValue  *CentralStreamLayoutOriginator `json:"originator,omitempty" validate:"omitempty"`
 }
 
+// Required: name
 type CentralStreamLayoutListItemImpl struct {
-	ChangeReasonValue        *CentralStreamLayoutChangeReason `json:"change_reason,omitempty" validate:"omitempty,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_become_offline stream_disabled node_deleted node_channel_limit_exceeded multistream_agent_ingest_conflict streamer_dvr_size_exceeded streamer_total_bandwidth_exceeded preferred_labels_better_match not_distributed dvr_redundancy_adjust node_cpu_pressure relayout_by_api namespace_mismatch"`
-	CreatedAtValue           *UtcMs                           `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	InferenceValue           *ServerName                      `json:"inference,omitempty" validate:"omitempty"`
-	IngestValue              *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
-	NameValue                *string                          `json:"name,omitempty" validate:"omitempty"`
-	OriginatorValue          *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
-	DvrBackupsValue          []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
-	IngestHistoryValue       []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
-	NodeLayoutDecisionsValue []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
+	ChangeReasonValue         *CentralStreamLayoutChangeReason `json:"change_reason,omitempty" validate:"omitempty,oneof=stream_misses_node_required_labels node_misses_stream_required_labels node_become_offline stream_disabled node_deleted node_channel_limit_exceeded multistream_agent_ingest_conflict streamer_dvr_size_exceeded node_not_available_for_transcoding node_nvenc_pressure node_transcoding_claims_exceeded streamer_total_bandwidth_exceeded preferred_labels_better_match not_distributed dvr_redundancy_adjust node_cpu_pressure relayout_by_api namespace_mismatch"`
+	CreatedAtValue            *UtcMs                           `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DvrBackupsValue           []ServerName                     `json:"dvr_backups,omitempty" validate:"omitempty,dive"`
+	DvrPartsValue             []ServerName                     `json:"dvr_parts,omitempty" validate:"omitempty,dive"`
+	InferenceValue            *ServerName                      `json:"inference,omitempty" validate:"omitempty"`
+	IngestValue               *ServerName                      `json:"ingest,omitempty" validate:"omitempty"`
+	IngestHistoryValue        []*CentralStreamLayoutBaseImpl   `json:"ingest_history,omitempty" validate:"omitempty,dive"`
+	IterationIDValue          *UUID                            `json:"iteration_id,omitempty" validate:"omitempty"`
+	NameValue                 string                           `json:"name" validate:"required"`
+	NodeLayoutDecisionsValue  []*CentralNodeLayoutDecisionImpl `json:"node_layout_decisions,omitempty" validate:"omitempty,dive"`
+	OriginatorValue           *CentralStreamLayoutOriginator   `json:"originator,omitempty" validate:"omitempty"`
+	TranscoderDeviceIDValue   *int                             `json:"transcoder_device_id,omitempty" validate:"omitempty"`
+	TranscoderDeviceTypeValue *TranscoderDevice                `json:"transcoder_device_type,omitempty" validate:"omitempty"`
 }
 
 type CentralStreamLayoutPredictionImpl struct {
-	TimingValue         any                                `json:"timing,omitempty" validate:"omitempty"`
+	ChangesValue        []*CentralStreamLayoutListItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
 	EstimatedCountValue *int                               `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                            `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                            `json:"prev,omitempty" validate:"omitempty"`
-	ChangesValue        []*CentralStreamLayoutListItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                                `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type CentralStreamLayoutsImpl struct {
-	TimingValue         any                        `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int                       `json:"estimated_count,omitempty" validate:"omitempty"`
+	LayoutsValue        []*CentralStreamLayoutImpl `json:"layouts,omitempty" validate:"omitempty,dive"`
 	NextValue           *string                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                    `json:"prev,omitempty" validate:"omitempty"`
-	LayoutsValue        []*CentralStreamLayoutImpl `json:"layouts,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                        `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type CentralStreamerLayoutPredictionImpl struct {
-	TimingValue         any                                        `json:"timing,omitempty" validate:"omitempty"`
+	ChangesValue        []*CentralStreamerLayoutPredictionItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
 	EstimatedCountValue *int                                       `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                                    `json:"prev,omitempty" validate:"omitempty"`
-	ChangesValue        []*CentralStreamerLayoutPredictionItemImpl `json:"changes,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                                        `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type CentralStreamerLayoutPredictionItemImpl struct {
@@ -14384,45 +14408,11 @@ type CentralStreamerLayoutPredictionItemImpl struct {
 }
 
 type CertificateInfoImpl struct {
+	DomainsValue    []string `json:"domains,omitempty" validate:"omitempty,dive"`
 	IssuerNameValue *string  `json:"issuer_name,omitempty" validate:"omitempty"`
 	NotAfterValue   *int     `json:"not_after,omitempty" validate:"omitempty"`
 	NotBeforeValue  *int     `json:"not_before,omitempty" validate:"omitempty"`
 	PublicKeyValue  *string  `json:"public_key,omitempty" validate:"omitempty"`
-	DomainsValue    []string `json:"domains,omitempty" validate:"omitempty,dive"`
-}
-
-type ChassisConfigImpl struct {
-	LcdValue                     *bool             `json:"lcd,omitempty" validate:"omitempty"`
-	AutoRebootValue              *bool             `json:"auto_reboot,omitempty" validate:"omitempty"`
-	DefaultGatewayInterfaceValue *string           `json:"default_gateway_interface,omitempty" validate:"omitempty"`
-	DhcpdIfaceValue              *InterfaceName    `json:"dhcpd_iface,omitempty" validate:"omitempty"`
-	DhcpdPortValue               *ListenSpec       `json:"dhcpd_port,omitempty" validate:"omitempty"`
-	DhcpdPortDestValue           *ListenSpec       `json:"dhcpd_port_dest,omitempty" validate:"omitempty"`
-	FirmwareBootDirValue         *DiskPath         `json:"firmware_boot_dir,omitempty" validate:"omitempty"`
-	FirmwareHostValue            *URL              `json:"firmware_host,omitempty" validate:"omitempty"`
-	HostnameValue                *ServerName       `json:"hostname,omitempty" validate:"omitempty"`
-	FirmwareVersionValue         *string           `json:"firmware_version,omitempty" validate:"omitempty"`
-	NtpdIfaceValue               *InterfaceName    `json:"ntpd_iface,omitempty" validate:"omitempty"`
-	UpdateChannelValue           *string           `json:"update_channel,omitempty" validate:"omitempty"`
-	APIPortValue                 *ListenSpec       `json:"api_port,omitempty" validate:"omitempty"`
-	NtpdPortValue                *ListenSpec       `json:"ntpd_port,omitempty" validate:"omitempty"`
-	ProductNameValue             *ChassisProduct   `json:"product_name,omitempty" validate:"omitempty"`
-	RestartCoderTimeoutValue     *int              `json:"restart_coder_timeout,omitempty" validate:"omitempty"`
-	StatsValue                   *ChassisStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	TftpPortValue                *ListenSpec       `json:"tftp_port,omitempty" validate:"omitempty"`
-	TftpRootValue                *DiskPath         `json:"tftp_root,omitempty" validate:"omitempty"`
-	NtpServersValue              []string          `json:"ntp_servers,omitempty" validate:"omitempty,dive"`
-}
-
-type ChassisStatsImpl struct {
-	HardwareIDValue           *string `json:"hardware_id,omitempty" validate:"omitempty"`
-	HostnameValue             *string `json:"hostname,omitempty" validate:"omitempty"`
-	ModelValue                *string `json:"model,omitempty" validate:"omitempty"`
-	NextVersionValue          *string `json:"next_version,omitempty" validate:"omitempty"`
-	NtpClockSynchronizedValue *bool   `json:"ntp_clock_synchronized,omitempty" validate:"omitempty"`
-	SerialNumberValue         *string `json:"serial_number,omitempty" validate:"omitempty"`
-	SystemTimeValue           *UtcMs  `json:"system_time,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	VersionValue              *string `json:"version,omitempty" validate:"omitempty"`
 }
 
 type ClosedCaptionsImpl struct {
@@ -14442,13 +14432,13 @@ type ClusterHealthMetricsTotalImpl struct {
 
 type ClusterHealthStatsImpl struct {
 	AgentMetricsTotalValue           *ClusterHealthMetricsTotalImpl                     `json:"agent_metrics_total,omitempty" validate:"omitempty" openmetrics_metric_segment:"agent"`
-	CollectedAtValue                 *UtcMs                                             `json:"collected_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CollectedAtValue                 *UtcMs                                             `json:"collected_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	ServerIDValue                    *UUID                                              `json:"server_id,omitempty" validate:"omitempty" openmetrics_label:"server_id"`
 	StreamMetricsTotalValue          *ClusterHealthMetricsTotalImpl                     `json:"stream_metrics_total,omitempty" validate:"omitempty" openmetrics_metric_segment:"stream"`
 	StreamerBitrateMetricsTotalValue *ClusterHealthStatsStreamerBitrateMetricsTotalImpl `json:"streamer_bitrate_metrics_total,omitempty" validate:"omitempty"`
+	StreamerMetricsValue             []*ClusterHealthStreamerStatsImpl                  `json:"streamer_metrics,omitempty" validate:"omitempty,dive"`
 	StreamerMetricsTotalValue        *ClusterHealthMetricsTotalImpl                     `json:"streamer_metrics_total,omitempty" validate:"omitempty" openmetrics_metric_segment:"streamer"`
 	VersionValue                     *int                                               `json:"version,omitempty" validate:"omitempty" openmetrics_metric:"version"`
-	StreamerMetricsValue             []*ClusterHealthStreamerStatsImpl                  `json:"streamer_metrics,omitempty" validate:"omitempty,dive"`
 }
 
 // Cluster total bitrate metrics
@@ -14460,16 +14450,19 @@ type ClusterHealthStatsStreamerBitrateMetricsTotalImpl struct {
 // Streamer stats
 // Required: hostname
 type ClusterHealthStreamerStatsImpl struct {
-	AgentMetricsValue  *ClusterHealthStreamerStatsAgentMetricsImpl  `json:"agent_metrics,omitempty" validate:"omitempty"`
-	ConfigValue        *ClusterHealthStreamerStatsConfigImpl        `json:"config,omitempty" validate:"omitempty"`
-	CpuValue           *ClusterHealthStreamerStatsCpuImpl           `json:"cpu,omitempty" validate:"omitempty"`
-	MemoryValue        *ClusterHealthStreamerStatsMemoryImpl        `json:"memory,omitempty" validate:"omitempty"`
-	NetworkValue       *ClusterHealthStreamerStatsNetworkImpl       `json:"network,omitempty" validate:"omitempty"`
-	StatusValue        *ClusterHealthStatus                         `json:"status,omitempty" validate:"omitempty"`
-	StorageValue       *ClusterHealthStreamerStatsStorageImpl       `json:"storage,omitempty" validate:"omitempty"`
-	StreamMetricsValue *ClusterHealthStreamerStatsStreamMetricsImpl `json:"stream_metrics,omitempty" validate:"omitempty"`
-	UptimeValue        *Seconds                                     `json:"uptime,omitempty" validate:"omitempty"`
-	HostnameValue      ServerName                                   `json:"hostname" validate:"required" openmetrics_label:"hostname"`
+	AgentMetricsValue         *ClusterHealthStreamerStatsAgentMetricsImpl  `json:"agent_metrics,omitempty" validate:"omitempty"`
+	ConfigValue               *ClusterHealthStreamerStatsConfigImpl        `json:"config,omitempty" validate:"omitempty"`
+	ConfigExternalStatusValue *ConfigExternalErrorStatusImpl               `json:"config_external_status,omitempty" validate:"omitempty"`
+	CpuValue                  *ClusterHealthStreamerStatsCpuImpl           `json:"cpu,omitempty" validate:"omitempty"`
+	HealthcheckStatusValue    *CentralHealthcheckStatusImpl                `json:"healthcheck_status,omitempty" validate:"omitempty"`
+	HostnameValue             ServerName                                   `json:"hostname" validate:"required" openmetrics_label:"hostname"`
+	MemoryValue               *ClusterHealthStreamerStatsMemoryImpl        `json:"memory,omitempty" validate:"omitempty"`
+	NetworkValue              *ClusterHealthStreamerStatsNetworkImpl       `json:"network,omitempty" validate:"omitempty"`
+	PredictionsValue          *ClusterHealthStreamerStatsPredictionsImpl   `json:"predictions,omitempty" validate:"omitempty"`
+	StatusValue               *ClusterHealthStatus                         `json:"status,omitempty" validate:"omitempty"`
+	StorageValue              *ClusterHealthStreamerStatsStorageImpl       `json:"storage,omitempty" validate:"omitempty"`
+	StreamMetricsValue        *ClusterHealthStreamerStatsStreamMetricsImpl `json:"stream_metrics,omitempty" validate:"omitempty"`
+	UptimeValue               *Seconds                                     `json:"uptime,omitempty" validate:"omitempty"`
 }
 
 // Streamer agents info.
@@ -14518,6 +14511,11 @@ type ClusterHealthStreamerStatsNetworkOutKbitImpl struct {
 	UsageValue  *Speed               `json:"usage,omitempty" validate:"omitempty" openmetrics_metric:"network_usage_out"`
 }
 
+// Predictions of future stats based on the current state of the cluster.
+type ClusterHealthStreamerStatsPredictionsImpl struct {
+	DiskValue *CentralDiskPredictionsImpl `json:"disk,omitempty" validate:"omitempty"`
+}
+
 // Total disk usage info.
 type ClusterHealthStreamerStatsStorageImpl struct {
 	StatusValue *ClusterHealthStatus `json:"status,omitempty" validate:"omitempty"`
@@ -14557,14 +14555,14 @@ type ConfigExternalErrorStatusImpl struct {
 	CodeValue   *int                             `json:"code,omitempty" validate:"omitempty"`
 	DetailValue *string                          `json:"detail,omitempty" validate:"omitempty"`
 	ErrorValue  *string                          `json:"error,omitempty" validate:"omitempty"`
+	PathValue   []ConfigPathSegment              `json:"path,omitempty" validate:"omitempty,dive"`
 	ReasonValue *RequestErrorReason              `json:"reason,omitempty" validate:"omitempty"`
 	StatusValue *ConfigExternalErrorStatusStatus `json:"status,omitempty" validate:"omitempty,oneof=loaded error"`
 	WhileValue  *ConfigExternalErrorStatusWhile  `json:"while,omitempty" validate:"omitempty,oneof=refresh request srt_port_resolve"`
-	PathValue   []ConfigPathSegment              `json:"path,omitempty" validate:"omitempty,dive"`
 }
 
 type CreationInfoImpl struct {
-	CreatedAtValue *UtcMs                `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue *UtcMs                `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	UserValue      *CreationInfoUserImpl `json:"user,omitempty" validate:"omitempty"`
 }
 
@@ -14586,14 +14584,26 @@ type DecklinkConfigImpl struct {
 
 // Base information about domain
 type DomainBaseImpl struct {
-	IDValue    *int    `json:"id,omitempty" validate:"omitempty"`
-	TitleValue *string `json:"title,omitempty" validate:"omitempty"`
+	DomainCodeValue *string             `json:"domain_code,omitempty" validate:"omitempty"`
+	IDValue         *int                `json:"id,omitempty" validate:"omitempty"`
+	OwnerIDValue    *int                `json:"owner_id,omitempty" validate:"omitempty"`
+	SettingsValue   *DomainSettingsImpl `json:"settings,omitempty" validate:"omitempty"`
+	TitleValue      *string             `json:"title,omitempty" validate:"omitempty"`
 }
 
 // All domain settings
 type DomainConfigImpl struct {
 	AppearanceValue *AppearanceConfigImpl `json:"appearance,omitempty" validate:"omitempty"`
 	MailValue       *MailSpecImpl         `json:"mail,omitempty" validate:"omitempty"`
+}
+
+// Domain settings
+type DomainSettingsImpl struct {
+	DefaultLocaleValue         *string  `json:"default_locale,omitempty" validate:"omitempty"`
+	DefaultOrganizationIDValue *int     `json:"default_organization_id,omitempty" validate:"omitempty"`
+	DemoAccessEnabledValue     *bool    `json:"demo_access_enabled,omitempty" validate:"omitempty"`
+	DNSNamesValue              []string `json:"dns_names,omitempty" validate:"omitempty,dive"`
+	LicenseIDValue             *int     `json:"license_id,omitempty" validate:"omitempty"`
 }
 
 type DrmBaseImpl struct {
@@ -14632,8 +14642,8 @@ type DrmKeyosBaseImpl struct {
 }
 
 type DrmSpecImpl struct {
-	KeyserverValue         *string        `json:"keyserver,omitempty" validate:"omitempty"`
-	LaURLValue             *URL           `json:"la_url,omitempty" validate:"omitempty"`
+	AccountIDValue         *string        `json:"account_id,omitempty" validate:"omitempty"`
+	AesKeyValue            *string        `json:"aes_key,omitempty" validate:"omitempty"`
 	AuthServerValue        *string        `json:"auth_server,omitempty" validate:"omitempty"`
 	ContentIDValue         *string        `json:"content_id,omitempty" validate:"omitempty"`
 	CpixConfigIDValue      *string        `json:"cpix_config_id,omitempty" validate:"omitempty"`
@@ -14648,8 +14658,8 @@ type DrmSpecImpl struct {
 	IvValue                *string        `json:"iv,omitempty" validate:"omitempty"`
 	KeyValue               *string        `json:"key,omitempty" validate:"omitempty"`
 	KeyseedValue           *string        `json:"keyseed,omitempty" validate:"omitempty"`
-	AesKeyValue            *string        `json:"aes_key,omitempty" validate:"omitempty"`
-	AccountIDValue         *string        `json:"account_id,omitempty" validate:"omitempty"`
+	KeyserverValue         *string        `json:"keyserver,omitempty" validate:"omitempty"`
+	LaURLValue             *URL           `json:"la_url,omitempty" validate:"omitempty"`
 	ManagementKeyValue     *string        `json:"management_key,omitempty" validate:"omitempty"`
 	MerchantIDValue        *string        `json:"merchant_id,omitempty" validate:"omitempty"`
 	PasswordValue          *string        `json:"password,omitempty" validate:"omitempty"`
@@ -14657,7 +14667,7 @@ type DrmSpecImpl struct {
 	SecretValue            *string        `json:"secret,omitempty" validate:"omitempty"`
 	SignerValue            *string        `json:"signer,omitempty" validate:"omitempty"`
 	SiteValue              *string        `json:"site,omitempty" validate:"omitempty"`
-	UsernameValue          *string        `json:"username,omitempty" validate:"omitempty"`
+	SystemsValue           []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 	TenantIDValue          *string        `json:"tenant_id,omitempty" validate:"omitempty"`
 	URLValue               *string        `json:"url,omitempty" validate:"omitempty"`
 	UserValue              *string        `json:"user,omitempty" validate:"omitempty"`
@@ -14665,8 +14675,8 @@ type DrmSpecImpl struct {
 	UserNameValue          *string        `json:"user_name,omitempty" validate:"omitempty"`
 	UserPathValue          *string        `json:"user_path,omitempty" validate:"omitempty"`
 	UserkeyValue           *string        `json:"userkey,omitempty" validate:"omitempty"`
+	UsernameValue          *string        `json:"username,omitempty" validate:"omitempty"`
 	VendorValue            string         `json:"vendor" validate:"required"`
-	SystemsValue           []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmSystemsImpl struct {
@@ -14689,9 +14699,9 @@ type DrmVendorAxinomImpl struct {
 	KeyserverValue     *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ManagementKeyValue *string        `json:"management_key,omitempty" validate:"omitempty"`
 	ResourceIDValue    *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
+	SystemsValue       []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 	TenantIDValue      *string        `json:"tenant_id,omitempty" validate:"omitempty"`
 	VendorValue        string         `json:"vendor" validate:"required"`
-	SystemsValue       []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorBuydrmImpl struct {
@@ -14720,9 +14730,9 @@ type DrmVendorConaxImpl struct {
 	ExpiresValue    *int           `json:"expires,omitempty" validate:"omitempty"`
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 	UserPathValue   *string        `json:"user_path,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorCpixImpl struct {
@@ -14731,8 +14741,8 @@ type DrmVendorCpixImpl struct {
 	IvValue         *string        `json:"iv,omitempty" validate:"omitempty"`
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
-	VendorValue     string         `json:"vendor" validate:"required"`
 	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
+	VendorValue     string         `json:"vendor" validate:"required"`
 }
 
 type DrmVendorDrmtodayImpl struct {
@@ -14745,9 +14755,9 @@ type DrmVendorDrmtodayImpl struct {
 	MerchantIDValue   *string        `json:"merchant_id,omitempty" validate:"omitempty"`
 	PasswordValue     *string        `json:"password,omitempty" validate:"omitempty"`
 	ResourceIDValue   *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
+	SystemsValue      []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 	UsernameValue     *string        `json:"username,omitempty" validate:"omitempty"`
 	VendorValue       string         `json:"vendor" validate:"required"`
-	SystemsValue      []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorEzdrmImpl struct {
@@ -14787,9 +14797,9 @@ type DrmVendorIrdetoImpl struct {
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	PasswordValue   *string        `json:"password,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
+	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 	UserNameValue   *string        `json:"user_name,omitempty" validate:"omitempty"`
 	VendorValue     string         `json:"vendor" validate:"required"`
-	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
 }
 
 type DrmVendorKeyosImpl struct {
@@ -14811,8 +14821,8 @@ type DrmVendorPallyconImpl struct {
 	IvValue         *string        `json:"iv,omitempty" validate:"omitempty"`
 	KeyserverValue  *string        `json:"keyserver,omitempty" validate:"omitempty"`
 	ResourceIDValue *DrmResourceID `json:"resource_id,omitempty" validate:"omitempty"`
-	VendorValue     string         `json:"vendor" validate:"required"`
 	SystemsValue    []DrmSystem    `json:"systems,omitempty" validate:"omitempty,dive"`
+	VendorValue     string         `json:"vendor" validate:"required"`
 }
 
 type DrmVendorPlayreadyImpl struct {
@@ -14873,27 +14883,27 @@ type DrmVendorWidevineImpl struct {
 
 // Required: name
 type DvbCardConfigImpl struct {
-	InputBitrateValue           *int              `json:"input_bitrate,omitempty" validate:"omitempty"`
-	IntFreqValue                *int              `json:"int_freq,omitempty" validate:"omitempty"`
+	AdapterValue                *int              `json:"adapter,omitempty" validate:"omitempty"`
+	AttenuatorValue             *int              `json:"attenuator,omitempty" validate:"omitempty"`
 	BandwidthValue              *int              `json:"bandwidth,omitempty" validate:"omitempty"`
 	CodeRateHpValue             *DvbFec           `json:"code_rate_hp,omitempty" validate:"omitempty"`
 	CodeRateLpValue             *DvbFec           `json:"code_rate_lp,omitempty" validate:"omitempty"`
 	CommentValue                *string           `json:"comment,omitempty" validate:"omitempty"`
 	CompensateTimeDriftPpmValue *int              `json:"compensate_time_drift_ppm,omitempty" validate:"omitempty"`
 	DeviceValue                 *int              `json:"device,omitempty" validate:"omitempty"`
-	AdapterValue                *int              `json:"adapter,omitempty" validate:"omitempty"`
+	DisabledValue               *bool             `json:"disabled,omitempty" validate:"omitempty"`
 	FrequencyValue              *int              `json:"frequency,omitempty" validate:"omitempty"`
 	FrontendValue               *int              `json:"frontend,omitempty" validate:"omitempty"`
 	GainValue                   *int              `json:"gain,omitempty" validate:"omitempty"`
 	GuardIntervalValue          *string           `json:"guard_interval,omitempty" validate:"omitempty"`
 	HierarchyValue              *string           `json:"hierarchy,omitempty" validate:"omitempty"`
-	AttenuatorValue             *int              `json:"attenuator,omitempty" validate:"omitempty"`
 	HighBandValue               *bool             `json:"high_band,omitempty" validate:"omitempty"`
-	DisabledValue               *bool             `json:"disabled,omitempty" validate:"omitempty"`
 	HwValue                     *string           `json:"hw,omitempty" validate:"omitempty"`
+	InputBitrateValue           *int              `json:"input_bitrate,omitempty" validate:"omitempty"`
+	IntFreqValue                *int              `json:"int_freq,omitempty" validate:"omitempty"`
 	InterleaveValue             *int              `json:"interleave,omitempty" validate:"omitempty,min=0,max=15"`
 	ModulationValue             *string           `json:"modulation,omitempty" validate:"omitempty"`
-	VideoDeviceValue            *string           `json:"video_device,omitempty" validate:"omitempty"`
+	NameValue                   DvbCardName       `json:"name" validate:"required" openmetrics_label:"name"`
 	PilotValue                  *string           `json:"pilot,omitempty" validate:"omitempty"`
 	PlpStreamIDValue            *int              `json:"plp_stream_id,omitempty" validate:"omitempty"`
 	PolarizationValue           *string           `json:"polarization,omitempty" validate:"omitempty"`
@@ -14904,7 +14914,7 @@ type DvbCardConfigImpl struct {
 	SymbolRateValue             *int              `json:"symbol_rate,omitempty" validate:"omitempty"`
 	SystemValue                 *string           `json:"system,omitempty" validate:"omitempty"`
 	TransmissionModeValue       *string           `json:"transmission_mode,omitempty" validate:"omitempty"`
-	NameValue                   DvbCardName       `json:"name" validate:"required" openmetrics_label:"name"`
+	VideoDeviceValue            *string           `json:"video_device,omitempty" validate:"omitempty"`
 }
 
 type DvbCardStatsImpl struct {
@@ -14942,50 +14952,23 @@ type DvrCapacityStatsImpl struct {
 	UsedIndexValue    *Bytes   `json:"used_index,omitempty" validate:"omitempty" openmetrics_metric:"storage_used_index"`
 }
 
-type DvrConfigImpl struct {
-	ActiveValue             *int                       `json:"active,omitempty" validate:"omitempty"`
-	DiskUsageLimitValue     *Percent                   `json:"disk_usage_limit,omitempty" validate:"omitempty,min=0,max=100"`
-	EpisodesExpirationValue *Seconds                   `json:"episodes_expiration,omitempty" validate:"omitempty"`
-	ExpirationValue         *Seconds                   `json:"expiration,omitempty" validate:"omitempty"`
-	IndexValue              *DiskPath                  `json:"index,omitempty" validate:"omitempty"`
-	RaidValue               *DvrRaidLevel              `json:"raid,omitempty" validate:"omitempty"`
-	StatsValue              *DvrStorageConfigStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	StorageLimitValue       *Bytes                     `json:"storage_limit,omitempty" validate:"omitempty"`
-	NameValue               DvrName                    `json:"name" validate:"required" openmetrics_label:"dvr_name"`
-	RootValue               DvrURL                     `json:"root" validate:"required"`
-	DisksValue              []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty,dive"`
-}
-
-// Required: from, depth, ranges
-type DvrInfoImpl struct {
-	BytesValue    *Bytes          `json:"bytes,omitempty" validate:"omitempty"`
-	DiskSizeValue *Bytes          `json:"disk_size,omitempty" validate:"omitempty"`
-	DurationValue *Seconds        `json:"duration,omitempty" validate:"omitempty"`
-	RangesValue   []*DvrRangeImpl `json:"ranges" validate:"required,dive"`
-	DepthValue    Seconds         `json:"depth" validate:"required"`
-	FromValue     Utc             `json:"from" validate:"required,min=1e+09,max=1e+10"`
-}
-
-type DvrRangeImpl struct {
-	ClosedAtValue *UtcMs   `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	DurationValue *Seconds `json:"duration,omitempty" validate:"omitempty"`
-	FromValue     *Utc     `json:"from,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
-	OpenedAtValue *UtcMs   `json:"opened_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-}
-
 // Required: name, root
-type DvrStorageConfigImpl struct {
-	ActiveValue *int                       `json:"active,omitempty" validate:"omitempty"`
-	IndexValue  *DiskPath                  `json:"index,omitempty" validate:"omitempty"`
-	RaidValue   *DvrRaidLevel              `json:"raid,omitempty" validate:"omitempty"`
-	StatsValue  *DvrStorageConfigStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	NameValue   DvrName                    `json:"name" validate:"required" openmetrics_label:"dvr_name"`
-	RootValue   DvrURL                     `json:"root" validate:"required"`
-	DisksValue  []*RaidDiskConfigImpl      `json:"disks,omitempty" validate:"omitempty,dive"`
+type DvrConfigImpl struct {
+	ActiveValue             *int                  `json:"active,omitempty" validate:"omitempty"`
+	DiskUsageLimitValue     *Percent              `json:"disk_usage_limit,omitempty" validate:"omitempty,min=0,max=100"`
+	DisksValue              []*RaidDiskConfigImpl `json:"disks,omitempty" validate:"omitempty,dive"`
+	EpisodesExpirationValue *Seconds              `json:"episodes_expiration,omitempty" validate:"omitempty"`
+	ExpirationValue         *Seconds              `json:"expiration,omitempty" validate:"omitempty"`
+	IndexValue              *DiskPath             `json:"index,omitempty" validate:"omitempty"`
+	NameValue               DvrName               `json:"name" validate:"required" openmetrics_label:"dvr_name"`
+	RaidValue               *DvrRaidLevel         `json:"raid,omitempty" validate:"omitempty"`
+	RootValue               DvrURL                `json:"root" validate:"required"`
+	StatsValue              *DvrConfigStatsImpl   `json:"stats,omitempty" validate:"omitempty"`
+	StorageLimitValue       *Bytes                `json:"storage_limit,omitempty" validate:"omitempty"`
 }
 
 // The runtime statistics about DVR.
-type DvrStorageConfigStatsImpl struct {
+type DvrConfigStatsImpl struct {
 	BlobsCountValue   *int                  `json:"blobs_count,omitempty" validate:"omitempty" openmetrics_metric:"storage_blobs_count"`
 	BlobsCountDbValue *int                  `json:"blobs_count_db,omitempty" validate:"omitempty" openmetrics_metric:"storage_blobs_count_db"`
 	ErrorsValue       *DvrStorageErrorsImpl `json:"errors,omitempty" validate:"omitempty"`
@@ -14993,6 +14976,23 @@ type DvrStorageConfigStatsImpl struct {
 	UsageValue        *Percent              `json:"usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"storage_usage"`
 	UsedValue         *Bytes                `json:"used,omitempty" validate:"omitempty" openmetrics_metric:"storage_used"`
 	UsedIndexValue    *Bytes                `json:"used_index,omitempty" validate:"omitempty" openmetrics_metric:"storage_used_index"`
+}
+
+// Required: from, depth, ranges
+type DvrInfoImpl struct {
+	BytesValue    *Bytes          `json:"bytes,omitempty" validate:"omitempty"`
+	DepthValue    Seconds         `json:"depth" validate:"required"`
+	DiskSizeValue *Bytes          `json:"disk_size,omitempty" validate:"omitempty"`
+	DurationValue *Seconds        `json:"duration,omitempty" validate:"omitempty"`
+	FromValue     Utc             `json:"from" validate:"required,min=1000000000,max=10000000000"`
+	RangesValue   []*DvrRangeImpl `json:"ranges" validate:"required,dive"`
+}
+
+type DvrRangeImpl struct {
+	ClosedAtValue *UtcMs   `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DurationValue *Seconds `json:"duration,omitempty" validate:"omitempty"`
+	FromValue     *Utc     `json:"from,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
+	OpenedAtValue *UtcMs   `json:"opened_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 type DvrStorageErrorsImpl struct {
@@ -15008,12 +15008,12 @@ type DvrStorageStatsImpl struct {
 }
 
 type ErrorImpl struct {
-	CodeValue   *string           `json:"code,omitempty" validate:"omitempty"`
-	IDValue     *string           `json:"id,omitempty" validate:"omitempty"`
-	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty,dive"`
-	SourceValue *ErrorSourceImpl  `json:"source,omitempty" validate:"omitempty"`
-	StatusValue *string           `json:"status,omitempty" validate:"omitempty"`
-	TitleValue  *string           `json:"title,omitempty" validate:"omitempty"`
+	CodeValue   *string          `json:"code,omitempty" validate:"omitempty"`
+	IDValue     *string          `json:"id,omitempty" validate:"omitempty"`
+	MetaValue   map[string]any   `json:"meta,omitempty" validate:"omitempty,dive"`
+	SourceValue *ErrorSourceImpl `json:"source,omitempty" validate:"omitempty"`
+	StatusValue *string          `json:"status,omitempty" validate:"omitempty"`
+	TitleValue  *string          `json:"title,omitempty" validate:"omitempty"`
 }
 
 type ErrorResponseImpl struct {
@@ -15027,44 +15027,44 @@ type ErrorSourceImpl struct {
 }
 
 type EventImpl struct {
-	PayloadValue     *string       `json:"payload,omitempty" validate:"omitempty"`
-	QsValue          *string       `json:"qs,omitempty" validate:"omitempty"`
-	UtcMsValue       *UtcMs        `json:"utc_ms,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue   *DateTime     `json:"created_at,omitempty" validate:"omitempty"`
+	DurationValue    *Microseconds `json:"duration,omitempty" validate:"omitempty"`
+	EventValue       string        `json:"event" validate:"required"`
 	EventIDValue     *int          `json:"event_id,omitempty" validate:"omitempty"`
 	IPValue          *IP           `json:"ip,omitempty" validate:"omitempty"`
 	OperationIDValue *string       `json:"operation_id,omitempty" validate:"omitempty"`
-	DurationValue    *Microseconds `json:"duration,omitempty" validate:"omitempty"`
 	OriginatorValue  *string       `json:"originator,omitempty" validate:"omitempty"`
-	CreatedAtValue   *DateTime     `json:"created_at,omitempty" validate:"omitempty"`
 	PathValue        *string       `json:"path,omitempty" validate:"omitempty"`
+	PayloadValue     *string       `json:"payload,omitempty" validate:"omitempty"`
+	QsValue          *string       `json:"qs,omitempty" validate:"omitempty"`
 	RequestIDValue   *string       `json:"request_id,omitempty" validate:"omitempty"`
 	ServerValue      *string       `json:"server,omitempty" validate:"omitempty"`
 	StatusValue      *int          `json:"status,omitempty" validate:"omitempty"`
 	TraceIDValue     *UUID         `json:"trace_id,omitempty" validate:"omitempty"`
 	UserAgentValue   *string       `json:"user_agent,omitempty" validate:"omitempty"`
-	EventValue       string        `json:"event" validate:"required"`
+	UtcMsValue       *UtcMs        `json:"utc_ms,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 type EventDefaultImpl struct {
 	EventIDValue *int    `json:"event_id,omitempty" validate:"omitempty"`
 	ServerValue  *string `json:"server,omitempty" validate:"omitempty"`
 	TraceIDValue *UUID   `json:"trace_id,omitempty" validate:"omitempty"`
-	UtcMsValue   *UtcMs  `json:"utc_ms,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	UtcMsValue   *UtcMs  `json:"utc_ms,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 // Required: name, url
 type EventSinkConfigImpl struct {
+	ExceptValue        []map[string][]string `json:"except,omitempty" validate:"omitempty,dive"`
 	ExtraValue         map[string]string     `json:"extra,omitempty" validate:"omitempty,dive"`
 	LevelValue         *Loglevel             `json:"level,omitempty" validate:"omitempty"`
 	MaxDepthValue      *int                  `json:"max_depth,omitempty" validate:"omitempty"`
 	MaxSizeValue       *Bytes                `json:"max_size,omitempty" validate:"omitempty"`
+	NameValue          EventSinkName         `json:"name" validate:"required"`
+	OnlyValue          []map[string][]string `json:"only,omitempty" validate:"omitempty,dive"`
 	ResendLimitValue   *int                  `json:"resend_limit,omitempty" validate:"omitempty"`
 	ResendTimeoutValue *int                  `json:"resend_timeout,omitempty" validate:"omitempty"`
 	ThrottleDelayValue *Seconds              `json:"throttle_delay,omitempty" validate:"omitempty"`
-	NameValue          EventSinkName         `json:"name" validate:"required"`
 	URLValue           string                `json:"url" validate:"required"`
-	ExceptValue        []map[string][]string `json:"except,omitempty" validate:"omitempty,dive"`
-	OnlyValue          []map[string][]string `json:"only,omitempty" validate:"omitempty,dive"`
 }
 
 // Choosing which type of events to subscribe to
@@ -15076,15 +15076,11 @@ type EventTypesImpl struct {
 }
 
 type EventsListImpl struct {
-	TimingValue         any          `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int         `json:"estimated_count,omitempty" validate:"omitempty"`
+	EventsValue         []*EventImpl `json:"events,omitempty" validate:"omitempty,dive"`
 	NextValue           *string      `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string      `json:"prev,omitempty" validate:"omitempty"`
-	EventsValue         []*EventImpl `json:"events,omitempty" validate:"omitempty,dive"`
-}
-
-type FileProcessorConfigImpl struct {
-	PathValue *DiskPath `json:"path,omitempty" validate:"omitempty"`
+	TimingValue         any          `json:"timing,omitempty" validate:"omitempty"`
 }
 
 // Update camera firmware
@@ -15172,12 +15168,12 @@ type InputAgentCountersImpl struct {
 
 // Here are grouped different counters for sessions: generic and errors
 type InputCountersImpl struct {
-	ErrorsTSStuckRestartsValue  *int                             `json:"errors_ts_stuck_restarts,omitempty" validate:"omitempty"`
-	FramesValue                 *int                             `json:"frames,omitempty" validate:"omitempty"`
+	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
+	AdSplicesInsertedValue      *int                             `json:"ad_splices_inserted,omitempty" validate:"omitempty"`
 	AgentValue                  *InputAgentCountersImpl          `json:"agent,omitempty" validate:"omitempty"`
 	BytesValue                  *Bytes                           `json:"bytes,omitempty" validate:"omitempty" openmetrics_metric:"stream_input_bytes"`
 	BytesDvrValue               *Bytes                           `json:"bytes_dvr,omitempty" validate:"omitempty"`
-	InputSwitchesValue          *int                             `json:"input_switches,omitempty" validate:"omitempty"`
+	ErrorRateValue              *int                             `json:"error_rate,omitempty" validate:"omitempty"`
 	ErrorsValue                 *int                             `json:"errors,omitempty" validate:"omitempty"`
 	Errors403Value              *int                             `json:"errors_403,omitempty" validate:"omitempty"`
 	Errors404Value              *int                             `json:"errors_404,omitempty" validate:"omitempty"`
@@ -15188,27 +15184,29 @@ type InputCountersImpl struct {
 	ErrorsDesyncValue           *int                             `json:"errors_desync,omitempty" validate:"omitempty"`
 	ErrorsDroppedFramesValue    *int                             `json:"errors_dropped_frames,omitempty" validate:"omitempty"`
 	ErrorsLostPacketsValue      *int                             `json:"errors_lost_packets,omitempty" validate:"omitempty"`
+	ErrorsTSJumpRestartsValue   *int                             `json:"errors_ts_jump_restarts,omitempty" validate:"omitempty"`
 	ErrorsTSPatValue            *int                             `json:"errors_ts_pat,omitempty" validate:"omitempty"`
 	ErrorsTSServiceLostValue    *int                             `json:"errors_ts_service_lost,omitempty" validate:"omitempty"`
-	AdSplicesInsertedValue      *int                             `json:"ad_splices_inserted,omitempty" validate:"omitempty"`
-	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
-	ErrorRateValue              *int                             `json:"error_rate,omitempty" validate:"omitempty"`
+	ErrorsTSStuckRestartsValue  *int                             `json:"errors_ts_stuck_restarts,omitempty" validate:"omitempty"`
+	FramesValue                 *int                             `json:"frames,omitempty" validate:"omitempty"`
+	InputSwitchesValue          *int                             `json:"input_switches,omitempty" validate:"omitempty"`
 	InvalidSecondaryInputsValue *int                             `json:"invalid_secondary_inputs,omitempty" validate:"omitempty"`
 	MediaInfoChangesValue       *int                             `json:"media_info_changes,omitempty" validate:"omitempty"`
 	MotionDetectorValue         *InputMotionDetectorCountersImpl `json:"motion_detector,omitempty" validate:"omitempty"`
 	NumSecNoDataValue           *Seconds                         `json:"num_sec_no_data,omitempty" validate:"omitempty"`
 	NumSecOnPrimaryInputValue   *Seconds                         `json:"num_sec_on_primary_input,omitempty" validate:"omitempty"`
 	NumSecOnSecondaryInputValue *Seconds                         `json:"num_sec_on_secondary_input,omitempty" validate:"omitempty"`
-	ValidSecondaryInputsValue   *int                             `json:"valid_secondary_inputs,omitempty" validate:"omitempty"`
+	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
 	ReorderCountValue           *int                             `json:"reorder_count,omitempty" validate:"omitempty"`
 	ResyncCountDriftValue       *int                             `json:"resync_count_drift,omitempty" validate:"omitempty"`
 	ResyncCountJumpValue        *int                             `json:"resync_count_jump,omitempty" validate:"omitempty"`
 	ResyncCountNormalValue      *int                             `json:"resync_count_normal,omitempty" validate:"omitempty"`
 	RetriesValue                *int                             `json:"retries,omitempty" validate:"omitempty"`
-	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
-	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
 	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
-	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
+	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
+	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
+	UDPMpegtsValue              *InputUDPMpegtsCountersImpl      `json:"udp_mpegts,omitempty" validate:"omitempty"`
+	ValidSecondaryInputsValue   *int                             `json:"valid_secondary_inputs,omitempty" validate:"omitempty"`
 }
 
 // Specific counters to get insights on current state of getting events from cameras.
@@ -15226,11 +15224,11 @@ type InputMotionDetectorCountersImpl struct {
 
 // Required: pid
 type InputPidCountersImpl struct {
-	ErrorsTSScrambledValue      *int `json:"errors_ts_scrambled,omitempty" validate:"omitempty"`
-	PacketsValue                *int `json:"packets,omitempty" validate:"omitempty"`
+	BrokenPesCountValue         *int `json:"broken_pes_count,omitempty" validate:"omitempty"`
+	BrokenPesSumValue           *int `json:"broken_pes_sum,omitempty" validate:"omitempty"`
 	CorrectedBackwardPtsValue   *int `json:"corrected_backward_pts,omitempty" validate:"omitempty"`
 	CrashedValue                *int `json:"crashed,omitempty" validate:"omitempty"`
-	BrokenPesCountValue         *int `json:"broken_pes_count,omitempty" validate:"omitempty"`
+	DiscardedBufferCountValue   *int `json:"discarded_buffer_count,omitempty" validate:"omitempty"`
 	DiscardedBufferSumValue     *int `json:"discarded_buffer_sum,omitempty" validate:"omitempty"`
 	DtsGoesBackwardsValue       *int `json:"dts_goes_backwards,omitempty" validate:"omitempty"`
 	DtsJumpForwardValue         *int `json:"dts_jump_forward,omitempty" validate:"omitempty"`
@@ -15238,27 +15236,27 @@ type InputPidCountersImpl struct {
 	ErrorsAdaptationBrokenValue *int `json:"errors_adaptation_broken,omitempty" validate:"omitempty"`
 	ErrorsPidLostValue          *int `json:"errors_pid_lost,omitempty" validate:"omitempty"`
 	ErrorsTSCcValue             *int `json:"errors_ts_cc,omitempty" validate:"omitempty"`
-	BrokenPesSumValue           *int `json:"broken_pes_sum,omitempty" validate:"omitempty"`
-	TooLargeDtsJumpValue        *int `json:"too_large_dts_jump,omitempty" validate:"omitempty"`
-	DiscardedBufferCountValue   *int `json:"discarded_buffer_count,omitempty" validate:"omitempty"`
+	ErrorsTSPmtValue            *int `json:"errors_ts_pmt,omitempty" validate:"omitempty"`
+	ErrorsTSPsiChecksumValue    *int `json:"errors_ts_psi_checksum,omitempty" validate:"omitempty"`
+	ErrorsTSScrambledValue      *int `json:"errors_ts_scrambled,omitempty" validate:"omitempty"`
 	ErrorsTSTeiValue            *int `json:"errors_ts_tei,omitempty" validate:"omitempty"`
 	FillersCountValue           *int `json:"fillers_count,omitempty" validate:"omitempty"`
 	FillersSumValue             *int `json:"fillers_sum,omitempty" validate:"omitempty"`
 	FramesValue                 *int `json:"frames,omitempty" validate:"omitempty"`
-	ErrorsTSPmtValue            *int `json:"errors_ts_pmt,omitempty" validate:"omitempty"`
+	PacketsValue                *int `json:"packets,omitempty" validate:"omitempty"`
 	PaddingPesCountValue        *int `json:"padding_pes_count,omitempty" validate:"omitempty"`
 	PaddingPesSumValue          *int `json:"padding_pes_sum,omitempty" validate:"omitempty"`
 	PcrResyncValue              *int `json:"pcr_resync,omitempty" validate:"omitempty"`
-	ErrorsTSPsiChecksumValue    *int `json:"errors_ts_psi_checksum,omitempty" validate:"omitempty"`
+	PidValue                    int  `json:"pid" validate:"required"`
 	PnrValue                    *int `json:"pnr,omitempty" validate:"omitempty"`
 	RepeatedFramesValue         *int `json:"repeated_frames,omitempty" validate:"omitempty"`
 	TimeCorrectionsValue        *int `json:"time_corrections,omitempty" validate:"omitempty"`
-	PidValue                    int  `json:"pid" validate:"required"`
+	TooLargeDtsJumpValue        *int `json:"too_large_dts_jump,omitempty" validate:"omitempty"`
 }
 
 type InputRTPCountersImpl struct {
-	NalAudCountValue                    *int    `json:"nal_aud_count,omitempty" validate:"omitempty"`
-	IncompleteNalCountValue             *int    `json:"incomplete_nal_count,omitempty" validate:"omitempty"`
+	BytesValue                          *int    `json:"bytes,omitempty" validate:"omitempty"`
+	ChannelIDValue                      int     `json:"channel_id" validate:"required"`
 	ContentValue                        *string `json:"content,omitempty" validate:"omitempty"`
 	DiscardedBrokenNalCountValue        *int    `json:"discarded_broken_nal_count,omitempty" validate:"omitempty"`
 	DiscardedFuCountValue               *int    `json:"discarded_fu_count,omitempty" validate:"omitempty"`
@@ -15268,20 +15266,21 @@ type InputRTPCountersImpl struct {
 	ErrorsBrokenPayloadValue            *int    `json:"errors_broken_payload,omitempty" validate:"omitempty"`
 	ErrorsDtsStuckValue                 *int    `json:"errors_dts_stuck,omitempty" validate:"omitempty"`
 	ErrorsLostPacketsValue              *int    `json:"errors_lost_packets,omitempty" validate:"omitempty"`
+	ErrorsSrClockDeviationValue         *int    `json:"errors_sr_clock_deviation,omitempty" validate:"omitempty"`
 	FramesValue                         *int    `json:"frames,omitempty" validate:"omitempty"`
 	FuEndThenMiddleWorkaroundCountValue *int    `json:"fu_end_then_middle_workaround_count,omitempty" validate:"omitempty"`
-	NalFillerCountValue                 *int    `json:"nal_filler_count,omitempty" validate:"omitempty"`
+	FuHasBothStartEndBitsCountValue     *int    `json:"fu_has_both_start_end_bits_count,omitempty" validate:"omitempty"`
 	FuPatternIsBrokenCountValue         *int    `json:"fu_pattern_is_broken_count,omitempty" validate:"omitempty"`
-	NalCountValue                       *int    `json:"nal_count,omitempty" validate:"omitempty"`
+	IncompleteNalCountValue             *int    `json:"incomplete_nal_count,omitempty" validate:"omitempty"`
 	InvalidSeiPayloadCountValue         *int    `json:"invalid_sei_payload_count,omitempty" validate:"omitempty"`
 	InvalidSeiSizeCountValue            *int    `json:"invalid_sei_size_count,omitempty" validate:"omitempty"`
 	InvalidSeiTypeCountValue            *int    `json:"invalid_sei_type_count,omitempty" validate:"omitempty"`
 	MarkerPacketsCountValue             *int    `json:"marker_packets_count,omitempty" validate:"omitempty"`
 	NackCountValue                      *int    `json:"nack_count,omitempty" validate:"omitempty"`
 	NalAggregationCountValue            *int    `json:"nal_aggregation_count,omitempty" validate:"omitempty"`
-	TSStuckValue                        *int    `json:"ts_stuck,omitempty" validate:"omitempty"`
-	BytesValue                          *int    `json:"bytes,omitempty" validate:"omitempty"`
-	FuHasBothStartEndBitsCountValue     *int    `json:"fu_has_both_start_end_bits_count,omitempty" validate:"omitempty"`
+	NalAudCountValue                    *int    `json:"nal_aud_count,omitempty" validate:"omitempty"`
+	NalCountValue                       *int    `json:"nal_count,omitempty" validate:"omitempty"`
+	NalFillerCountValue                 *int    `json:"nal_filler_count,omitempty" validate:"omitempty"`
 	NalFuCountValue                     *int    `json:"nal_fu_count,omitempty" validate:"omitempty"`
 	NalIdrCountValue                    *int    `json:"nal_idr_count,omitempty" validate:"omitempty"`
 	NalOtherCountValue                  *int    `json:"nal_other_count,omitempty" validate:"omitempty"`
@@ -15301,7 +15300,7 @@ type InputRTPCountersImpl struct {
 	SrTSStuckValue                      *int    `json:"sr_ts_stuck,omitempty" validate:"omitempty"`
 	TSGoesBackwardsValue                *int    `json:"ts_goes_backwards,omitempty" validate:"omitempty"`
 	TSJumpForwardValue                  *int    `json:"ts_jump_forward,omitempty" validate:"omitempty"`
-	ChannelIDValue                      int     `json:"channel_id" validate:"required"`
+	TSStuckValue                        *int    `json:"ts_stuck,omitempty" validate:"omitempty"`
 }
 
 // SDI,HDMI and other raw input counters
@@ -15327,8 +15326,8 @@ type InputSrtCountersImpl struct {
 }
 
 type InputStatsImpl struct {
-	InvalidSecondaryInputsValue *int                             `json:"invalid_secondary_inputs,omitempty" validate:"omitempty"`
-	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
+	ActiveValue                 *bool                            `json:"active,omitempty" validate:"omitempty"`
+	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
 	AdSplicesInsertedValue      *int                             `json:"ad_splices_inserted,omitempty" validate:"omitempty"`
 	AgentValue                  *InputAgentCountersImpl          `json:"agent,omitempty" validate:"omitempty"`
 	BytesValue                  *Bytes                           `json:"bytes,omitempty" validate:"omitempty" openmetrics_metric:"stream_input_bytes"`
@@ -15346,46 +15345,55 @@ type InputStatsImpl struct {
 	ErrorsDesyncValue           *int                             `json:"errors_desync,omitempty" validate:"omitempty"`
 	ErrorsDroppedFramesValue    *int                             `json:"errors_dropped_frames,omitempty" validate:"omitempty"`
 	ErrorsLostPacketsValue      *int                             `json:"errors_lost_packets,omitempty" validate:"omitempty"`
+	ErrorsTSJumpRestartsValue   *int                             `json:"errors_ts_jump_restarts,omitempty" validate:"omitempty"`
 	ErrorsTSPatValue            *int                             `json:"errors_ts_pat,omitempty" validate:"omitempty"`
 	ErrorsTSServiceLostValue    *int                             `json:"errors_ts_service_lost,omitempty" validate:"omitempty"`
 	ErrorsTSStuckRestartsValue  *int                             `json:"errors_ts_stuck_restarts,omitempty" validate:"omitempty"`
 	FramesValue                 *int                             `json:"frames,omitempty" validate:"omitempty"`
 	InputSwitchesValue          *int                             `json:"input_switches,omitempty" validate:"omitempty"`
-	AdSplicesIngestedValue      *int                             `json:"ad_splices_ingested,omitempty" validate:"omitempty"`
+	InvalidSecondaryInputsValue *int                             `json:"invalid_secondary_inputs,omitempty" validate:"omitempty"`
+	IPValue                     *string                          `json:"ip,omitempty" validate:"omitempty"`
 	MediaInfoValue              *MediaInfoImpl                   `json:"media_info,omitempty" validate:"omitempty"`
-	ActiveValue                 *bool                            `json:"active,omitempty" validate:"omitempty"`
 	MediaInfoChangesValue       *int                             `json:"media_info_changes,omitempty" validate:"omitempty"`
 	MotionDetectorValue         *InputMotionDetectorCountersImpl `json:"motion_detector,omitempty" validate:"omitempty"`
 	NumSecNoDataValue           *Seconds                         `json:"num_sec_no_data,omitempty" validate:"omitempty"`
 	NumSecOnPrimaryInputValue   *Seconds                         `json:"num_sec_on_primary_input,omitempty" validate:"omitempty"`
 	NumSecOnSecondaryInputValue *Seconds                         `json:"num_sec_on_secondary_input,omitempty" validate:"omitempty"`
-	OpenedAtValue               *UtcMs                           `json:"opened_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	ValidSecondaryInputsValue   *int                             `json:"valid_secondary_inputs,omitempty" validate:"omitempty"`
+	OpenedAtValue               *UtcMs                           `json:"opened_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
 	ProtoValue                  *Protocol                        `json:"proto,omitempty" validate:"omitempty"`
 	ReorderCountValue           *int                             `json:"reorder_count,omitempty" validate:"omitempty"`
 	ResyncCountDriftValue       *int                             `json:"resync_count_drift,omitempty" validate:"omitempty"`
 	ResyncCountJumpValue        *int                             `json:"resync_count_jump,omitempty" validate:"omitempty"`
 	ResyncCountNormalValue      *int                             `json:"resync_count_normal,omitempty" validate:"omitempty"`
 	RetriesValue                *int                             `json:"retries,omitempty" validate:"omitempty"`
-	UserAgentValue              *string                          `json:"user_agent,omitempty" validate:"omitempty"`
-	IPValue                     *string                          `json:"ip,omitempty" validate:"omitempty"`
+	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
+	SdiValue                    *InputSdiCountersImpl            `json:"sdi,omitempty" validate:"omitempty"`
 	SrtValue                    *InputSrtCountersImpl            `json:"srt,omitempty" validate:"omitempty"`
-	URLValue                    *URL                             `json:"url,omitempty" validate:"omitempty"`
+	StopEventsValue             []*InputStatsStopEventsItemImpl  `json:"stop_events,omitempty" validate:"omitempty,dive"`
 	TSDelayValue                *Ticks                           `json:"ts_delay,omitempty" validate:"omitempty"`
 	TSDelayPerTracksValue       []Ticks                          `json:"ts_delay_per_tracks,omitempty" validate:"omitempty,dive"`
-	StopEventsValue             []*InputStatsStopEventsItemImpl  `json:"stop_events,omitempty" validate:"omitempty,dive"`
-	RTPChannelsValue            []*InputRTPCountersImpl          `json:"rtp_channels,omitempty" validate:"omitempty,dive"`
-	PidsValue                   []*InputPidCountersImpl          `json:"pids,omitempty" validate:"omitempty,dive"`
+	UDPMpegtsValue              *InputUDPMpegtsCountersImpl      `json:"udp_mpegts,omitempty" validate:"omitempty"`
+	URLValue                    *URL                             `json:"url,omitempty" validate:"omitempty"`
+	UserAgentValue              *string                          `json:"user_agent,omitempty" validate:"omitempty"`
+	ValidSecondaryInputsValue   *int                             `json:"valid_secondary_inputs,omitempty" validate:"omitempty"`
 }
 
 // Required: code, timestamp
 type InputStatsStopEventsItemImpl struct {
 	CodeValue      string `json:"code" validate:"required"`
-	TimestampValue UtcMs  `json:"timestamp" validate:"required,min=1e+12,max=1e+13"`
+	TimestampValue UtcMs  `json:"timestamp" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
-type IptvConfigImpl struct {
-	DatabaseValue *string `json:"database,omitempty" validate:"omitempty"`
+// Counters for MPEG-TS carried over a plain UDP input (including multicast).
+// Please note that if multiple streams use the same UDP multicast MPTS input,
+// counter values are repeated per stream (same receive on the wire).
+// Do not sum them across streams.
+type InputUDPMpegtsCountersImpl struct {
+	BytesValue             *Bytes `json:"bytes,omitempty" validate:"omitempty"`
+	NotAlignedPacketsValue *int   `json:"not_aligned_packets,omitempty" validate:"omitempty"`
+	PacketsValue           *int   `json:"packets,omitempty" validate:"omitempty"`
+	RTPPacketsValue        *int   `json:"rtp_packets,omitempty" validate:"omitempty"`
 }
 
 type LetsencryptRequestImpl struct {
@@ -15490,25 +15498,114 @@ type MediaInfoSpecificImpl struct {
 }
 
 type MultiplexerStatsImpl struct {
-	LateTicksValue          *int                           `json:"late_ticks,omitempty" validate:"omitempty"`
-	SysPacketsValue         *int                           `json:"sys_packets,omitempty" validate:"omitempty"`
+	BitrateValue            *Speed                         `json:"bitrate,omitempty" validate:"omitempty"`
+	EcmgNetworkErrorsValue  *int                           `json:"ecmg_network_errors,omitempty" validate:"omitempty"`
+	EmmCountValue           *int                           `json:"emm_count,omitempty" validate:"omitempty"`
+	EmmgNetworkErrorsValue  *int                           `json:"emmg_network_errors,omitempty" validate:"omitempty"`
+	EncodedValue            *Bytes                         `json:"encoded,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_encoded"`
 	EpgProgramsValue        *int                           `json:"epg_programs,omitempty" validate:"omitempty"`
-	PayloadValue            *Bytes                         `json:"payload,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_payload"`
+	ErrorsXmltvFileValue    *int                           `json:"errors_xmltv_file,omitempty" validate:"omitempty"`
 	ErrorsXmltvParseValue   *int                           `json:"errors_xmltv_parse,omitempty" validate:"omitempty"`
 	ExceededBytesValue      *Bytes                         `json:"exceeded_bytes,omitempty" validate:"omitempty"`
 	ExceededFramesValue     *int                           `json:"exceeded_frames,omitempty" validate:"omitempty"`
 	FillersValue            *int                           `json:"fillers,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_fillers"`
-	EncodedValue            *Bytes                         `json:"encoded,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_encoded"`
-	TSOverflowValue         *bool                          `json:"ts_overflow,omitempty" validate:"omitempty"`
-	ErrorsXmltvFileValue    *int                           `json:"errors_xmltv_file,omitempty" validate:"omitempty"`
-	TrimmedFramesValue      *int                           `json:"trimmed_frames,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_trimmed_frames"`
+	LateTicksValue          *int                           `json:"late_ticks,omitempty" validate:"omitempty"`
+	PayloadValue            *Bytes                         `json:"payload,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_payload"`
+	PidsValue               []*PushPidCountersImpl         `json:"pids,omitempty" validate:"omitempty,dive"`
+	ProgramsValue           []*TransponderProgramStatsImpl `json:"programs,omitempty" validate:"omitempty,dive"`
+	RotatedKeysCountValue   *int                           `json:"rotated_keys_count,omitempty" validate:"omitempty"`
+	ScrambledBytesValue     *Bytes                         `json:"scrambled_bytes,omitempty" validate:"omitempty"`
 	StuffingValue           *int                           `json:"stuffing,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_stuffing"`
-	BitrateValue            *Speed                         `json:"bitrate,omitempty" validate:"omitempty"`
+	SysPacketsValue         *int                           `json:"sys_packets,omitempty" validate:"omitempty"`
 	SysPayloadValue         *Bytes                         `json:"sys_payload,omitempty" validate:"omitempty"`
 	SysStuffingPacketsValue *int                           `json:"sys_stuffing_packets,omitempty" validate:"omitempty"`
 	TrimmedBytesValue       *Bytes                         `json:"trimmed_bytes,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_trimmed_bytes"`
-	ProgramsValue           []*TransponderProgramStatsImpl `json:"programs,omitempty" validate:"omitempty,dive"`
-	PidsValue               []*PushPidCountersImpl         `json:"pids,omitempty" validate:"omitempty,dive"`
+	TrimmedFramesValue      *int                           `json:"trimmed_frames,omitempty" validate:"omitempty" openmetrics_metric:"multiplexer_trimmed_frames"`
+	TSOverflowValue         *bool                          `json:"ts_overflow,omitempty" validate:"omitempty"`
+}
+
+type NmosConfigImpl struct {
+	BindToDeviceValue *string `json:"bind_to_device,omitempty" validate:"omitempty"`
+	EnabledValue      *bool   `json:"enabled,omitempty" validate:"omitempty"`
+}
+
+type NvrImpl struct {
+	IDValue              *int                  `json:"id,omitempty" validate:"omitempty"`
+	NoteValue            *string               `json:"note,omitempty" validate:"omitempty"`
+	OrganizationValue    *OrganizationBaseImpl `json:"organization,omitempty" validate:"omitempty"`
+	StatsValue           *NvrStatsImpl         `json:"stats,omitempty" validate:"omitempty"`
+	SyncValue            *NvrSyncSettingsImpl  `json:"sync,omitempty" validate:"omitempty"`
+	TitleValue           *string               `json:"title,omitempty" validate:"omitempty"`
+	UserPermissionsValue *NvrPermissionsImpl   `json:"user_permissions,omitempty" validate:"omitempty"`
+}
+
+type NvrBaseImpl struct {
+	NoteValue  *string       `json:"note,omitempty" validate:"omitempty"`
+	StatsValue *NvrStatsImpl `json:"stats,omitempty" validate:"omitempty"`
+	TitleValue *string       `json:"title,omitempty" validate:"omitempty"`
+}
+
+// Status of NVR healthcheck. Updated every minute.
+type NvrHealthcheckStatusImpl struct {
+	ChecksValue          *NvrHealthcheckStatusChecksImpl `json:"checks,omitempty" validate:"omitempty"`
+	StatusValue          *NvrHealthcheckStatusStatus     `json:"status,omitempty" validate:"omitempty,oneof=ok error"`
+	StatusChangedAtValue *UtcMs                          `json:"status_changed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+}
+
+// List of healthcheck checks with their results.
+type NvrHealthcheckStatusChecksImpl struct {
+	ReachableValue *bool `json:"reachable,omitempty" validate:"omitempty"`
+}
+
+type NvrListImpl struct {
+	EstimatedCountValue *int       `json:"estimated_count,omitempty" validate:"omitempty"`
+	NextValue           *string    `json:"next,omitempty" validate:"omitempty"`
+	NvrsValue           []*NvrImpl `json:"nvrs,omitempty" validate:"omitempty,dive"`
+	PrevValue           *string    `json:"prev,omitempty" validate:"omitempty"`
+	TimingValue         any        `json:"timing,omitempty" validate:"omitempty"`
+}
+
+// User permissions for NVR
+type NvrPermissionsImpl struct {
+	CanEditSettingsValue *bool `json:"can_edit_settings,omitempty" validate:"omitempty"`
+	CanSyncValue         *bool `json:"can_sync,omitempty" validate:"omitempty"`
+}
+
+// NVR statistics
+type NvrStatsImpl struct {
+	HealthcheckStatusValue *NvrHealthcheckStatusImpl `json:"healthcheck_status,omitempty" validate:"omitempty"`
+	StreamsValue           *NvrStreamsStatsImpl      `json:"streams,omitempty" validate:"omitempty"`
+}
+
+type NvrStreamSettingsImpl struct {
+	AudioValue      *NvrStreamSettingsAudioImpl `json:"audio,omitempty" validate:"omitempty"`
+	CanPublishValue *bool                       `json:"can_publish,omitempty" validate:"omitempty"`
+	DisabledValue   *bool                       `json:"disabled,omitempty" validate:"omitempty"`
+	DvrValue        *StreamDvrSpecImpl          `json:"dvr,omitempty" validate:"omitempty"`
+	InputsValue     []StreamInput               `json:"inputs,omitempty" validate:"omitempty,dive"`
+	OnvifValue      *StreamOnvifConfigImpl      `json:"onvif,omitempty" validate:"omitempty"`
+	StaticValue     *bool                       `json:"static,omitempty" validate:"omitempty"`
+	VisionValue     *VisionSpecImpl             `json:"vision,omitempty" validate:"omitempty"`
+}
+
+// Audio settings for the stream.
+type NvrStreamSettingsAudioImpl struct {
+	DisabledValue            *bool            `json:"disabled,omitempty" validate:"omitempty"`
+	TranscodeAudioCodecValue *FrameAudioCodec `json:"transcode_audio_codec,omitempty" validate:"omitempty"`
+}
+
+// NVR streams statistics
+type NvrStreamsStatsImpl struct {
+	DisabledValue *int `json:"disabled,omitempty" validate:"omitempty"`
+	ErrorValue    *int `json:"error,omitempty" validate:"omitempty"`
+	RunningValue  *int `json:"running,omitempty" validate:"omitempty"`
+	TotalValue    *int `json:"total,omitempty" validate:"omitempty"`
+	WaitingValue  *int `json:"waiting,omitempty" validate:"omitempty"`
+}
+
+// NVR synchronization settings
+type NvrSyncSettingsImpl struct {
+	EpisodesValue *bool `json:"episodes,omitempty" validate:"omitempty"`
 }
 
 type OnOffImpl struct {
@@ -15519,20 +15616,67 @@ type OnOffAutoImpl struct {
 	ModeValue *OnOffAutoMode `json:"mode,omitempty" validate:"omitempty,oneof=on off auto"`
 }
 
+// Parameters for starting ONVIF camera discovery on the local network.
+type OnvifDiscoverRequestImpl struct {
+	AddressValue  *string `json:"address,omitempty" validate:"omitempty"`
+	LoginValue    *string `json:"login,omitempty" validate:"omitempty"`
+	PasswordValue *string `json:"password,omitempty" validate:"omitempty"`
+}
+
+// A camera discovered on the local network via the ONVIF protocol.
+type OnvifDiscoveredDeviceImpl struct {
+	EndpointValue     *string                      `json:"endpoint,omitempty" validate:"omitempty"`
+	ErrorValue        *string                      `json:"error,omitempty" validate:"omitempty"`
+	IPValue           *string                      `json:"ip,omitempty" validate:"omitempty"`
+	IsKnownValue      *bool                        `json:"is_known,omitempty" validate:"omitempty"`
+	ManufacturerValue *string                      `json:"manufacturer,omitempty" validate:"omitempty"`
+	ModelValue        *string                      `json:"model,omitempty" validate:"omitempty"`
+	PtzValue          *bool                        `json:"ptz,omitempty" validate:"omitempty"`
+	StreamsValue      []*OnvifDiscoveredStreamImpl `json:"streams,omitempty" validate:"omitempty,dive"`
+}
+
+type OnvifDiscoveredDevicesImpl struct {
+	DevicesValue        []*OnvifDiscoveredDeviceImpl `json:"devices,omitempty" validate:"omitempty,dive"`
+	EstimatedCountValue *int                         `json:"estimated_count,omitempty" validate:"omitempty"`
+	NextValue           *string                      `json:"next,omitempty" validate:"omitempty"`
+	PrevValue           *string                      `json:"prev,omitempty" validate:"omitempty"`
+	TimingValue         any                          `json:"timing,omitempty" validate:"omitempty"`
+}
+
+// A single stream (ONVIF media profile) available on a discovered camera.
+type OnvifDiscoveredStreamImpl struct {
+	BitrateValue     *int    `json:"bitrate,omitempty" validate:"omitempty"`
+	CodecValue       *string `json:"codec,omitempty" validate:"omitempty"`
+	FPSValue         *int    `json:"fps,omitempty" validate:"omitempty"`
+	HeightValue      *int    `json:"height,omitempty" validate:"omitempty"`
+	JpegURLValue     *string `json:"jpeg_url,omitempty" validate:"omitempty"`
+	ProfileValue     *string `json:"profile,omitempty" validate:"omitempty"`
+	ProfileNameValue *string `json:"profile_name,omitempty" validate:"omitempty"`
+	StreamURLValue   *string `json:"stream_url,omitempty" validate:"omitempty"`
+	WidthValue       *int    `json:"width,omitempty" validate:"omitempty"`
+}
+
 // Required: id, title
 type OrganizationBaseImpl struct {
-	TitleValue string `json:"title" validate:"required"`
 	IDValue    int    `json:"id" validate:"required"`
+	TitleValue string `json:"title" validate:"required"`
 }
 
 type OrganizationPermissionsImpl struct {
-	CanEditPersonsListsValue *bool `json:"can_edit_persons_lists,omitempty" validate:"omitempty"`
-	CanEditStreamsValue      *bool `json:"can_edit_streams,omitempty" validate:"omitempty"`
-	CanEditUsersValue        *bool `json:"can_edit_users,omitempty" validate:"omitempty"`
-	CanViewPersonsListsValue *bool `json:"can_view_persons_lists,omitempty" validate:"omitempty"`
-	CanViewStatsValue        *bool `json:"can_view_stats,omitempty" validate:"omitempty"`
-	CanViewStreamsValue      *bool `json:"can_view_streams,omitempty" validate:"omitempty"`
-	IsMemberValue            *bool `json:"is_member,omitempty" validate:"omitempty"`
+	CanEditPersonsListsValue *bool                            `json:"can_edit_persons_lists,omitempty" validate:"omitempty"`
+	CanEditStreamsValue      *bool                            `json:"can_edit_streams,omitempty" validate:"omitempty"`
+	CanEditUsersValue        *bool                            `json:"can_edit_users,omitempty" validate:"omitempty"`
+	CanViewPersonsListsValue *bool                            `json:"can_view_persons_lists,omitempty" validate:"omitempty"`
+	CanViewStatsValue        *bool                            `json:"can_view_stats,omitempty" validate:"omitempty"`
+	CanViewStreamsValue      *bool                            `json:"can_view_streams,omitempty" validate:"omitempty"`
+	IsMemberValue            *bool                            `json:"is_member,omitempty" validate:"omitempty"`
+	NvrsValue                *OrganizationPermissionsNvrsImpl `json:"nvrs,omitempty" validate:"omitempty"`
+}
+
+// Permissions related to nvr management.
+type OrganizationPermissionsNvrsImpl struct {
+	CanEditValue *bool `json:"can_edit,omitempty" validate:"omitempty"`
+	CanViewValue *bool `json:"can_view,omitempty" validate:"omitempty"`
 }
 
 type OrganizationPresetImpl struct {
@@ -15546,10 +15690,11 @@ type OrganizationStreamImpl struct {
 
 type OutputMpegtsPidsImpl struct {
 	DefaultValue *string               `json:"default,omitempty" validate:"omitempty"`
+	EcmValue     *int                  `json:"ecm,omitempty" validate:"omitempty"`
+	MediaValue   []*TransponderPidImpl `json:"media,omitempty" validate:"omitempty,dive"`
 	PcrValue     *int                  `json:"pcr,omitempty" validate:"omitempty"`
 	PmtValue     *int                  `json:"pmt,omitempty" validate:"omitempty"`
 	SdtValue     *int                  `json:"sdt,omitempty" validate:"omitempty"`
-	MediaValue   []*TransponderPidImpl `json:"media,omitempty" validate:"omitempty,dive"`
 }
 
 type PartitionStatsImpl struct {
@@ -15569,13 +15714,14 @@ type PeerConfigImpl struct {
 }
 
 type PeerStatsImpl struct {
-	OutputKbitValue           *Speed                         `json:"output_kbit,omitempty" validate:"omitempty" openmetrics_metric:"server_output_bitrate"`
-	TotalBandwidthValue       *Speed                         `json:"total_bandwidth,omitempty" validate:"omitempty"`
+	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
+	BuildValue                *int                           `json:"build,omitempty" validate:"omitempty" openmetrics_label:"build"`
 	ConfigErrorValue          *ConfigErrorStatusImpl         `json:"config_error,omitempty" validate:"omitempty"`
 	ConfigExternalStatusValue *ConfigExternalErrorStatusImpl `json:"config_external_status,omitempty" validate:"omitempty"`
-	VsaasRunningValue         *bool                          `json:"vsaas_running,omitempty" validate:"omitempty"`
-	PredictionsValue          *PeerStatsPredictionsImpl      `json:"predictions,omitempty" validate:"omitempty"`
+	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
+	CpuUsageValue             *Percent                       `json:"cpu_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_cpu_usage"`
 	ErrorValue                *string                        `json:"error,omitempty" validate:"omitempty"`
+	HealthcheckStatusValue    *CentralHealthcheckStatusImpl  `json:"healthcheck_status,omitempty" validate:"omitempty"`
 	HostnameValue             *string                        `json:"hostname,omitempty" validate:"omitempty"`
 	IDValue                   *UUID                          `json:"id,omitempty" validate:"omitempty"`
 	InputKbitValue            *Speed                         `json:"input_kbit,omitempty" validate:"omitempty" openmetrics_metric:"server_input_bitrate"`
@@ -15584,28 +15730,28 @@ type PeerStatsImpl struct {
 	LicenseTypeValue          *LicenseType                   `json:"license_type,omitempty" validate:"omitempty"`
 	MemoryUsageValue          *Percent                       `json:"memory_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_memory_usage"`
 	NextVersionValue          *ServerVersion                 `json:"next_version,omitempty" validate:"omitempty"`
-	NowValue                  *UtcMs                         `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	NowValue                  *UtcMs                         `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	OnlineStreamsValue        *int                           `json:"online_streams,omitempty" validate:"omitempty" openmetrics_metric:"server_online_streams"`
 	OpenedFilesValue          *int                           `json:"opened_files,omitempty" validate:"omitempty" openmetrics_metric:"server_opened_files"`
-	BuildValue                *int                           `json:"build,omitempty" validate:"omitempty" openmetrics_label:"build"`
-	VsaasBrandingValue        *bool                          `json:"vsaas_branding,omitempty" validate:"omitempty"`
-	CpuUsageValue             *Percent                       `json:"cpu_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_cpu_usage"`
+	OutputKbitValue           *Speed                         `json:"output_kbit,omitempty" validate:"omitempty" openmetrics_metric:"server_output_bitrate"`
+	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
+	PredictionsValue          *PeerStatsPredictionsImpl      `json:"predictions,omitempty" validate:"omitempty"`
 	RproxyValue               *bool                          `json:"rproxy,omitempty" validate:"omitempty"`
 	RproxyRunningValue        *bool                          `json:"rproxy_running,omitempty" validate:"omitempty"`
 	SchedulerLoadValue        *Percent                       `json:"scheduler_load,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_scheduler_load"`
 	ServerVersionValue        *ServerVersion                 `json:"server_version,omitempty" validate:"omitempty" openmetrics_label:"version"`
-	StartedAtValue            *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10" openmetrics_metric:"server_started_at"`
+	StartedAtValue            *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000" openmetrics_metric:"server_started_at"`
 	StreamerStatusValue       *ServerStatsStreamerStatus     `json:"streamer_status,omitempty" validate:"omitempty"`
 	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty,dive"`
-	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
+	TotalBandwidthValue       *Speed                         `json:"total_bandwidth,omitempty" validate:"omitempty"`
 	TotalClientsValue         *int                           `json:"total_clients,omitempty" validate:"omitempty" openmetrics_metric:"server_total_clients"`
 	TotalStreamsValue         *int                           `json:"total_streams,omitempty" validate:"omitempty"`
 	TranscoderValue           *bool                          `json:"transcoder,omitempty" validate:"omitempty"`
-	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
-	UptimeValue               *Seconds                       `json:"uptime,omitempty" validate:"omitempty"`
 	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty,dive"`
-	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
-	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
+	UptimeValue               *Seconds                       `json:"uptime,omitempty" validate:"omitempty"`
+	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
+	VsaasBrandingValue        *bool                          `json:"vsaas_branding,omitempty" validate:"omitempty"`
+	VsaasRunningValue         *bool                          `json:"vsaas_running,omitempty" validate:"omitempty"`
 }
 
 // Predictions of future stats based on the current state of the cluster.
@@ -15636,20 +15782,31 @@ type PlayProtocolsSpecImpl struct {
 
 // Required: id, title
 type PresetImpl struct {
-	DeletedAtValue    *UtcMs                 `json:"deleted_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	DvrValue          *StreamDvrSpecImpl     `json:"dvr,omitempty" validate:"omitempty"`
-	IsAdjustableValue *bool                  `json:"is_adjustable,omitempty" validate:"omitempty"`
-	IsDefaultValue    *bool                  `json:"is_default,omitempty" validate:"omitempty"`
-	LastChangeValue   *PresetLastChangeImpl  `json:"last_change,omitempty" validate:"omitempty"`
-	LayoutRulesValue  *StreamZoneConfigImpl  `json:"layout_rules,omitempty" validate:"omitempty"`
-	StatsValue        *PresetStatsImpl       `json:"stats,omitempty" validate:"omitempty"`
-	VisionValue       *VisionSpecPresetsImpl `json:"vision,omitempty" validate:"omitempty"`
-	TitleValue        string                 `json:"title" validate:"required"`
-	IDValue           int                    `json:"id" validate:"required"`
+	BillingExternalIDValue *string               `json:"billing_external_id,omitempty" validate:"omitempty"`
+	DeletedAtValue         *UtcMs                `json:"deleted_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DvrValue               *PresetDvrImpl        `json:"dvr,omitempty" validate:"omitempty"`
+	ExternalIDValue        *string               `json:"external_id,omitempty" validate:"omitempty"`
+	IDValue                int                   `json:"id" validate:"required"`
+	IsAdjustableValue      *bool                 `json:"is_adjustable,omitempty" validate:"omitempty"`
+	IsDefaultValue         *bool                 `json:"is_default,omitempty" validate:"omitempty"`
+	LastChangeValue        *PresetLastChangeImpl `json:"last_change,omitempty" validate:"omitempty"`
+	LayoutRulesValue       *StreamZoneConfigImpl `json:"layout_rules,omitempty" validate:"omitempty"`
+	StatsValue             *PresetStatsImpl      `json:"stats,omitempty" validate:"omitempty"`
+	TitleValue             string                `json:"title" validate:"required"`
+	VisionValue            *PresetVisionImpl     `json:"vision,omitempty" validate:"omitempty"`
+}
+
+// DVR configuration
+type PresetDvrImpl struct {
+	DiskUsageLimitValue     *Percent `json:"disk_usage_limit,omitempty" validate:"omitempty,min=0,max=100"`
+	EpisodesExpirationValue *Seconds `json:"episodes_expiration,omitempty" validate:"omitempty"`
+	ExpirationValue         *Seconds `json:"expiration,omitempty" validate:"omitempty"`
+	RedundancyFactorValue   *int     `json:"redundancy_factor,omitempty" validate:"omitempty,min=0"`
+	StorageLimitValue       *Bytes   `json:"storage_limit,omitempty" validate:"omitempty"`
 }
 
 type PresetLastChangeImpl struct {
-	UpdatedAtValue *UtcMs                    `json:"updated_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	UpdatedAtValue *UtcMs                    `json:"updated_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	UserValue      *PresetLastChangeUserImpl `json:"user,omitempty" validate:"omitempty"`
 }
 
@@ -15665,17 +15822,23 @@ type PresetStatsImpl struct {
 	StreamsCountValue       *int `json:"streams_count,omitempty" validate:"omitempty"`
 }
 
+// Vision configuration
+type PresetVisionImpl struct {
+	AlgValue          *VisionSpecPresetsAlg `json:"alg,omitempty" validate:"omitempty,oneof=faces plates"`
+	DetectorTypeValue *VisionDetector       `json:"detector_type,omitempty" validate:"omitempty"`
+}
+
 type PresetsListImpl struct {
-	TimingValue         any           `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int          `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string       `json:"next,omitempty" validate:"omitempty"`
-	PrevValue           *string       `json:"prev,omitempty" validate:"omitempty"`
 	PresetsValue        []*PresetImpl `json:"presets,omitempty" validate:"omitempty,dive"`
+	PrevValue           *string       `json:"prev,omitempty" validate:"omitempty"`
+	TimingValue         any           `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type PushCountersImpl struct {
-	ErrorsStopOverloadedValue       *int                   `json:"errors_stop_overloaded,omitempty" validate:"omitempty"`
-	ErrorsTlsValue                  *int                   `json:"errors_tls,omitempty" validate:"omitempty"`
+	BytesValue                      *Bytes                 `json:"bytes,omitempty" validate:"omitempty"`
+	EncodedBytesValue               *Bytes                 `json:"encoded_bytes,omitempty" validate:"omitempty"`
 	Errors401Value                  *int                   `json:"errors_401,omitempty" validate:"omitempty"`
 	Errors403Value                  *int                   `json:"errors_403,omitempty" validate:"omitempty"`
 	Errors404Value                  *int                   `json:"errors_404,omitempty" validate:"omitempty"`
@@ -15684,88 +15847,85 @@ type PushCountersImpl struct {
 	ErrorsAudioFrameDecodeValue     *int                   `json:"errors_audio_frame_decode,omitempty" validate:"omitempty"`
 	ErrorsConnectionLostValue       *int                   `json:"errors_connection_lost,omitempty" validate:"omitempty"`
 	ErrorsDeviceBufferOverflowValue *int                   `json:"errors_device_buffer_overflow,omitempty" validate:"omitempty"`
-	ErrorsVideoFrameDecodeValue     *int                   `json:"errors_video_frame_decode,omitempty" validate:"omitempty"`
+	ErrorsDeviceNotOpenedValue      *int                   `json:"errors_device_not_opened,omitempty" validate:"omitempty"`
 	ErrorsDroppedFramesValue        *int                   `json:"errors_dropped_frames,omitempty" validate:"omitempty"`
 	ErrorsDroppedSegmentsValue      *int                   `json:"errors_dropped_segments,omitempty" validate:"omitempty"`
 	ErrorsNoDestinationValue        *int                   `json:"errors_no_destination,omitempty" validate:"omitempty"`
 	ErrorsNotAuthorizedValue        *int                   `json:"errors_not_authorized,omitempty" validate:"omitempty"`
 	ErrorsRedirectLimitValue        *int                   `json:"errors_redirect_limit,omitempty" validate:"omitempty"`
-	EncodedBytesValue               *Bytes                 `json:"encoded_bytes,omitempty" validate:"omitempty"`
-	BytesValue                      *Bytes                 `json:"bytes,omitempty" validate:"omitempty"`
-	ErrorsDeviceNotOpenedValue      *int                   `json:"errors_device_not_opened,omitempty" validate:"omitempty"`
+	ErrorsStopOverloadedValue       *int                   `json:"errors_stop_overloaded,omitempty" validate:"omitempty"`
+	ErrorsTlsValue                  *int                   `json:"errors_tls,omitempty" validate:"omitempty"`
+	ErrorsVideoFrameDecodeValue     *int                   `json:"errors_video_frame_decode,omitempty" validate:"omitempty"`
 	FramesValue                     *int                   `json:"frames,omitempty" validate:"omitempty"`
 	GenlockStatusValue              *GenlockStatus         `json:"genlock_status,omitempty" validate:"omitempty"`
 	GenrefStatusValue               *GenrefStatusImpl      `json:"genref_status,omitempty" validate:"omitempty"`
-	OpenedAtValue                   *UtcMs                 `json:"opened_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	URLValue                        *InputURL              `json:"url,omitempty" validate:"omitempty"`
+	OpenedAtValue                   *UtcMs                 `json:"opened_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	PidsValue                       []*PushPidCountersImpl `json:"pids,omitempty" validate:"omitempty,dive"`
 	PusherQueueExhaustedCountValue  *int                   `json:"pusher_queue_exhausted_count,omitempty" validate:"omitempty"`
 	PusherRestartsValue             *int                   `json:"pusher_restarts,omitempty" validate:"omitempty"`
-	ResentPacketsValue              *int                   `json:"resent_packets,omitempty" validate:"omitempty"`
+	RetransmittedPacketsValue       *int                   `json:"retransmitted_packets,omitempty" validate:"omitempty"`
 	SegmentsValue                   *int                   `json:"segments,omitempty" validate:"omitempty"`
 	StandbyStatusValue              *PusherStandbyStatus   `json:"standby_status,omitempty" validate:"omitempty"`
 	StatusValue                     *PusherStatus          `json:"status,omitempty" validate:"omitempty"`
-	SysFillersBytesValue            *Bytes                 `json:"sys_fillers_bytes,omitempty" validate:"omitempty"`
 	SysPayloadBytesValue            *Bytes                 `json:"sys_payload_bytes,omitempty" validate:"omitempty"`
 	SysStuffingPacketsValue         *int                   `json:"sys_stuffing_packets,omitempty" validate:"omitempty"`
-	PidsValue                       []*PushPidCountersImpl `json:"pids,omitempty" validate:"omitempty,dive"`
+	URLValue                        *InputURL              `json:"url,omitempty" validate:"omitempty"`
 }
 
 // Required: pid
 type PushPidCountersImpl struct {
-	FillersBytesValue            *Bytes        `json:"fillers_bytes,omitempty" validate:"omitempty"`
-	ErrorsStartLateDtsValue      *int          `json:"errors_start_late_dts,omitempty" validate:"omitempty"`
+	BitrateValue                 *Speed        `json:"bitrate,omitempty" validate:"omitempty"`
+	ContentValue                 *FrameContent `json:"content,omitempty" validate:"omitempty"`
 	ErrorsDtsGoesBackwardValue   *int          `json:"errors_dts_goes_backward,omitempty" validate:"omitempty"`
 	ErrorsDtsJumpsForwardValue   *int          `json:"errors_dts_jumps_forward,omitempty" validate:"omitempty"`
 	ErrorsPidOffValue            *int          `json:"errors_pid_off,omitempty" validate:"omitempty"`
 	ErrorsStartFutureDtsValue    *int          `json:"errors_start_future_dts,omitempty" validate:"omitempty"`
-	FillersValue                 *Bytes        `json:"fillers,omitempty" validate:"omitempty" openmetrics_metric:"pid_fillers"`
+	ErrorsStartLateDtsValue      *int          `json:"errors_start_late_dts,omitempty" validate:"omitempty"`
 	ErrorsUnconfiguredQueueValue *int          `json:"errors_unconfigured_queue,omitempty" validate:"omitempty"`
 	ExceededBytesValue           *Bytes        `json:"exceeded_bytes,omitempty" validate:"omitempty"`
 	ExceededFramesValue          *int          `json:"exceeded_frames,omitempty" validate:"omitempty"`
-	ContentValue                 *FrameContent `json:"content,omitempty" validate:"omitempty"`
 	FillerPacketsValue           *int          `json:"filler_packets,omitempty" validate:"omitempty"`
-	PayloadValue                 *Bytes        `json:"payload,omitempty" validate:"omitempty" openmetrics_metric:"pid_payload"`
 	MaxBufferValue               *Milliseconds `json:"max_buffer,omitempty" validate:"omitempty"`
 	MinBufferValue               *Milliseconds `json:"min_buffer,omitempty" validate:"omitempty"`
 	PacketsValue                 *int          `json:"packets,omitempty" validate:"omitempty"`
-	BitrateValue                 *Speed        `json:"bitrate,omitempty" validate:"omitempty"`
 	PayloadBytesValue            *Bytes        `json:"payload_bytes,omitempty" validate:"omitempty"`
-	TrimmedFramesValue           *int          `json:"trimmed_frames,omitempty" validate:"omitempty"`
+	PidValue                     int           `json:"pid" validate:"required"`
 	PnrValue                     *int          `json:"pnr,omitempty" validate:"omitempty"`
-	StuffingValue                *int          `json:"stuffing,omitempty" validate:"omitempty" openmetrics_metric:"pid_stuffing"`
+	QueuedTimeValue              *Milliseconds `json:"queued_time,omitempty" validate:"omitempty"`
 	StuffingPacketsValue         *int          `json:"stuffing_packets,omitempty" validate:"omitempty"`
 	TrimmedBytesValue            *Bytes        `json:"trimmed_bytes,omitempty" validate:"omitempty"`
-	PidValue                     int           `json:"pid" validate:"required"`
+	TrimmedFramesValue           *int          `json:"trimmed_frames,omitempty" validate:"omitempty"`
 }
 
 // Required: channel_id
 type RTPCountersBaseImpl struct {
-	NackCountValue            *int    `json:"nack_count,omitempty" validate:"omitempty"`
-	PtRejectCountValue        *int    `json:"pt_reject_count,omitempty" validate:"omitempty"`
-	ContentValue              *string `json:"content,omitempty" validate:"omitempty"`
-	NoMarkerModeFlagValue     *bool   `json:"no_marker_mode_flag,omitempty" validate:"omitempty"`
-	ErrorsDtsStuckValue       *int    `json:"errors_dts_stuck,omitempty" validate:"omitempty"`
-	ErrorsLostPacketsValue    *int    `json:"errors_lost_packets,omitempty" validate:"omitempty"`
-	FramesValue               *int    `json:"frames,omitempty" validate:"omitempty"`
-	MarkerPacketsCountValue   *int    `json:"marker_packets_count,omitempty" validate:"omitempty"`
-	TSStuckValue              *int    `json:"ts_stuck,omitempty" validate:"omitempty"`
-	BytesValue                *int    `json:"bytes,omitempty" validate:"omitempty"`
-	ErrorsBrokenPayloadValue  *int    `json:"errors_broken_payload,omitempty" validate:"omitempty"`
-	PtRejectSumValue          *int    `json:"pt_reject_sum,omitempty" validate:"omitempty"`
-	RtcpPacketsValue          *int    `json:"rtcp_packets,omitempty" validate:"omitempty"`
-	RTPPacketsValue           *int    `json:"rtp_packets,omitempty" validate:"omitempty"`
-	SenderClockDeviationValue *int    `json:"sender_clock_deviation,omitempty" validate:"omitempty"`
-	SrTSStuckValue            *int    `json:"sr_ts_stuck,omitempty" validate:"omitempty"`
-	TSGoesBackwardsValue      *int    `json:"ts_goes_backwards,omitempty" validate:"omitempty"`
-	TSJumpForwardValue        *int    `json:"ts_jump_forward,omitempty" validate:"omitempty"`
-	ChannelIDValue            int     `json:"channel_id" validate:"required"`
+	BytesValue                  *int    `json:"bytes,omitempty" validate:"omitempty"`
+	ChannelIDValue              int     `json:"channel_id" validate:"required"`
+	ContentValue                *string `json:"content,omitempty" validate:"omitempty"`
+	ErrorsBrokenPayloadValue    *int    `json:"errors_broken_payload,omitempty" validate:"omitempty"`
+	ErrorsDtsStuckValue         *int    `json:"errors_dts_stuck,omitempty" validate:"omitempty"`
+	ErrorsLostPacketsValue      *int    `json:"errors_lost_packets,omitempty" validate:"omitempty"`
+	ErrorsSrClockDeviationValue *int    `json:"errors_sr_clock_deviation,omitempty" validate:"omitempty"`
+	FramesValue                 *int    `json:"frames,omitempty" validate:"omitempty"`
+	MarkerPacketsCountValue     *int    `json:"marker_packets_count,omitempty" validate:"omitempty"`
+	NackCountValue              *int    `json:"nack_count,omitempty" validate:"omitempty"`
+	NoMarkerModeFlagValue       *bool   `json:"no_marker_mode_flag,omitempty" validate:"omitempty"`
+	PtRejectCountValue          *int    `json:"pt_reject_count,omitempty" validate:"omitempty"`
+	PtRejectSumValue            *int    `json:"pt_reject_sum,omitempty" validate:"omitempty"`
+	RtcpPacketsValue            *int    `json:"rtcp_packets,omitempty" validate:"omitempty"`
+	RTPPacketsValue             *int    `json:"rtp_packets,omitempty" validate:"omitempty"`
+	SenderClockDeviationValue   *int    `json:"sender_clock_deviation,omitempty" validate:"omitempty"`
+	SrTSStuckValue              *int    `json:"sr_ts_stuck,omitempty" validate:"omitempty"`
+	TSGoesBackwardsValue        *int    `json:"ts_goes_backwards,omitempty" validate:"omitempty"`
+	TSJumpForwardValue          *int    `json:"ts_jump_forward,omitempty" validate:"omitempty"`
+	TSStuckValue                *int    `json:"ts_stuck,omitempty" validate:"omitempty"`
 }
 
 // Required: path
 type RaidDiskConfigImpl struct {
 	ModeValue  *RaidDiskMode            `json:"mode,omitempty" validate:"omitempty"`
-	StatsValue *RaidDiskConfigStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 	PathValue  DiskPath                 `json:"path" validate:"required" openmetrics_label:"disk"`
+	StatsValue *RaidDiskConfigStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 }
 
 // The runtime statistics about RAID. The statistics shows the state of disks.
@@ -15773,14 +15933,16 @@ type RaidDiskConfigImpl struct {
 type RaidDiskConfigStatsImpl struct {
 	BlobsCountValue       *int                `json:"blobs_count,omitempty" validate:"omitempty" openmetrics_metric:"storage_blobs_count"`
 	BlobsCountDbValue     *int                `json:"blobs_count_db,omitempty" validate:"omitempty" openmetrics_metric:"storage_blobs_count_db"`
+	DeviceValue           *string             `json:"device,omitempty" validate:"omitempty"`
 	ErrorsValue           *RaidDiskErrorsImpl `json:"errors,omitempty" validate:"omitempty"`
 	IoUsageValue          *Percent            `json:"io_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"raid_disk_io_usage"`
-	MigrationEtaValue     *Utc                `json:"migration_eta,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	MigrationEtaValue     *Utc                `json:"migration_eta,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 	MigrationSpeedValue   *Speed              `json:"migration_speed,omitempty" validate:"omitempty"`
-	MigrationUpdatedValue *Utc                `json:"migration_updated,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	MigrationUpdatedValue *Utc                `json:"migration_updated,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 	ModeValue             *RaidDiskMode       `json:"mode,omitempty" validate:"omitempty"`
 	MountedValue          *bool               `json:"mounted,omitempty" validate:"omitempty"`
 	SizeValue             *Bytes              `json:"size,omitempty" validate:"omitempty" openmetrics_metric:"storage_size"`
+	StatusValue           *RaidDiskStatus     `json:"status,omitempty" validate:"omitempty"`
 	UsageValue            *Percent            `json:"usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"storage_usage"`
 	UsedValue             *Bytes              `json:"used,omitempty" validate:"omitempty" openmetrics_metric:"storage_used"`
 	UsedIndexValue        *Bytes              `json:"used_index,omitempty" validate:"omitempty" openmetrics_metric:"storage_used_index"`
@@ -15804,13 +15966,15 @@ type RaidDiskErrorsImpl struct {
 }
 
 type RaidDiskStatsImpl struct {
+	DeviceValue           *string             `json:"device,omitempty" validate:"omitempty"`
 	ErrorsValue           *RaidDiskErrorsImpl `json:"errors,omitempty" validate:"omitempty"`
 	IoUsageValue          *Percent            `json:"io_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"raid_disk_io_usage"`
-	MigrationEtaValue     *Utc                `json:"migration_eta,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	MigrationEtaValue     *Utc                `json:"migration_eta,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 	MigrationSpeedValue   *Speed              `json:"migration_speed,omitempty" validate:"omitempty"`
-	MigrationUpdatedValue *Utc                `json:"migration_updated,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	MigrationUpdatedValue *Utc                `json:"migration_updated,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 	ModeValue             *RaidDiskMode       `json:"mode,omitempty" validate:"omitempty"`
 	MountedValue          *bool               `json:"mounted,omitempty" validate:"omitempty"`
+	StatusValue           *RaidDiskStatus     `json:"status,omitempty" validate:"omitempty"`
 }
 
 // Required: streampoint_key
@@ -15832,58 +15996,51 @@ type SensorImpl struct {
 }
 
 type ServerConfigBaseImpl struct {
-	PulsedbValue        *DiskPath               `json:"pulsedb,omitempty" validate:"omitempty"`
-	MetaValue           *string                 `json:"meta,omitempty" validate:"omitempty"`
-	ClusterKeyValue     *string                 `json:"cluster_key,omitempty" validate:"omitempty"`
-	EditAuthValue       *AdminCredentialsImpl   `json:"edit_auth,omitempty" validate:"omitempty"`
-	GeoipValue          *DiskPath               `json:"geoip,omitempty" validate:"omitempty"`
-	ListenersValue      *ListenersImpl          `json:"listeners,omitempty" validate:"omitempty"`
-	LogRequestsValue    *bool                   `json:"log_requests,omitempty" validate:"omitempty"`
-	SessionLogValue     *DiskPath               `json:"session_log,omitempty" validate:"omitempty"`
-	WebrtcPublishValue  *WebrtcRouterConfigImpl `json:"webrtc_publish,omitempty" validate:"omitempty"`
-	NvidiaMonitorValue  *bool                   `json:"nvidia_monitor,omitempty" validate:"omitempty"`
-	AuthTokenValue      *AuthToken              `json:"auth_token,omitempty" validate:"omitempty"`
-	WebrtcPlayValue     *WebrtcRouterConfigImpl `json:"webrtc_play,omitempty" validate:"omitempty"`
-	LoglevelValue       *Loglevel               `json:"loglevel,omitempty" validate:"omitempty"`
-	SrtValue            *ListenSpec             `json:"srt,omitempty" validate:"omitempty"`
-	Srt2PlayValue       *SrtConfigImpl          `json:"srt2_play,omitempty" validate:"omitempty"`
-	Srt2PublishValue    *SrtConfigImpl          `json:"srt2_publish,omitempty" validate:"omitempty"`
-	SrtPlayValue        *SrtConfigImpl          `json:"srt_play,omitempty" validate:"omitempty"`
-	SrtPublishValue     *SrtConfigImpl          `json:"srt_publish,omitempty" validate:"omitempty"`
-	TotalBandwidthValue *Speed                  `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	URLPrefixValue      *URLPrefix              `json:"url_prefix,omitempty" validate:"omitempty"`
-	ViewAuthValue       *AdminCredentialsImpl   `json:"view_auth,omitempty" validate:"omitempty"`
-	APIAllowedFromValue []Cidr                  `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
-	ServerNamesValue    []*ServerNameConfigImpl `json:"server_names,omitempty" validate:"omitempty,dive"`
+	APIAllowedFromValue  []Cidr                  `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
+	AuthTokenValue       *AuthToken              `json:"auth_token,omitempty" validate:"omitempty"`
+	ClusterKeyValue      *string                 `json:"cluster_key,omitempty" validate:"omitempty"`
+	EditAuthValue        *AdminCredentialsImpl   `json:"edit_auth,omitempty" validate:"omitempty"`
+	GeoipValue           *DiskPath               `json:"geoip,omitempty" validate:"omitempty"`
+	ListenersValue       *ListenersImpl          `json:"listeners,omitempty" validate:"omitempty"`
+	LogRequestsValue     *bool                   `json:"log_requests,omitempty" validate:"omitempty"`
+	LoglevelValue        *Loglevel               `json:"loglevel,omitempty" validate:"omitempty"`
+	MetaValue            *string                 `json:"meta,omitempty" validate:"omitempty"`
+	NvidiaMonitorValue   *bool                   `json:"nvidia_monitor,omitempty" validate:"omitempty"`
+	PulsedbValue         *DiskPath               `json:"pulsedb,omitempty" validate:"omitempty"`
+	ServerNamesValue     []*ServerNameConfigImpl `json:"server_names,omitempty" validate:"omitempty,dive"`
+	SessionLogValue      *DiskPath               `json:"session_log,omitempty" validate:"omitempty"`
+	SrtValue             *ListenSpec             `json:"srt,omitempty" validate:"omitempty"`
+	Srt2PlayValue        *SrtConfigImpl          `json:"srt2_play,omitempty" validate:"omitempty"`
+	Srt2PublishValue     *SrtConfigImpl          `json:"srt2_publish,omitempty" validate:"omitempty"`
+	SrtPlayValue         *SrtConfigImpl          `json:"srt_play,omitempty" validate:"omitempty"`
+	SrtPublishValue      *SrtConfigImpl          `json:"srt_publish,omitempty" validate:"omitempty"`
+	StreamingPrefixValue *string                 `json:"streaming_prefix,omitempty" validate:"omitempty"`
+	TotalBandwidthValue  *Speed                  `json:"total_bandwidth,omitempty" validate:"omitempty"`
+	URLPrefixValue       *URLPrefix              `json:"url_prefix,omitempty" validate:"omitempty"`
+	ViewAuthValue        *AdminCredentialsImpl   `json:"view_auth,omitempty" validate:"omitempty"`
+	WebrtcPlayValue      *WebrtcRouterConfigImpl `json:"webrtc_play,omitempty" validate:"omitempty"`
+	WebrtcPublishValue   *WebrtcRouterConfigImpl `json:"webrtc_publish,omitempty" validate:"omitempty"`
 }
 
 type ServerConfigFullImpl struct {
-	FileProcessorValue *FileProcessorConfigImpl `json:"file_processor,omitempty" validate:"omitempty"`
-	VsaasValue         *VsaasConfigImpl         `json:"vsaas,omitempty" validate:"omitempty"`
-	RproxyValue        *RproxyConfigImpl        `json:"rproxy,omitempty" validate:"omitempty"`
-	CameraAlarmValue   *CameraAlarmConfigImpl   `json:"camera_alarm,omitempty" validate:"omitempty"`
-	ChassisValue       *ChassisConfigImpl       `json:"chassis,omitempty" validate:"omitempty"`
-	IptvValue          *IptvConfigImpl          `json:"iptv,omitempty" validate:"omitempty"`
-	HTTPProxiesValue   []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
-	CachesValue        []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
-	EventSinksValue    []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
-	DvbCardsValue      []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
-	AuthBackendsValue  []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
-	DecklinksValue     []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
-	PeersValue         []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty,dive"`
-	DvrsValue          []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
-	SourcesValue       []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty,dive"`
-	StreamsValue       []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty,dive"`
-	TemplatesValue     []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty,dive"`
-	TranspondersValue  []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
-	VodsValue          []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
-	BalancersValue     []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty,dive"`
+	AuthBackendsValue []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
+	CachesValue       []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
+	CameraAlarmValue  *CameraAlarmConfigImpl   `json:"camera_alarm,omitempty" validate:"omitempty"`
+	DecklinksValue    []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
+	DvbCardsValue     []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
+	DvrsValue         []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
+	EventSinksValue   []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
+	HTTPProxiesValue  []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
+	RproxyValue       *RproxyConfigImpl        `json:"rproxy,omitempty" validate:"omitempty"`
+	TranspondersValue []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
+	VodsValue         []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
+	VsaasValue        *VsaasConfigImpl         `json:"vsaas,omitempty" validate:"omitempty"`
 }
 
 // Required: domain
 type ServerNameConfigImpl struct {
-	DomainValue  string   `json:"domain" validate:"required"`
 	AliasesValue []string `json:"aliases,omitempty" validate:"omitempty,dive"`
+	DomainValue  string   `json:"domain" validate:"required"`
 }
 
 type ServerStatsNetworkImpl struct {
@@ -15896,10 +16053,10 @@ type ServerStatsNetworkImpl struct {
 }
 
 type ServerStatsStreamerImpl struct {
-	TotalBandwidthValue       *Speed                         `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	UptimeValue               *Seconds                       `json:"uptime,omitempty" validate:"omitempty"`
+	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
+	ConfigErrorValue          *ConfigErrorStatusImpl         `json:"config_error,omitempty" validate:"omitempty"`
 	ConfigExternalStatusValue *ConfigExternalErrorStatusImpl `json:"config_external_status,omitempty" validate:"omitempty"`
-	VsaasRunningValue         *bool                          `json:"vsaas_running,omitempty" validate:"omitempty"`
+	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
 	CpuUsageValue             *Percent                       `json:"cpu_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_cpu_usage"`
 	HostnameValue             *string                        `json:"hostname,omitempty" validate:"omitempty"`
 	IDValue                   *UUID                          `json:"id,omitempty" validate:"omitempty"`
@@ -15908,26 +16065,26 @@ type ServerStatsStreamerImpl struct {
 	LicenseTypeValue          *LicenseType                   `json:"license_type,omitempty" validate:"omitempty"`
 	MemoryUsageValue          *Percent                       `json:"memory_usage,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_memory_usage"`
 	NextVersionValue          *ServerVersion                 `json:"next_version,omitempty" validate:"omitempty"`
-	ConfigErrorValue          *ConfigErrorStatusImpl         `json:"config_error,omitempty" validate:"omitempty"`
+	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
+	RproxyValue               *bool                          `json:"rproxy,omitempty" validate:"omitempty"`
 	RproxyRunningValue        *bool                          `json:"rproxy_running,omitempty" validate:"omitempty"`
-	VsaasBrandingValue        *bool                          `json:"vsaas_branding,omitempty" validate:"omitempty"`
 	SchedulerLoadValue        *Percent                       `json:"scheduler_load,omitempty" validate:"omitempty,min=0,max=100" openmetrics_metric:"server_scheduler_load"`
 	StreamerStatusValue       *ServerStatsStreamerStatus     `json:"streamer_status,omitempty" validate:"omitempty"`
 	TextAlertsValue           map[string]string              `json:"text_alerts,omitempty" validate:"omitempty,dive"`
-	BandwidthUsageValue       *Percent                       `json:"bandwidth_usage,omitempty" validate:"omitempty,min=0,max=100"`
+	TotalBandwidthValue       *Speed                         `json:"total_bandwidth,omitempty" validate:"omitempty"`
 	TranscoderValue           *bool                          `json:"transcoder,omitempty" validate:"omitempty"`
-	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
-	RproxyValue               *bool                          `json:"rproxy,omitempty" validate:"omitempty"`
 	TranscoderDevicesValue    []*TranscoderDeviceStatsImpl   `json:"transcoder_devices,omitempty" validate:"omitempty,dive"`
-	PartitionsValue           []*PartitionStatsImpl          `json:"partitions,omitempty" validate:"omitempty,dive"`
-	ConfigVersionValue        []int                          `json:"config_version,omitempty" validate:"omitempty"`
+	UptimeValue               *Seconds                       `json:"uptime,omitempty" validate:"omitempty"`
+	VsaasValue                *bool                          `json:"vsaas,omitempty" validate:"omitempty"`
+	VsaasBrandingValue        *bool                          `json:"vsaas_branding,omitempty" validate:"omitempty"`
+	VsaasRunningValue         *bool                          `json:"vsaas_running,omitempty" validate:"omitempty"`
 }
 
 type ServerStatsWhoamiImpl struct {
 	BuildValue         *int           `json:"build,omitempty" validate:"omitempty" openmetrics_label:"build"`
-	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	ServerVersionValue *ServerVersion `json:"server_version,omitempty" validate:"omitempty" openmetrics_label:"version"`
-	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10" openmetrics_metric:"server_started_at"`
+	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000" openmetrics_metric:"server_started_at"`
 }
 
 // Shared token are designed to provide access to the camera and its archive via a link.
@@ -15953,103 +16110,97 @@ type SharedTokenPermissionImpl struct {
 }
 
 type SharedTokensListImpl struct {
-	TimingValue         any                `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int               `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string            `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string            `json:"prev,omitempty" validate:"omitempty"`
 	SharedTokensValue   []*SharedTokenImpl `json:"shared_tokens,omitempty" validate:"omitempty,dive"`
-}
-
-type SourceConfigImpl struct {
-	DvrValue    *StreamDvrSpecImpl  `json:"dvr,omitempty" validate:"omitempty"`
-	LabelsValue map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
-	VisionValue *VisionSpecImpl     `json:"vision,omitempty" validate:"omitempty"`
-	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
-}
-
-type SourceSpecificConfigImpl struct {
+	TimingValue         any                `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type SrtConfigImpl struct {
-	PortValue    *ListenSpec `json:"port,omitempty" validate:"omitempty"`
-	TimeoutValue any         `json:"timeout,omitempty" validate:"omitempty"`
+	EnforcedencryptionValue *bool         `json:"enforcedencryption,omitempty" validate:"omitempty"`
+	LatencyValue            *Milliseconds `json:"latency,omitempty" validate:"omitempty"`
+	LingerValue             *Seconds      `json:"linger,omitempty" validate:"omitempty"`
+	MinversionValue         *string       `json:"minversion,omitempty" validate:"omitempty"`
+	PassphraseValue         *string       `json:"passphrase,omitempty" validate:"omitempty,min=10,max=79"`
+	PortValue               *ListenSpec   `json:"port,omitempty" validate:"omitempty"`
+	StreamidValue           *string       `json:"streamid,omitempty" validate:"omitempty,max=512"`
+	TimeoutValue            any           `json:"timeout,omitempty" validate:"omitempty"`
+	VersionValue            *string       `json:"version,omitempty" validate:"omitempty"`
 }
 
 type SrtConfigBaseImpl struct {
+	EnforcedencryptionValue *bool         `json:"enforcedencryption,omitempty" validate:"omitempty"`
+	LatencyValue            *Milliseconds `json:"latency,omitempty" validate:"omitempty"`
+	LingerValue             *Seconds      `json:"linger,omitempty" validate:"omitempty"`
+	MinversionValue         *string       `json:"minversion,omitempty" validate:"omitempty"`
+	PassphraseValue         *string       `json:"passphrase,omitempty" validate:"omitempty,min=10,max=79"`
+	StreamidValue           *string       `json:"streamid,omitempty" validate:"omitempty,max=512"`
+	VersionValue            *string       `json:"version,omitempty" validate:"omitempty"`
 }
 
 type StreamConfigImpl struct {
-	LayoutValue                 *CentralStreamLayoutImpl                    `json:"layout,omitempty" validate:"omitempty"`
-	MapCoordinatesValue         *MapSpecImpl                                `json:"map_coordinates,omitempty" validate:"omitempty"`
-	CommentValue                *string                                     `json:"comment,omitempty" validate:"omitempty"`
-	CoordinatesValue            *MapSpecImpl                                `json:"coordinates,omitempty" validate:"omitempty"`
-	CreatedAtValue              *UtcMs                                      `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	DisabledValue               *bool                                       `json:"disabled,omitempty" validate:"omitempty"`
-	DomainValue                 *DomainBaseImpl                             `json:"domain,omitempty" validate:"omitempty"`
-	DvrValue                    *StreamDvrSpecImpl                          `json:"dvr,omitempty" validate:"omitempty"`
-	FirmwareUpdateDurationValue *Milliseconds                               `json:"firmware_update_duration,omitempty" validate:"omitempty"`
-	FolderIDValue               *int                                        `json:"folder_id,omitempty" validate:"omitempty"`
-	VisionValue                 *VisionSpecImpl                             `json:"vision,omitempty" validate:"omitempty"`
-	LabelsValue                 map[string]UnixName                         `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
-	LastChangeValue             *AuditLogRecordImpl                         `json:"last_change,omitempty" validate:"omitempty"`
-	LastEpisodeAtValue          *UtcMs                                      `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	CanPublishValue             *bool                                       `json:"can_publish,omitempty" validate:"omitempty"`
-	AudioValue                  *WatcherStreamConfigAudioImpl               `json:"audio,omitempty" validate:"omitempty"`
-	TitleValue                  *string                                     `json:"title,omitempty" validate:"omitempty"`
-	StatsValue                  *StreamStatsImpl                            `json:"stats,omitempty" validate:"omitempty"`
-	LayoutRulesValue            *StreamZoneConfigImpl                       `json:"layout_rules,omitempty" validate:"omitempty"`
-	OnvifValue                  *StreamOnvifConfigImpl                      `json:"onvif,omitempty" validate:"omitempty"`
-	OrganizationValue           *OrganizationStreamImpl                     `json:"organization,omitempty" validate:"omitempty"`
-	OrganizationIDValue         *int                                        `json:"organization_id,omitempty" validate:"omitempty"`
-	StaticValue                 *bool                                       `json:"static,omitempty" validate:"omitempty"`
-	PostalAddressValue          *string                                     `json:"postal_address,omitempty" validate:"omitempty"`
-	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
-	PresetIDValue               *int                                        `json:"preset_id,omitempty" validate:"omitempty"`
-	NameValue                   MediaName                                   `json:"name" validate:"required" openmetrics_label:"name"`
-	PushesValue                 []StreamPush                                `json:"pushes,omitempty" validate:"omitempty,dive"`
-	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty,dive"`
-	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty,dive"`
-	InputsValue                 []StreamInput                               `json:"inputs,omitempty" validate:"omitempty,dive"`
+	AudioValue                  *StreamConfigAudioImpl               `json:"audio,omitempty" validate:"omitempty"`
+	CanPublishValue             *bool                                `json:"can_publish,omitempty" validate:"omitempty"`
+	CommentValue                *string                              `json:"comment,omitempty" validate:"omitempty"`
+	CoordinatesValue            *MapSpecImpl                         `json:"coordinates,omitempty" validate:"omitempty"`
+	CreatedAtValue              *UtcMs                               `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DisabledValue               *bool                                `json:"disabled,omitempty" validate:"omitempty"`
+	DomainValue                 *DomainBaseImpl                      `json:"domain,omitempty" validate:"omitempty"`
+	DvrValue                    *StreamDvrSpecImpl                   `json:"dvr,omitempty" validate:"omitempty"`
+	FirmwareUpdateDurationValue *Milliseconds                        `json:"firmware_update_duration,omitempty" validate:"omitempty"`
+	FolderIDValue               *int                                 `json:"folder_id,omitempty" validate:"omitempty"`
+	InputsValue                 []StreamInput                        `json:"inputs,omitempty" validate:"omitempty,dive"`
+	LabelsValue                 map[string]UnixName                  `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
+	LastChangeValue             *AuditLogRecordImpl                  `json:"last_change,omitempty" validate:"omitempty"`
+	LastEpisodeAtValue          *UtcMs                               `json:"last_episode_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	LayoutValue                 *CentralStreamLayoutImpl             `json:"layout,omitempty" validate:"omitempty"`
+	LayoutRulesValue            *StreamZoneConfigImpl                `json:"layout_rules,omitempty" validate:"omitempty"`
+	MapCoordinatesValue         *MapSpecImpl                         `json:"map_coordinates,omitempty" validate:"omitempty"`
+	NameValue                   *MediaName                           `json:"name,omitempty" validate:"omitempty" openmetrics_label:"name"`
+	NotificationsValue          []*StreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty,dive"`
+	NvrIDValue                  *int                                 `json:"nvr_id,omitempty" validate:"omitempty"`
+	NvrSettingsValue            *NvrStreamSettingsImpl               `json:"nvr_settings,omitempty" validate:"omitempty"`
+	OnvifValue                  *StreamOnvifConfigImpl               `json:"onvif,omitempty" validate:"omitempty"`
+	OrganizationValue           *OrganizationStreamImpl              `json:"organization,omitempty" validate:"omitempty"`
+	OrganizationIDValue         *int                                 `json:"organization_id,omitempty" validate:"omitempty"`
+	PathValue                   []*StreamPathItemImpl                `json:"path,omitempty" validate:"omitempty,dive"`
+	PostalAddressValue          *string                              `json:"postal_address,omitempty" validate:"omitempty"`
+	PresetValue                 *StreamPresetImpl                    `json:"preset,omitempty" validate:"omitempty"`
+	PresetIDValue               *int                                 `json:"preset_id,omitempty" validate:"omitempty"`
+	PushesValue                 []StreamPush                         `json:"pushes,omitempty" validate:"omitempty,dive"`
+	StaticValue                 *bool                                `json:"static,omitempty" validate:"omitempty"`
+	StatsValue                  *StreamStatsImpl                     `json:"stats,omitempty" validate:"omitempty"`
+	TitleValue                  *string                              `json:"title,omitempty" validate:"omitempty"`
+	VisionValue                 *VisionSpecImpl                      `json:"vision,omitempty" validate:"omitempty"`
 }
 
-type StreamConfigAdditionalImpl struct {
-	StatsValue *StreamStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-}
-
-type StreamConfigBaseImpl struct {
-	DisabledValue *bool `json:"disabled,omitempty" validate:"omitempty"`
-	StaticValue   *bool `json:"static,omitempty" validate:"omitempty"`
-}
-
-type StreamConfigDeprecatedImpl struct {
-}
-
-type StreamConfigInputImpl struct {
-	InputsValue []StreamInput `json:"inputs,omitempty" validate:"omitempty,dive"`
-}
-
-type StreamConfigMediaImpl struct {
-	DvrValue    *StreamDvrSpecImpl  `json:"dvr,omitempty" validate:"omitempty"`
-	LabelsValue map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
-	PushesValue []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
+// Audio settings for the stream.
+type StreamConfigAudioImpl struct {
+	DisabledValue            *bool            `json:"disabled,omitempty" validate:"omitempty"`
+	TranscodeAudioCodecValue *FrameAudioCodec `json:"transcode_audio_codec,omitempty" validate:"omitempty"`
 }
 
 type StreamConfigMultieditImpl struct {
-	DvrValue         *StreamDvrSpecImpl    `json:"dvr,omitempty" validate:"omitempty"`
-	LayoutRulesValue *StreamZoneConfigImpl `json:"layout_rules,omitempty" validate:"omitempty"`
-	NameValue        *string               `json:"name,omitempty" validate:"omitempty"`
-	PresetIDValue    *int                  `json:"preset_id,omitempty" validate:"omitempty"`
+	DvrValue         *StreamConfigMultieditDvrImpl `json:"dvr,omitempty" validate:"omitempty"`
+	LayoutRulesValue *StreamZoneConfigImpl         `json:"layout_rules,omitempty" validate:"omitempty"`
+	NameValue        *string                       `json:"name,omitempty" validate:"omitempty"`
+	PresetIDValue    *int                          `json:"preset_id,omitempty" validate:"omitempty"`
 }
 
-type StreamConfigOnpremisesImpl struct {
-	VisionValue *VisionSpecImpl `json:"vision,omitempty" validate:"omitempty"`
+// DVR configuration.
+type StreamConfigMultieditDvrImpl struct {
+	DiskUsageLimitValue     *Percent `json:"disk_usage_limit,omitempty" validate:"omitempty,min=0,max=100"`
+	EpisodesExpirationValue *Seconds `json:"episodes_expiration,omitempty" validate:"omitempty"`
+	ExpirationValue         *Seconds `json:"expiration,omitempty" validate:"omitempty"`
+	RedundancyFactorValue   *int     `json:"redundancy_factor,omitempty" validate:"omitempty,min=0"`
+	StorageLimitValue       *Bytes   `json:"storage_limit,omitempty" validate:"omitempty"`
 }
 
-// Required: name
-type StreamConfigSpecificImpl struct {
-	CommentValue *string   `json:"comment,omitempty" validate:"omitempty"`
-	TitleValue   *string   `json:"title,omitempty" validate:"omitempty"`
-	NameValue    MediaName `json:"name" validate:"required" openmetrics_label:"name"`
+// Notification subscription details for a specific event type.
+type StreamConfigNotificationsItemImpl struct {
+	EventTypesValue       *EventTypesImpl   `json:"event_types,omitempty" validate:"omitempty"`
+	NotificationTypeValue *NotificationType `json:"notification_type,omitempty" validate:"omitempty"`
 }
 
 type StreamDvrSpecImpl struct {
@@ -16060,166 +16211,47 @@ type StreamDvrSpecImpl struct {
 	StorageLimitValue       *Bytes   `json:"storage_limit,omitempty" validate:"omitempty"`
 }
 
-type StreamDvrSpecificSpecImpl struct {
-	RedundancyFactorValue *int `json:"redundancy_factor,omitempty" validate:"omitempty,min=0"`
-}
-
-type StreamInputBaseImpl struct {
-	AllowIfValue                 *string           `json:"allow_if,omitempty" validate:"omitempty"`
-	AudioTimeoutValue            *Seconds          `json:"audio_timeout,omitempty" validate:"omitempty"`
-	CommentValue                 *string           `json:"comment,omitempty" validate:"omitempty"`
-	DenyIfValue                  *string           `json:"deny_if,omitempty" validate:"omitempty"`
-	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
-	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
-	NoClientsReconnectDelayValue *int              `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
-	OutputAudioValue             *OutputAudio      `json:"output_audio,omitempty" validate:"omitempty"`
-	PriorityValue                *int              `json:"priority,omitempty" validate:"omitempty"`
-	SourceTimeoutValue           any               `json:"source_timeout,omitempty" validate:"omitempty"`
-	StatsValue                   *InputStatsImpl   `json:"stats,omitempty" validate:"omitempty"`
-	TimeoutValue                 *int              `json:"timeout,omitempty" validate:"omitempty"`
-	UserAgentValue               *string           `json:"user_agent,omitempty" validate:"omitempty"`
-	ViaValue                     *AgentURL         `json:"via,omitempty" validate:"omitempty"`
-	VideoTimeoutValue            *Seconds          `json:"video_timeout,omitempty" validate:"omitempty"`
-}
-
+// Title: Demo source
+// Required: url
 type StreamInputFakeImpl struct {
-	SourceTimeoutValue           any               `json:"source_timeout,omitempty" validate:"omitempty"`
-	OutputAudioValue             *OutputAudio      `json:"output_audio,omitempty" validate:"omitempty"`
-	PriorityValue                *int              `json:"priority,omitempty" validate:"omitempty"`
-	CommentValue                 *string           `json:"comment,omitempty" validate:"omitempty"`
-	AllowIfValue                 *string           `json:"allow_if,omitempty" validate:"omitempty"`
-	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
-	HeightValue                  *int              `json:"height,omitempty" validate:"omitempty"`
-	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
-	BitrateValue                 *Speed            `json:"bitrate,omitempty" validate:"omitempty"`
-	NoClientsReconnectDelayValue *int              `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
-	DenyIfValue                  *string           `json:"deny_if,omitempty" validate:"omitempty"`
-	AudioTimeoutValue            *Seconds          `json:"audio_timeout,omitempty" validate:"omitempty"`
-	StatsValue                   *InputStatsImpl   `json:"stats,omitempty" validate:"omitempty"`
-	TimeoutValue                 *int              `json:"timeout,omitempty" validate:"omitempty"`
-	WidthValue                   *int              `json:"width,omitempty" validate:"omitempty"`
-	UserAgentValue               *string           `json:"user_agent,omitempty" validate:"omitempty"`
-	ViaValue                     *AgentURL         `json:"via,omitempty" validate:"omitempty"`
-	VideoTimeoutValue            *Seconds          `json:"video_timeout,omitempty" validate:"omitempty"`
-	URLValue                     InputURL          `json:"url" validate:"required"`
+	BitrateValue *Speed   `json:"bitrate,omitempty" validate:"omitempty"`
+	HeightValue  *int     `json:"height,omitempty" validate:"omitempty"`
+	URLValue     InputURL `json:"url" validate:"required"`
+	WidthValue   *int     `json:"width,omitempty" validate:"omitempty"`
 }
 
+// Title: File
+// Required: url
 type StreamInputFileImpl struct {
-	SourceTimeoutValue           any                                 `json:"source_timeout,omitempty" validate:"omitempty"`
-	FramesTimeoutValue           *int                                `json:"frames_timeout,omitempty" validate:"omitempty"`
-	PriorityValue                *int                                `json:"priority,omitempty" validate:"omitempty"`
-	CommentValue                 *string                             `json:"comment,omitempty" validate:"omitempty"`
-	DenyIfValue                  *string                             `json:"deny_if,omitempty" validate:"omitempty"`
-	AllowIfValue                 *string                             `json:"allow_if,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string                   `json:"headers,omitempty" validate:"omitempty,dive"`
-	LanguagesValue               map[string]string                   `json:"languages,omitempty" validate:"omitempty,dive"`
-	MaxRetryTimeoutValue         *Seconds                            `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
-	NoClientsReconnectDelayValue *int                                `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
-	VideoTimeoutValue            *Seconds                            `json:"video_timeout,omitempty" validate:"omitempty"`
-	ClosedCaptionsValue          map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty,dive"`
-	ViaValue                     *AgentURL                           `json:"via,omitempty" validate:"omitempty"`
-	OutputAudioValue             *OutputAudio                        `json:"output_audio,omitempty" validate:"omitempty"`
-	Scte35Value                  *bool                               `json:"scte35,omitempty" validate:"omitempty"`
-	AudioTimeoutValue            *Seconds                            `json:"audio_timeout,omitempty" validate:"omitempty"`
-	StatsValue                   *InputStatsImpl                     `json:"stats,omitempty" validate:"omitempty"`
-	SubtitlesValue               *StreamInputMpegtsSpecificSubtitles `json:"subtitles,omitempty" validate:"omitempty,oneof=drop accept ocr_replace ocr_add"`
-	TimeoutValue                 *int                                `json:"timeout,omitempty" validate:"omitempty"`
-	UserAgentValue               *string                             `json:"user_agent,omitempty" validate:"omitempty"`
-	URLValue                     InputURL                            `json:"url" validate:"required"`
-	PidsValue                    []int                               `json:"pids,omitempty" validate:"omitempty,dive"`
-	ProgramsValue                []int                               `json:"programs,omitempty" validate:"omitempty,dive"`
+	URLValue InputURL `json:"url" validate:"required"`
 }
 
-type StreamInputMpegtsSpecificImpl struct {
-	ClosedCaptionsValue map[string]string                   `json:"closed_captions,omitempty" validate:"omitempty,dive"`
-	LanguagesValue      map[string]string                   `json:"languages,omitempty" validate:"omitempty,dive"`
-	Scte35Value         *bool                               `json:"scte35,omitempty" validate:"omitempty"`
-	SubtitlesValue      *StreamInputMpegtsSpecificSubtitles `json:"subtitles,omitempty" validate:"omitempty,oneof=drop accept ocr_replace ocr_add"`
-	PidsValue           []int                               `json:"pids,omitempty" validate:"omitempty,dive"`
-	ProgramsValue       []int                               `json:"programs,omitempty" validate:"omitempty,dive"`
+// Title: M4F
+// Required: url
+type StreamInputM4fImpl struct {
+	ClosedCaptionsValue map[string]string `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	URLValue            InputURL          `json:"url" validate:"required"`
 }
 
+// Title: M4S
+// Required: url
+type StreamInputM4sImpl struct {
+	ClosedCaptionsValue map[string]string `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	URLValue            InputURL          `json:"url" validate:"required"`
+}
+
+// Title: Publish
+// Required: url
 type StreamInputPublishImpl struct {
-	SourceTimeoutValue           any                                     `json:"source_timeout,omitempty" validate:"omitempty"`
-	MinBitrateValue              *int                                    `json:"min_bitrate,omitempty" validate:"omitempty"`
-	OutputAudioValue             *OutputAudio                            `json:"output_audio,omitempty" validate:"omitempty"`
-	AbrLossLowerValue            *float64                                `json:"abr_loss_lower,omitempty" validate:"omitempty"`
-	AbrLossUpperValue            *float64                                `json:"abr_loss_upper,omitempty" validate:"omitempty"`
-	AbrMaxBitrateValue           *int                                    `json:"abr_max_bitrate,omitempty" validate:"omitempty"`
-	AbrModeValue                 *int                                    `json:"abr_mode,omitempty" validate:"omitempty"`
-	AbrStepdownValue             *float64                                `json:"abr_stepdown,omitempty" validate:"omitempty"`
-	AbrStepupValue               *int                                    `json:"abr_stepup,omitempty" validate:"omitempty"`
-	NoClientsReconnectDelayValue *int                                    `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
-	AudioTimeoutValue            *Seconds                                `json:"audio_timeout,omitempty" validate:"omitempty"`
-	CommentValue                 *string                                 `json:"comment,omitempty" validate:"omitempty"`
-	DenyIfValue                  *string                                 `json:"deny_if,omitempty" validate:"omitempty"`
-	FramesTimeoutValue           *int                                    `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string                       `json:"headers,omitempty" validate:"omitempty,dive"`
-	AbrDebugValue                *int                                    `json:"abr_debug,omitempty" validate:"omitempty"`
-	MaxRetryTimeoutValue         *Seconds                                `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
-	AllowIfValue                 *string                                 `json:"allow_if,omitempty" validate:"omitempty"`
-	AbrCorrectionValue           *int                                    `json:"abr_correction,omitempty" validate:"omitempty"`
-	PreferCodecValue             *WebrtcPreferVideoCodec                 `json:"prefer_codec,omitempty" validate:"omitempty"`
-	PreferVideoCodecValue        *WebrtcPreferVideoCodec                 `json:"prefer_video_codec,omitempty" validate:"omitempty"`
-	PriorityValue                *int                                    `json:"priority,omitempty" validate:"omitempty"`
-	Scte35Value                  *bool                                   `json:"scte35,omitempty" validate:"omitempty"`
-	AbrCyclesValue               *int                                    `json:"abr_cycles,omitempty" validate:"omitempty"`
-	StatsValue                   *InputStatsImpl                         `json:"stats,omitempty" validate:"omitempty"`
-	SubtitlesValue               *StreamInputSrtPublishSpecificSubtitles `json:"subtitles,omitempty" validate:"omitempty,oneof=drop accept ocr_replace ocr_add"`
-	TimeoutValue                 *int                                    `json:"timeout,omitempty" validate:"omitempty"`
-	TransportValue               *WebrtcTransport                        `json:"transport,omitempty" validate:"omitempty"`
-	WebrtcAbrValue               *bool                                   `json:"webrtc_abr,omitempty" validate:"omitempty"`
-	UserAgentValue               *string                                 `json:"user_agent,omitempty" validate:"omitempty"`
-	ViaValue                     *AgentURL                               `json:"via,omitempty" validate:"omitempty"`
-	VideoTimeoutValue            *Seconds                                `json:"video_timeout,omitempty" validate:"omitempty"`
-	URLValue                     InputURL                                `json:"url" validate:"required"`
+	URLValue InputURL `json:"url" validate:"required"`
 }
 
+// Title: RTSP
+// Required: url
 type StreamInputRtspImpl struct {
-	SourceTimeoutValue           any               `json:"source_timeout,omitempty" validate:"omitempty"`
-	OutputAudioValue             *OutputAudio      `json:"output_audio,omitempty" validate:"omitempty"`
-	AudioTimeoutValue            *Seconds          `json:"audio_timeout,omitempty" validate:"omitempty"`
-	DenyIfValue                  *string           `json:"deny_if,omitempty" validate:"omitempty"`
-	FramesTimeoutValue           *int              `json:"frames_timeout,omitempty" validate:"omitempty"`
-	HeadersValue                 map[string]string `json:"headers,omitempty" validate:"omitempty,dive"`
-	MaxRetryTimeoutValue         *Seconds          `json:"max_retry_timeout,omitempty" validate:"omitempty,min=1"`
-	NoClientsReconnectDelayValue *int              `json:"no_clients_reconnect_delay,omitempty" validate:"omitempty"`
-	AllowIfValue                 *string           `json:"allow_if,omitempty" validate:"omitempty"`
-	CommentValue                 *string           `json:"comment,omitempty" validate:"omitempty"`
-	PriorityValue                *int              `json:"priority,omitempty" validate:"omitempty"`
-	RTPValue                     *string           `json:"rtp,omitempty" validate:"omitempty"`
-	StatsValue                   *InputStatsImpl   `json:"stats,omitempty" validate:"omitempty"`
-	TimeoutValue                 *int              `json:"timeout,omitempty" validate:"omitempty"`
-	WaitRtcpValue                *bool             `json:"wait_rtcp,omitempty" validate:"omitempty"`
-	UserAgentValue               *string           `json:"user_agent,omitempty" validate:"omitempty"`
-	ViaValue                     *AgentURL         `json:"via,omitempty" validate:"omitempty"`
-	VideoTimeoutValue            *Seconds          `json:"video_timeout,omitempty" validate:"omitempty"`
-	URLValue                     InputURL          `json:"url" validate:"required"`
-}
-
-type StreamInputSrtPublishSpecificImpl struct {
-	Scte35Value    *bool                                   `json:"scte35,omitempty" validate:"omitempty"`
-	SubtitlesValue *StreamInputSrtPublishSpecificSubtitles `json:"subtitles,omitempty" validate:"omitempty,oneof=drop accept ocr_replace ocr_add"`
-}
-
-// Title: WebRTC
-type StreamInputWebrtcPublishSpecificImpl struct {
-	AbrCorrectionValue    *int                    `json:"abr_correction,omitempty" validate:"omitempty"`
-	AbrCyclesValue        *int                    `json:"abr_cycles,omitempty" validate:"omitempty"`
-	AbrDebugValue         *int                    `json:"abr_debug,omitempty" validate:"omitempty"`
-	AbrLossLowerValue     *float64                `json:"abr_loss_lower,omitempty" validate:"omitempty"`
-	AbrLossUpperValue     *float64                `json:"abr_loss_upper,omitempty" validate:"omitempty"`
-	AbrMaxBitrateValue    *int                    `json:"abr_max_bitrate,omitempty" validate:"omitempty"`
-	AbrModeValue          *int                    `json:"abr_mode,omitempty" validate:"omitempty"`
-	AbrStepdownValue      *float64                `json:"abr_stepdown,omitempty" validate:"omitempty"`
-	AbrStepupValue        *int                    `json:"abr_stepup,omitempty" validate:"omitempty"`
-	MinBitrateValue       *int                    `json:"min_bitrate,omitempty" validate:"omitempty"`
-	PreferCodecValue      *WebrtcPreferVideoCodec `json:"prefer_codec,omitempty" validate:"omitempty"`
-	PreferVideoCodecValue *WebrtcPreferVideoCodec `json:"prefer_video_codec,omitempty" validate:"omitempty"`
-	TransportValue        *WebrtcTransport        `json:"transport,omitempty" validate:"omitempty"`
-	WebrtcAbrValue        *bool                   `json:"webrtc_abr,omitempty" validate:"omitempty"`
+	RTPValue      *string  `json:"rtp,omitempty" validate:"omitempty"`
+	URLValue      InputURL `json:"url" validate:"required"`
+	WaitRtcpValue *bool    `json:"wait_rtcp,omitempty" validate:"omitempty"`
 }
 
 type StreamOnvifConfigImpl struct {
@@ -16238,41 +16270,29 @@ type StreamPresetImpl struct {
 	TitleValue        *string `json:"title,omitempty" validate:"omitempty"`
 }
 
-type StreamPushBaseImpl struct {
-	CommentValue      *string           `json:"comment,omitempty" validate:"omitempty"`
-	DisabledValue     *bool             `json:"disabled,omitempty" validate:"omitempty"`
-	RetryLimitValue   *int              `json:"retry_limit,omitempty" validate:"omitempty"`
-	RetryTimeoutValue *Seconds          `json:"retry_timeout,omitempty" validate:"omitempty"`
-	StatsValue        *PushCountersImpl `json:"stats,omitempty" validate:"omitempty"`
-	TimeoutValue      *Seconds          `json:"timeout,omitempty" validate:"omitempty"`
-}
-
+// Title: RTMP
+// Required: url
 type StreamPushRtmpImpl struct {
-	CommentValue      *string           `json:"comment,omitempty" validate:"omitempty"`
-	DisabledValue     *bool             `json:"disabled,omitempty" validate:"omitempty"`
-	RetryLimitValue   *int              `json:"retry_limit,omitempty" validate:"omitempty"`
-	RetryTimeoutValue *Seconds          `json:"retry_timeout,omitempty" validate:"omitempty"`
-	StatsValue        *PushCountersImpl `json:"stats,omitempty" validate:"omitempty"`
-	TimeoutValue      *Seconds          `json:"timeout,omitempty" validate:"omitempty"`
-	URLValue          InputURL          `json:"url" validate:"required"`
+	URLValue InputURL `json:"url" validate:"required"`
 }
 
 type StreamStatsImpl struct {
-	AgentStatusValue       *string        `json:"agent_status,omitempty" validate:"omitempty"`
-	AliveValue             *bool          `json:"alive,omitempty" validate:"omitempty"`
-	BitrateValue           *Speed         `json:"bitrate,omitempty" validate:"omitempty" openmetrics_metric:"stream_bitrate"`
-	BytesOutValue          *Bytes         `json:"bytes_out,omitempty" validate:"omitempty" openmetrics_metric:"stream_bytes_out"`
-	CurrentAgentIDValue    *AgentID       `json:"current_agent_id,omitempty" validate:"omitempty"`
-	DvrInfoValue           *DvrInfoImpl   `json:"dvr_info,omitempty" validate:"omitempty"`
-	LastDtsAtValue         *UtcMs         `json:"last_dts_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	LifetimeValue          *Milliseconds  `json:"lifetime,omitempty" validate:"omitempty"`
-	MediaInfoValue         *MediaInfoImpl `json:"media_info,omitempty" validate:"omitempty"`
-	OnlineClientsValue     *ClientCount   `json:"online_clients,omitempty" validate:"omitempty" openmetrics_metric:"stream_online_clients"`
-	PlaybackTokenValue     *string        `json:"playback_token,omitempty" validate:"omitempty"`
-	PublishEndpointValue   *string        `json:"publish_endpoint,omitempty" validate:"omitempty"`
-	StatusValue            *StreamStatus  `json:"status,omitempty" validate:"omitempty"`
-	StreamingEndpointValue *string        `json:"streaming_endpoint,omitempty" validate:"omitempty"`
-	TSDelayValue           *Ticks         `json:"ts_delay,omitempty" validate:"omitempty"`
+	AgentStatusValue       *string           `json:"agent_status,omitempty" validate:"omitempty"`
+	AliveValue             *bool             `json:"alive,omitempty" validate:"omitempty"`
+	BitrateValue           *Speed            `json:"bitrate,omitempty" validate:"omitempty" openmetrics_metric:"stream_bitrate"`
+	BytesOutValue          *Bytes            `json:"bytes_out,omitempty" validate:"omitempty" openmetrics_metric:"stream_bytes_out"`
+	CurrentAgentIDValue    *AgentID          `json:"current_agent_id,omitempty" validate:"omitempty"`
+	DvrInfoValue           *DvrInfoImpl      `json:"dvr_info,omitempty" validate:"omitempty"`
+	InputsValue            []*InputStatsImpl `json:"inputs,omitempty" validate:"omitempty,dive"`
+	LastDtsAtValue         *UtcMs            `json:"last_dts_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	LifetimeValue          *Milliseconds     `json:"lifetime,omitempty" validate:"omitempty"`
+	MediaInfoValue         *MediaInfoImpl    `json:"media_info,omitempty" validate:"omitempty"`
+	OnlineClientsValue     *ClientCount      `json:"online_clients,omitempty" validate:"omitempty" openmetrics_metric:"stream_online_clients"`
+	PlaybackTokenValue     *string           `json:"playback_token,omitempty" validate:"omitempty"`
+	PublishEndpointValue   *string           `json:"publish_endpoint,omitempty" validate:"omitempty"`
+	StatusValue            *StreamStatus     `json:"status,omitempty" validate:"omitempty"`
+	StreamingEndpointValue *string           `json:"streaming_endpoint,omitempty" validate:"omitempty"`
+	TSDelayValue           *Ticks            `json:"ts_delay,omitempty" validate:"omitempty"`
 }
 
 type StreamZoneConfigImpl struct {
@@ -16282,6 +16302,7 @@ type StreamZoneConfigImpl struct {
 
 type StreamerImpl struct {
 	APIURLValue            *URL                      `json:"api_url,omitempty" validate:"omitempty"`
+	CdnZoneValue           *string                   `json:"cdn_zone,omitempty" validate:"omitempty"`
 	ChannelLimitValue      *int                      `json:"channel_limit,omitempty" validate:"omitempty"`
 	ClusterKeyValue        *string                   `json:"cluster_key,omitempty" validate:"omitempty"`
 	ConfigValue            *StreamerConfigConfigImpl `json:"config,omitempty" validate:"omitempty"`
@@ -16296,70 +16317,66 @@ type StreamerImpl struct {
 	ZonesValue             []string                  `json:"zones,omitempty" validate:"omitempty,dive"`
 }
 
+// Required: cluster_key, role, hostname
 type StreamerConfigImpl struct {
 	APIURLValue            *URL                      `json:"api_url,omitempty" validate:"omitempty"`
+	CdnZoneValue           *string                   `json:"cdn_zone,omitempty" validate:"omitempty"`
 	ChannelLimitValue      *int                      `json:"channel_limit,omitempty" validate:"omitempty"`
-	ClusterKeyValue        *string                   `json:"cluster_key,omitempty" validate:"omitempty"`
+	ClusterKeyValue        string                    `json:"cluster_key" validate:"required"`
 	ConfigValue            *StreamerConfigConfigImpl `json:"config,omitempty" validate:"omitempty"`
-	HostnameValue          *ServerName               `json:"hostname,omitempty" validate:"omitempty"`
+	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty,dive"`
+	HostnameValue          ServerName                `json:"hostname" validate:"required"`
 	LabelsValue            map[string]UnixName       `json:"labels,omitempty" validate:"omitempty"`
 	PrivatePayloadURLValue *URL                      `json:"private_payload_url,omitempty" validate:"omitempty"`
 	PublicPayloadURLValue  *URL                      `json:"public_payload_url,omitempty" validate:"omitempty"`
-	RoleValue              *CentralNodeRoleRole      `json:"role,omitempty" validate:"omitempty,oneof=streamer inference identification"`
+	RoleValue              CentralNodeRoleRole       `json:"role" validate:"required,oneof=streamer inference identification"`
 	StatsValue             *PeerStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 	TotalBandwidthValue    *Speed                    `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	DvrsValue              []*DvrConfigImpl          `json:"dvrs,omitempty" validate:"omitempty,dive"`
 }
 
 // Flussonic Media Server configuration which will be provided to Streamer
 type StreamerConfigConfigImpl struct {
-	Srt2PublishValue    *SrtConfigImpl           `json:"srt2_publish,omitempty" validate:"omitempty"`
-	SrtPlayValue        *SrtConfigImpl           `json:"srt_play,omitempty" validate:"omitempty"`
-	AuthTokenValue      *AuthToken               `json:"auth_token,omitempty" validate:"omitempty"`
-	WebrtcPublishValue  *WebrtcRouterConfigImpl  `json:"webrtc_publish,omitempty" validate:"omitempty"`
-	WebrtcPlayValue     *WebrtcRouterConfigImpl  `json:"webrtc_play,omitempty" validate:"omitempty"`
-	CameraAlarmValue    *CameraAlarmConfigImpl   `json:"camera_alarm,omitempty" validate:"omitempty"`
-	ChassisValue        *ChassisConfigImpl       `json:"chassis,omitempty" validate:"omitempty"`
-	ClusterKeyValue     *string                  `json:"cluster_key,omitempty" validate:"omitempty"`
-	VsaasValue          *VsaasConfigImpl         `json:"vsaas,omitempty" validate:"omitempty"`
-	ViewAuthValue       *AdminCredentialsImpl    `json:"view_auth,omitempty" validate:"omitempty"`
-	URLPrefixValue      *URLPrefix               `json:"url_prefix,omitempty" validate:"omitempty"`
-	EditAuthValue       *AdminCredentialsImpl    `json:"edit_auth,omitempty" validate:"omitempty"`
-	TotalBandwidthValue *Speed                   `json:"total_bandwidth,omitempty" validate:"omitempty"`
-	FileProcessorValue  *FileProcessorConfigImpl `json:"file_processor,omitempty" validate:"omitempty"`
-	GeoipValue          *DiskPath                `json:"geoip,omitempty" validate:"omitempty"`
-	SrtPublishValue     *SrtConfigImpl           `json:"srt_publish,omitempty" validate:"omitempty"`
-	IptvValue           *IptvConfigImpl          `json:"iptv,omitempty" validate:"omitempty"`
-	NvidiaMonitorValue  *bool                    `json:"nvidia_monitor,omitempty" validate:"omitempty"`
-	LogRequestsValue    *bool                    `json:"log_requests,omitempty" validate:"omitempty"`
-	LoglevelValue       *Loglevel                `json:"loglevel,omitempty" validate:"omitempty"`
-	MetaValue           *string                  `json:"meta,omitempty" validate:"omitempty"`
-	Srt2PlayValue       *SrtConfigImpl           `json:"srt2_play,omitempty" validate:"omitempty"`
-	ListenersValue      *ListenersImpl           `json:"listeners,omitempty" validate:"omitempty"`
-	PulsedbValue        *DiskPath                `json:"pulsedb,omitempty" validate:"omitempty"`
-	RproxyValue         *RproxyConfigImpl        `json:"rproxy,omitempty" validate:"omitempty"`
-	SrtValue            *ListenSpec              `json:"srt,omitempty" validate:"omitempty"`
-	SessionLogValue     *DiskPath                `json:"session_log,omitempty" validate:"omitempty"`
-	EventSinksValue     []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
-	TemplatesValue      []*TemplateConfigImpl    `json:"templates,omitempty" validate:"omitempty,dive"`
-	PeersValue          []*PeerConfigImpl        `json:"peers,omitempty" validate:"omitempty,dive"`
-	APIAllowedFromValue []Cidr                   `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
-	AuthBackendsValue   []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
-	HTTPProxiesValue    []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
-	ServerNamesValue    []*ServerNameConfigImpl  `json:"server_names,omitempty" validate:"omitempty,dive"`
-	StreamsValue        []*StreamConfigImpl      `json:"streams,omitempty" validate:"omitempty,dive"`
-	TranspondersValue   []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
-	SourcesValue        []*SourceConfigImpl      `json:"sources,omitempty" validate:"omitempty,dive"`
-	DvrsValue           []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
-	DvbCardsValue       []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
-	VodsValue           []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
-	DecklinksValue      []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
-	CachesValue         []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
-	BalancersValue      []*BalancerConfigImpl    `json:"balancers,omitempty" validate:"omitempty,dive"`
+	APIAllowedFromValue  []Cidr                   `json:"api_allowed_from,omitempty" validate:"omitempty,dive"`
+	AuthBackendsValue    []*AuthBackendConfigImpl `json:"auth_backends,omitempty" validate:"omitempty,dive"`
+	AuthTokenValue       *AuthToken               `json:"auth_token,omitempty" validate:"omitempty"`
+	CachesValue          []*CacheConfigImpl       `json:"caches,omitempty" validate:"omitempty,dive"`
+	CameraAlarmValue     *CameraAlarmConfigImpl   `json:"camera_alarm,omitempty" validate:"omitempty"`
+	ClusterKeyValue      *string                  `json:"cluster_key,omitempty" validate:"omitempty"`
+	DecklinksValue       []*DecklinkConfigImpl    `json:"decklinks,omitempty" validate:"omitempty,dive"`
+	DvbCardsValue        []*DvbCardConfigImpl     `json:"dvb_cards,omitempty" validate:"omitempty,dive"`
+	DvrsValue            []*DvrConfigImpl         `json:"dvrs,omitempty" validate:"omitempty,dive"`
+	EditAuthValue        *AdminCredentialsImpl    `json:"edit_auth,omitempty" validate:"omitempty"`
+	EventSinksValue      []*EventSinkConfigImpl   `json:"event_sinks,omitempty" validate:"omitempty,dive"`
+	GeoipValue           *DiskPath                `json:"geoip,omitempty" validate:"omitempty"`
+	HTTPProxiesValue     []*HTTPProxyConfigImpl   `json:"http_proxies,omitempty" validate:"omitempty,dive"`
+	ListenersValue       *ListenersImpl           `json:"listeners,omitempty" validate:"omitempty"`
+	LogRequestsValue     *bool                    `json:"log_requests,omitempty" validate:"omitempty"`
+	LoglevelValue        *Loglevel                `json:"loglevel,omitempty" validate:"omitempty"`
+	MetaValue            *string                  `json:"meta,omitempty" validate:"omitempty"`
+	NvidiaMonitorValue   *bool                    `json:"nvidia_monitor,omitempty" validate:"omitempty"`
+	PulsedbValue         *DiskPath                `json:"pulsedb,omitempty" validate:"omitempty"`
+	RproxyValue          *RproxyConfigImpl        `json:"rproxy,omitempty" validate:"omitempty"`
+	ServerNamesValue     []*ServerNameConfigImpl  `json:"server_names,omitempty" validate:"omitempty,dive"`
+	SessionLogValue      *DiskPath                `json:"session_log,omitempty" validate:"omitempty"`
+	SrtValue             *ListenSpec              `json:"srt,omitempty" validate:"omitempty"`
+	Srt2PlayValue        *SrtConfigImpl           `json:"srt2_play,omitempty" validate:"omitempty"`
+	Srt2PublishValue     *SrtConfigImpl           `json:"srt2_publish,omitempty" validate:"omitempty"`
+	SrtPlayValue         *SrtConfigImpl           `json:"srt_play,omitempty" validate:"omitempty"`
+	SrtPublishValue      *SrtConfigImpl           `json:"srt_publish,omitempty" validate:"omitempty"`
+	StreamingPrefixValue *string                  `json:"streaming_prefix,omitempty" validate:"omitempty"`
+	TotalBandwidthValue  *Speed                   `json:"total_bandwidth,omitempty" validate:"omitempty"`
+	TranspondersValue    []*TransponderConfigImpl `json:"transponders,omitempty" validate:"omitempty,dive"`
+	URLPrefixValue       *URLPrefix               `json:"url_prefix,omitempty" validate:"omitempty"`
+	ViewAuthValue        *AdminCredentialsImpl    `json:"view_auth,omitempty" validate:"omitempty"`
+	VodsValue            []*VodConfigImpl         `json:"vods,omitempty" validate:"omitempty,dive"`
+	VsaasValue           *VsaasConfigImpl         `json:"vsaas,omitempty" validate:"omitempty"`
+	WebrtcPlayValue      *WebrtcRouterConfigImpl  `json:"webrtc_play,omitempty" validate:"omitempty"`
+	WebrtcPublishValue   *WebrtcRouterConfigImpl  `json:"webrtc_publish,omitempty" validate:"omitempty"`
 }
 
 type StreamerLayoutPredictionImpl struct {
 	APIURLValue            *URL                      `json:"api_url,omitempty" validate:"omitempty"`
+	CdnZoneValue           *string                   `json:"cdn_zone,omitempty" validate:"omitempty"`
 	ChannelLimitValue      *int                      `json:"channel_limit,omitempty" validate:"omitempty"`
 	ClusterKeyValue        *string                   `json:"cluster_key,omitempty" validate:"omitempty"`
 	ConfigValue            *StreamerConfigConfigImpl `json:"config,omitempty" validate:"omitempty"`
@@ -16375,19 +16392,19 @@ type StreamerLayoutPredictionImpl struct {
 }
 
 type StreamersListImpl struct {
-	TimingValue         any             `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int            `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string         `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string         `json:"prev,omitempty" validate:"omitempty"`
 	StreamersValue      []*StreamerImpl `json:"streamers,omitempty" validate:"omitempty,dive"`
+	TimingValue         any             `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type StreamsListImpl struct {
-	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int                `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
 	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 }
 
 // Array of streams with settings
@@ -16406,6 +16423,8 @@ type SystemConfigImpl struct {
 	CentralURLValue               *URL           `json:"central_url,omitempty" validate:"omitempty"`
 	CustomAuthValue               *URL           `json:"custom_auth,omitempty" validate:"omitempty"`
 	DatabaseValue                 *DatabaseImpl  `json:"database,omitempty" validate:"omitempty"`
+	IsAPIV2EnabledValue           *bool          `json:"is_api_v2_enabled,omitempty" validate:"omitempty"`
+	IsNvrEnabledValue             *bool          `json:"is_nvr_enabled,omitempty" validate:"omitempty"`
 	LicenseKeyValue               *string        `json:"license_key,omitempty" validate:"omitempty"`
 	ListenersValue                *ListenersImpl `json:"listeners,omitempty" validate:"omitempty"`
 	LoglevelValue                 *Loglevel      `json:"loglevel,omitempty" validate:"omitempty"`
@@ -16437,52 +16456,41 @@ type TSVersionsImpl struct {
 	SdtValue *int `json:"sdt,omitempty" validate:"omitempty"`
 }
 
-type TemplateConfigImpl struct {
-	DisabledValue *bool               `json:"disabled,omitempty" validate:"omitempty"`
-	DvrValue      *StreamDvrSpecImpl  `json:"dvr,omitempty" validate:"omitempty"`
-	LabelsValue   map[string]UnixName `json:"labels,omitempty" validate:"omitempty,dive,min=1,max=40"`
-	StaticValue   *bool               `json:"static,omitempty" validate:"omitempty"`
-	VisionValue   *VisionSpecImpl     `json:"vision,omitempty" validate:"omitempty"`
-	InputsValue   []StreamInput       `json:"inputs,omitempty" validate:"omitempty,dive"`
-	PushesValue   []StreamPush        `json:"pushes,omitempty" validate:"omitempty,dive"`
-}
-
-type TemplateConfigSpecificImpl struct {
-}
-
 type ThumbnailsSpecImpl struct {
-	EnabledValue any `json:"enabled,omitempty" validate:"omitempty"`
+	DeviceidValue *TcDeviceid       `json:"deviceid,omitempty" validate:"omitempty"`
+	EnabledValue  any               `json:"enabled,omitempty" validate:"omitempty"`
+	HwValue       *TranscoderDevice `json:"hw,omitempty" validate:"omitempty"`
 }
 
 type TlsCertificateImpl struct {
 	CacertValue                     *CertificateInfoImpl   `json:"cacert,omitempty" validate:"omitempty"`
 	CertValue                       *CertificateInfoImpl   `json:"cert,omitempty" validate:"omitempty"`
-	PrivateKeyMatchCertificateValue *bool                  `json:"private_key_match_certificate,omitempty" validate:"omitempty"`
 	FullchainValue                  []*CertificateInfoImpl `json:"fullchain,omitempty" validate:"omitempty,dive"`
+	PrivateKeyMatchCertificateValue *bool                  `json:"private_key_match_certificate,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoImpl struct {
-	TrackIDValue        any                   `json:"track_id,omitempty" validate:"omitempty"`
-	LanguageValue       *string               `json:"language,omitempty" validate:"omitempty"`
-	PixFmtValue         *FrameVideoPixFmt     `json:"pix_fmt,omitempty" validate:"omitempty"`
+	AvgFPSValue         *float64              `json:"avg_fps,omitempty" validate:"omitempty"`
+	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	BandwidthValue      *Speed                `json:"bandwidth,omitempty" validate:"omitempty"`
 	BframesValue        *int                  `json:"bframes,omitempty" validate:"omitempty"`
 	BitrateValue        *Speed                `json:"bitrate,omitempty" validate:"omitempty"`
 	ChannelsValue       *int                  `json:"channels,omitempty" validate:"omitempty"`
-	WidthValue          *Pixels               `json:"width,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 	CodecValue          *FrameCodec           `json:"codec,omitempty" validate:"omitempty"`
-	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	ContentValue        FrameContent          `json:"content" validate:"required"`
 	FPSValue            *float64              `json:"fps,omitempty" validate:"omitempty"`
 	FrameDurationValue  *Ticks                `json:"frame_duration,omitempty" validate:"omitempty"`
 	GopSizeValue        *int                  `json:"gop_size,omitempty" validate:"omitempty"`
 	HeightValue         *Pixels               `json:"height,omitempty" validate:"omitempty"`
 	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
-	AvgFPSValue         *float64              `json:"avg_fps,omitempty" validate:"omitempty"`
-	BandwidthValue      *Speed                `json:"bandwidth,omitempty" validate:"omitempty"`
-	LevelValue          *string               `json:"level,omitempty" validate:"omitempty"`
+	LanguageValue       *string               `json:"language,omitempty" validate:"omitempty"`
 	LastGopValue        *int                  `json:"last_gop,omitempty" validate:"omitempty"`
+	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
+	LevelValue          *string               `json:"level,omitempty" validate:"omitempty"`
 	NumRefsFramesValue  *int                  `json:"num_refs_frames,omitempty" validate:"omitempty,min=0,max=32"`
 	PidValue            *int                  `json:"pid,omitempty" validate:"omitempty"`
-	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
+	PixFmtValue         *FrameVideoPixFmt     `json:"pix_fmt,omitempty" validate:"omitempty"`
 	PixelHeightValue    *Pixels               `json:"pixel_height,omitempty" validate:"omitempty"`
 	PixelWidthValue     *Pixels               `json:"pixel_width,omitempty" validate:"omitempty"`
 	ProfileValue        *string               `json:"profile,omitempty" validate:"omitempty"`
@@ -16490,21 +16498,21 @@ type TrackInfoImpl struct {
 	SarHeightValue      *int                  `json:"sar_height,omitempty" validate:"omitempty"`
 	SarWidthValue       *int                  `json:"sar_width,omitempty" validate:"omitempty"`
 	TitleValue          *string               `json:"title,omitempty" validate:"omitempty"`
-	ContentValue        FrameContent          `json:"content" validate:"required"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	TrackIDValue        any                   `json:"track_id,omitempty" validate:"omitempty"`
+	WidthValue          *Pixels               `json:"width,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoApplicationImpl struct {
-	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 	AvgFPSValue        *float64     `json:"avg_fps,omitempty" validate:"omitempty"`
 	BandwidthValue     *Speed       `json:"bandwidth,omitempty" validate:"omitempty"`
 	BitrateValue       *Speed       `json:"bitrate,omitempty" validate:"omitempty"`
 	CodecValue         *FrameCodec  `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue       FrameContent `json:"content" validate:"required"`
 	FrameDurationValue *Ticks       `json:"frame_duration,omitempty" validate:"omitempty"`
 	LanguageValue      *string      `json:"language,omitempty" validate:"omitempty"`
 	PidValue           *int         `json:"pid,omitempty" validate:"omitempty"`
 	TitleValue         *string      `json:"title,omitempty" validate:"omitempty"`
-	ContentValue       FrameContent `json:"content" validate:"required"`
+	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoApplicationSpecificImpl struct {
@@ -16512,18 +16520,18 @@ type TrackInfoApplicationSpecificImpl struct {
 }
 
 type TrackInfoAudioImpl struct {
-	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 	AvgFPSValue        *float64     `json:"avg_fps,omitempty" validate:"omitempty"`
 	BandwidthValue     *Speed       `json:"bandwidth,omitempty" validate:"omitempty"`
 	BitrateValue       *Speed       `json:"bitrate,omitempty" validate:"omitempty"`
 	ChannelsValue      *int         `json:"channels,omitempty" validate:"omitempty"`
 	CodecValue         *FrameCodec  `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue       FrameContent `json:"content" validate:"required"`
 	FrameDurationValue *Ticks       `json:"frame_duration,omitempty" validate:"omitempty"`
 	LanguageValue      *string      `json:"language,omitempty" validate:"omitempty"`
 	PidValue           *int         `json:"pid,omitempty" validate:"omitempty"`
 	SampleRateValue    *int         `json:"sample_rate,omitempty" validate:"omitempty"`
 	TitleValue         *string      `json:"title,omitempty" validate:"omitempty"`
-	ContentValue       FrameContent `json:"content" validate:"required"`
+	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoAudioSpecificImpl struct {
@@ -16542,34 +16550,67 @@ type TrackInfoBaseImpl struct {
 // Required: content
 type TrackInfoBaseConfigurableImpl struct {
 	BitrateValue *Speed       `json:"bitrate,omitempty" validate:"omitempty"`
+	ContentValue FrameContent `json:"content" validate:"required"`
 	PidValue     *int         `json:"pid,omitempty" validate:"omitempty"`
 	TitleValue   *string      `json:"title,omitempty" validate:"omitempty"`
-	ContentValue FrameContent `json:"content" validate:"required"`
+}
+
+type TrackInfoFullImpl struct {
+	AvgFPSValue         *float64              `json:"avg_fps,omitempty" validate:"omitempty"`
+	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	BandwidthValue      *Speed                `json:"bandwidth,omitempty" validate:"omitempty"`
+	BframesValue        *int                  `json:"bframes,omitempty" validate:"omitempty"`
+	BitrateValue        *Speed                `json:"bitrate,omitempty" validate:"omitempty"`
+	ChannelsValue       *int                  `json:"channels,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	CodecValue          *FrameCodec           `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue        FrameContent          `json:"content" validate:"required"`
+	FPSValue            *float64              `json:"fps,omitempty" validate:"omitempty"`
+	FrameDurationValue  *Ticks                `json:"frame_duration,omitempty" validate:"omitempty"`
+	GopSizeValue        *int                  `json:"gop_size,omitempty" validate:"omitempty"`
+	HeightValue         *Pixels               `json:"height,omitempty" validate:"omitempty"`
+	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
+	LanguageValue       *string               `json:"language,omitempty" validate:"omitempty"`
+	LastGopValue        *int                  `json:"last_gop,omitempty" validate:"omitempty"`
+	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
+	LevelValue          *string               `json:"level,omitempty" validate:"omitempty"`
+	NumRefsFramesValue  *int                  `json:"num_refs_frames,omitempty" validate:"omitempty,min=0,max=32"`
+	PidValue            *int                  `json:"pid,omitempty" validate:"omitempty"`
+	PixFmtValue         *FrameVideoPixFmt     `json:"pix_fmt,omitempty" validate:"omitempty"`
+	PixelHeightValue    *Pixels               `json:"pixel_height,omitempty" validate:"omitempty"`
+	PixelWidthValue     *Pixels               `json:"pixel_width,omitempty" validate:"omitempty"`
+	ProfileValue        *string               `json:"profile,omitempty" validate:"omitempty"`
+	SampleRateValue     *int                  `json:"sample_rate,omitempty" validate:"omitempty"`
+	SarHeightValue      *int                  `json:"sar_height,omitempty" validate:"omitempty"`
+	SarWidthValue       *int                  `json:"sar_width,omitempty" validate:"omitempty"`
+	TitleValue          *string               `json:"title,omitempty" validate:"omitempty"`
+	TrackIDValue        any                   `json:"track_id,omitempty" validate:"omitempty"`
+	WidthValue          *Pixels               `json:"width,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoMetadataImpl struct {
-	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 	AvgFPSValue        *float64     `json:"avg_fps,omitempty" validate:"omitempty"`
 	BandwidthValue     *Speed       `json:"bandwidth,omitempty" validate:"omitempty"`
 	BitrateValue       *Speed       `json:"bitrate,omitempty" validate:"omitempty"`
 	CodecValue         *FrameCodec  `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue       FrameContent `json:"content" validate:"required"`
 	FrameDurationValue *Ticks       `json:"frame_duration,omitempty" validate:"omitempty"`
 	PidValue           *int         `json:"pid,omitempty" validate:"omitempty"`
 	TitleValue         *string      `json:"title,omitempty" validate:"omitempty"`
-	ContentValue       FrameContent `json:"content" validate:"required"`
+	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoTextImpl struct {
-	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 	AvgFPSValue        *float64     `json:"avg_fps,omitempty" validate:"omitempty"`
 	BandwidthValue     *Speed       `json:"bandwidth,omitempty" validate:"omitempty"`
 	BitrateValue       *Speed       `json:"bitrate,omitempty" validate:"omitempty"`
 	CodecValue         *FrameCodec  `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue       FrameContent `json:"content" validate:"required"`
 	FrameDurationValue *Ticks       `json:"frame_duration,omitempty" validate:"omitempty"`
 	LanguageValue      *string      `json:"language,omitempty" validate:"omitempty"`
 	PidValue           *int         `json:"pid,omitempty" validate:"omitempty"`
 	TitleValue         *string      `json:"title,omitempty" validate:"omitempty"`
-	ContentValue       FrameContent `json:"content" validate:"required"`
+	TrackIDValue       any          `json:"track_id,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoTextSpecificImpl struct {
@@ -16577,33 +16618,33 @@ type TrackInfoTextSpecificImpl struct {
 }
 
 type TrackInfoVideoImpl struct {
-	TrackIDValue        any                   `json:"track_id,omitempty" validate:"omitempty"`
-	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
-	SarWidthValue       *int                  `json:"sar_width,omitempty" validate:"omitempty"`
+	AvgFPSValue         *float64              `json:"avg_fps,omitempty" validate:"omitempty"`
+	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	BandwidthValue      *Speed                `json:"bandwidth,omitempty" validate:"omitempty"`
 	BframesValue        *int                  `json:"bframes,omitempty" validate:"omitempty"`
 	BitrateValue        *Speed                `json:"bitrate,omitempty" validate:"omitempty"`
-	WidthValue          *Pixels               `json:"width,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 	CodecValue          *FrameCodec           `json:"codec,omitempty" validate:"omitempty"`
-	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	ContentValue        FrameContent          `json:"content" validate:"required"`
 	FPSValue            *float64              `json:"fps,omitempty" validate:"omitempty"`
 	FrameDurationValue  *Ticks                `json:"frame_duration,omitempty" validate:"omitempty"`
 	GopSizeValue        *int                  `json:"gop_size,omitempty" validate:"omitempty"`
 	HeightValue         *Pixels               `json:"height,omitempty" validate:"omitempty"`
-	AvgFPSValue         *float64              `json:"avg_fps,omitempty" validate:"omitempty"`
-	BandwidthValue      *Speed                `json:"bandwidth,omitempty" validate:"omitempty"`
+	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
 	LastGopValue        *int                  `json:"last_gop,omitempty" validate:"omitempty"`
-	PixelHeightValue    *Pixels               `json:"pixel_height,omitempty" validate:"omitempty"`
+	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
+	LevelValue          *string               `json:"level,omitempty" validate:"omitempty"`
 	NumRefsFramesValue  *int                  `json:"num_refs_frames,omitempty" validate:"omitempty,min=0,max=32"`
 	PidValue            *int                  `json:"pid,omitempty" validate:"omitempty"`
 	PixFmtValue         *FrameVideoPixFmt     `json:"pix_fmt,omitempty" validate:"omitempty"`
-	LevelValue          *string               `json:"level,omitempty" validate:"omitempty"`
+	PixelHeightValue    *Pixels               `json:"pixel_height,omitempty" validate:"omitempty"`
 	PixelWidthValue     *Pixels               `json:"pixel_width,omitempty" validate:"omitempty"`
 	ProfileValue        *string               `json:"profile,omitempty" validate:"omitempty"`
 	SarHeightValue      *int                  `json:"sar_height,omitempty" validate:"omitempty"`
-	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
+	SarWidthValue       *int                  `json:"sar_width,omitempty" validate:"omitempty"`
 	TitleValue          *string               `json:"title,omitempty" validate:"omitempty"`
-	ContentValue        FrameContent          `json:"content" validate:"required"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
+	TrackIDValue        any                   `json:"track_id,omitempty" validate:"omitempty"`
+	WidthValue          *Pixels               `json:"width,omitempty" validate:"omitempty"`
 }
 
 type TrackInfoVideoConfigurableImpl struct {
@@ -16624,10 +16665,10 @@ type TrackInfoVideoConfigurableImpl struct {
 
 type TrackInfoVideoSpecificImpl struct {
 	AvgGopValue         *int                  `json:"avg_gop,omitempty" validate:"omitempty"`
+	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 	IsProgressiveValue  *bool                 `json:"is_progressive,omitempty" validate:"omitempty"`
 	LastGopValue        *int                  `json:"last_gop,omitempty" validate:"omitempty"`
 	LengthSizeValue     *int                  `json:"length_size,omitempty" validate:"omitempty"`
-	ClosedCaptionsValue []*ClosedCaptionsImpl `json:"closed_captions,omitempty" validate:"omitempty,dive"`
 }
 
 type TranscoderDeviceStatsImpl struct {
@@ -16645,28 +16686,29 @@ type TranscoderDeviceStatsImpl struct {
 	NameValue            *string            `json:"name,omitempty" validate:"omitempty"`
 	ReconfigSupportValue *TcReconfigSupport `json:"reconfig_support,omitempty" validate:"omitempty"`
 	TypeValue            *TranscoderDevice  `json:"type,omitempty" validate:"omitempty"`
+	UUIDValue            *string            `json:"uuid,omitempty" validate:"omitempty"`
 }
 
 // Required: name
 type TransponderConfigImpl struct {
-	VideoBufferValue       *int                         `json:"video_buffer,omitempty" validate:"omitempty"`
+	BitrateValue           *Speed                       `json:"bitrate,omitempty" validate:"omitempty"`
 	EitValue               *TransponderEitImpl          `json:"eit,omitempty" validate:"omitempty"`
+	NameValue              MediaName                    `json:"name" validate:"required" openmetrics_label:"name"`
 	NetworkIDValue         *int                         `json:"network_id,omitempty" validate:"omitempty"`
 	NetworkNameValue       *string                      `json:"network_name,omitempty" validate:"omitempty"`
 	OriginalNetworkIDValue *int                         `json:"original_network_id,omitempty" validate:"omitempty"`
-	TimeoutsValue          *TSTimeoutsImpl              `json:"timeouts,omitempty" validate:"omitempty"`
-	PrebufferValue         *Milliseconds                `json:"prebuffer,omitempty" validate:"omitempty"`
-	BitrateValue           *Speed                       `json:"bitrate,omitempty" validate:"omitempty"`
-	ProviderValue          *string                      `json:"provider,omitempty" validate:"omitempty"`
-	VersionsValue          *TSVersionsImpl              `json:"versions,omitempty" validate:"omitempty"`
-	StatsValue             *MultiplexerStatsImpl        `json:"stats,omitempty" validate:"omitempty"`
-	TSStreamIDValue        *int                         `json:"ts_stream_id,omitempty" validate:"omitempty"`
-	NameValue              MediaName                    `json:"name" validate:"required" openmetrics_label:"name"`
-	ProgramsValue          []*TransponderProgramImpl    `json:"programs,omitempty" validate:"omitempty,dive"`
-	TSDescriptorsValue     []*TSDescriptorImpl          `json:"ts_descriptors,omitempty" validate:"omitempty,dive"`
-	TimeOffsetsValue       []*TransponderTimeOffsetImpl `json:"time_offsets,omitempty" validate:"omitempty,dive"`
-	PushesValue            []*TransponderPushImpl       `json:"pushes,omitempty" validate:"omitempty,dive"`
 	OthersValue            []*TransponderOtherImpl      `json:"others,omitempty" validate:"omitempty,dive"`
+	PrebufferValue         *Milliseconds                `json:"prebuffer,omitempty" validate:"omitempty"`
+	ProgramsValue          []*TransponderProgramImpl    `json:"programs,omitempty" validate:"omitempty,dive"`
+	ProviderValue          *string                      `json:"provider,omitempty" validate:"omitempty"`
+	PushesValue            []*TransponderPushImpl       `json:"pushes,omitempty" validate:"omitempty,dive"`
+	StatsValue             *MultiplexerStatsImpl        `json:"stats,omitempty" validate:"omitempty"`
+	TimeOffsetsValue       []*TransponderTimeOffsetImpl `json:"time_offsets,omitempty" validate:"omitempty,dive"`
+	TimeoutsValue          *TSTimeoutsImpl              `json:"timeouts,omitempty" validate:"omitempty"`
+	TSDescriptorsValue     []*TSDescriptorImpl          `json:"ts_descriptors,omitempty" validate:"omitempty,dive"`
+	TSStreamIDValue        *int                         `json:"ts_stream_id,omitempty" validate:"omitempty"`
+	VersionsValue          *TSVersionsImpl              `json:"versions,omitempty" validate:"omitempty"`
+	VideoBufferValue       *Milliseconds                `json:"video_buffer,omitempty" validate:"omitempty"`
 }
 
 type TransponderEitImpl struct {
@@ -16686,11 +16728,11 @@ type TransponderOtherImpl struct {
 type TransponderPidImpl struct {
 	BitrateValue    *Speed               `json:"bitrate,omitempty" validate:"omitempty"`
 	CodecValue      *FrameCodec          `json:"codec,omitempty" validate:"omitempty"`
+	ContentValue    string               `json:"content" validate:"required"`
 	EsInfoValue     *Hexbinary           `json:"es_info,omitempty" validate:"omitempty"`
+	PidValue        int                  `json:"pid" validate:"required" openmetrics_label:"pid"`
 	StatsValue      *PushPidCountersImpl `json:"stats,omitempty" validate:"omitempty"`
 	StreamTypeValue *int                 `json:"stream_type,omitempty" validate:"omitempty,min=1,max=255"`
-	ContentValue    string               `json:"content" validate:"required"`
-	PidValue        int                  `json:"pid" validate:"required" openmetrics_label:"pid"`
 	TrackValue      int                  `json:"track" validate:"required"`
 }
 
@@ -16699,10 +16741,10 @@ type TransponderProgramImpl struct {
 	EitTitleValue    *string               `json:"eit_title,omitempty" validate:"omitempty"`
 	LcnValue         *int                  `json:"lcn,omitempty" validate:"omitempty"`
 	PidsValue        *OutputMpegtsPidsImpl `json:"pids,omitempty" validate:"omitempty"`
+	ProgramIDValue   int                   `json:"program_id" validate:"required" openmetrics_label:"program_id"`
 	ServiceTypeValue *TSServiceType        `json:"service_type,omitempty" validate:"omitempty"`
 	SourceValue      *MediaName            `json:"source,omitempty" validate:"omitempty" openmetrics_label:"source"`
 	TitleValue       *string               `json:"title,omitempty" validate:"omitempty"`
-	ProgramIDValue   int                   `json:"program_id" validate:"required" openmetrics_label:"program_id"`
 }
 
 // Required: pnr
@@ -16710,8 +16752,8 @@ type TransponderProgramStatsImpl struct {
 	ErrorsProgramResetValue    *int `json:"errors_program_reset,omitempty" validate:"omitempty"`
 	ErrorsScte35AnnouncesValue *int `json:"errors_scte35_announces,omitempty" validate:"omitempty"`
 	OutputDtsShiftChangedValue *int `json:"output_dts_shift_changed,omitempty" validate:"omitempty"`
-	Scte35AnnouncesValue       *int `json:"scte35_announces,omitempty" validate:"omitempty"`
 	PnrValue                   int  `json:"pnr" validate:"required"`
+	Scte35AnnouncesValue       *int `json:"scte35_announces,omitempty" validate:"omitempty"`
 }
 
 // Required: url
@@ -16725,37 +16767,38 @@ type TransponderPushImpl struct {
 
 // Required: country
 type TransponderTimeOffsetImpl struct {
+	CountryValue         string  `json:"country" validate:"required"`
 	LocalTimeOffsetValue *string `json:"local_time_offset,omitempty" validate:"omitempty"`
 	NextTimeOffsetValue  *string `json:"next_time_offset,omitempty" validate:"omitempty"`
 	RegionValue          *int    `json:"region,omitempty" validate:"omitempty"`
 	TimeOfChangeValue    *int    `json:"time_of_change,omitempty" validate:"omitempty"`
-	CountryValue         string  `json:"country" validate:"required"`
 }
 
 type UserImpl struct {
-	LocaleValue        *ISO6391                          `json:"locale,omitempty" validate:"omitempty"`
-	PhoneValue         *PhoneNumber                      `json:"phone,omitempty" validate:"omitempty"`
+	AccessLevelValue   *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic domain_admin admin"`
+	CreatedAtValue     *UtcMs                            `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	DisabledValue      *bool                             `json:"disabled,omitempty" validate:"omitempty"`
 	EmailValue         *Email                            `json:"email,omitempty" validate:"omitempty"`
+	ExternalIDValue    *string                           `json:"external_id,omitempty" validate:"omitempty"`
 	FullnameValue      *string                           `json:"fullname,omitempty" validate:"omitempty"`
 	IDValue            *int                              `json:"id,omitempty" validate:"omitempty"`
-	NameValue          *string                           `json:"name,omitempty" validate:"omitempty"`
-	AccessLevelValue   *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic admin"`
-	CreatedAtValue     *UtcMs                            `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	NoteValue          *string                           `json:"note,omitempty" validate:"omitempty"`
-	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
-	PasswordValue      *string                           `json:"password,omitempty" validate:"omitempty"`
+	LocaleValue        *ISO6391                          `json:"locale,omitempty" validate:"omitempty"`
 	MaxSessionsValue   *int                              `json:"max_sessions,omitempty" validate:"omitempty"`
+	NameValue          *string                           `json:"name,omitempty" validate:"omitempty"`
+	NoteValue          *string                           `json:"note,omitempty" validate:"omitempty"`
 	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
+	PasswordValue      *string                           `json:"password,omitempty" validate:"omitempty"`
+	PhoneValue         *PhoneNumber                      `json:"phone,omitempty" validate:"omitempty"`
+	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 }
 
 // User Parameters available from Admin API.
 type UserAdminImpl struct {
-	AccessLevelValue   *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic admin"`
+	AccessLevelValue   *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic domain_admin admin"`
 	DisabledValue      *bool                             `json:"disabled,omitempty" validate:"omitempty"`
 	IDValue            *int                              `json:"id,omitempty" validate:"omitempty"`
-	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 	OrganizationsValue []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
+	ReadonlyValue      *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 }
 
 type UserAdminOrganizationsItemImpl struct {
@@ -16773,8 +16816,9 @@ type UserAdminOrganizationsItemOwnerImpl struct {
 
 // User parameters visible from Admin and Client APIs.
 type UserBaseImpl struct {
-	CreatedAtValue   *UtcMs       `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CreatedAtValue   *UtcMs       `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EmailValue       *Email       `json:"email,omitempty" validate:"omitempty"`
+	ExternalIDValue  *string      `json:"external_id,omitempty" validate:"omitempty"`
 	FullnameValue    *string      `json:"fullname,omitempty" validate:"omitempty"`
 	LocaleValue      *ISO6391     `json:"locale,omitempty" validate:"omitempty"`
 	MaxSessionsValue *int         `json:"max_sessions,omitempty" validate:"omitempty"`
@@ -16785,21 +16829,22 @@ type UserBaseImpl struct {
 }
 
 type UserCreateImpl struct {
-	LocaleValue         *ISO6391                          `json:"locale,omitempty" validate:"omitempty"`
-	OrganizationIDValue *int                              `json:"organization_id,omitempty" validate:"omitempty"`
+	AccessLevelValue    *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic domain_admin admin"`
+	CreatedAtValue      *UtcMs                            `json:"created_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	DisabledValue       *bool                             `json:"disabled,omitempty" validate:"omitempty"`
 	EmailValue          *Email                            `json:"email,omitempty" validate:"omitempty"`
+	ExternalIDValue     *string                           `json:"external_id,omitempty" validate:"omitempty"`
 	FullnameValue       *string                           `json:"fullname,omitempty" validate:"omitempty"`
 	IDValue             *int                              `json:"id,omitempty" validate:"omitempty"`
-	CreatedAtValue      *UtcMs                            `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	NameValue           *string                           `json:"name,omitempty" validate:"omitempty"`
-	AccessLevelValue    *UserAdminAccessLevel             `json:"access_level,omitempty" validate:"omitempty,oneof=generic admin"`
-	NoteValue           *string                           `json:"note,omitempty" validate:"omitempty"`
+	LocaleValue         *ISO6391                          `json:"locale,omitempty" validate:"omitempty"`
 	MaxSessionsValue    *int                              `json:"max_sessions,omitempty" validate:"omitempty"`
-	ReadonlyValue       *bool                             `json:"readonly,omitempty" validate:"omitempty"`
+	NameValue           *string                           `json:"name,omitempty" validate:"omitempty"`
+	NoteValue           *string                           `json:"note,omitempty" validate:"omitempty"`
+	OrganizationIDValue *int                              `json:"organization_id,omitempty" validate:"omitempty"`
+	OrganizationsValue  []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
 	PasswordValue       *string                           `json:"password,omitempty" validate:"omitempty"`
 	PhoneValue          *PhoneNumber                      `json:"phone,omitempty" validate:"omitempty"`
-	OrganizationsValue  []*UserAdminOrganizationsItemImpl `json:"organizations,omitempty" validate:"omitempty,dive"`
+	ReadonlyValue       *bool                             `json:"readonly,omitempty" validate:"omitempty"`
 }
 
 type UsersImpl struct {
@@ -16811,18 +16856,18 @@ type UsersImpl struct {
 }
 
 type VisionAlertsImpl struct {
-	LowQualityAtValue          *UtcMs `json:"low_quality_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	NotEnoughDetectionsAtValue *UtcMs `json:"not_enough_detections_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	SmallSizeAtValue           *UtcMs `json:"small_size_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	LowQualityAtValue          *UtcMs `json:"low_quality_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	NotEnoughDetectionsAtValue *UtcMs `json:"not_enough_detections_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	SmallSizeAtValue           *UtcMs `json:"small_size_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 // Required: detector_type, region_id
 type VisionDetectorConfigImpl struct {
 	DetectorTypeValue      *VisionDetectorConfigDetectorTypeImpl      `json:"detector_type" validate:"required"`
 	RegionCoordinatesValue *VisionDetectorConfigRegionCoordinatesImpl `json:"region_coordinates,omitempty" validate:"omitempty"`
+	RegionIDValue          string                                     `json:"region_id" validate:"required"`
 	RegionTitleValue       *string                                    `json:"region_title,omitempty" validate:"omitempty"`
 	StatsValue             *VisionDetectorStatsImpl                   `json:"stats,omitempty" validate:"omitempty"`
-	RegionIDValue          string                                     `json:"region_id" validate:"required"`
 }
 
 type VisionDetectorConfigDetectorTypeImpl struct {
@@ -16833,7 +16878,7 @@ type VisionDetectorConfigRegionCoordinatesImpl struct {
 
 type VisionDetectorStatsImpl struct {
 	AlertsValue          *VisionAlertsImpl `json:"alerts,omitempty" validate:"omitempty"`
-	LastDetectionAtValue *UtcMs            `json:"last_detection_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	LastDetectionAtValue *UtcMs            `json:"last_detection_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 // 2D point
@@ -16854,24 +16899,24 @@ type VisionSpecPresetsImpl struct {
 }
 
 type VodConfigImpl struct {
-	PositionValue        *SortIndex             `json:"position,omitempty" validate:"omitempty"`
-	ProtocolsValue       *PlayProtocolsSpecImpl `json:"protocols,omitempty" validate:"omitempty"`
+	AddAudioOnlyValue    *bool                  `json:"add_audio_only,omitempty" validate:"omitempty"`
+	AutoMbrValue         *bool                  `json:"auto_mbr,omitempty" validate:"omitempty"`
 	CacheValue           *CacheSpecImpl         `json:"cache,omitempty" validate:"omitempty"`
 	DisabledValue        *bool                  `json:"disabled,omitempty" validate:"omitempty"`
 	DownloadValue        *bool                  `json:"download,omitempty" validate:"omitempty"`
 	DrmValue             *DrmSpecImpl           `json:"drm,omitempty" validate:"omitempty"`
 	LogoValue            *WebLogoSpecImpl       `json:"logo,omitempty" validate:"omitempty"`
 	OnPlayValue          *AuthSpecImpl          `json:"on_play,omitempty" validate:"omitempty"`
-	AutoMbrValue         *bool                  `json:"auto_mbr,omitempty" validate:"omitempty"`
-	AddAudioOnlyValue    *bool                  `json:"add_audio_only,omitempty" validate:"omitempty"`
+	PositionValue        *SortIndex             `json:"position,omitempty" validate:"omitempty"`
 	PrefixValue          *MediaName             `json:"prefix,omitempty" validate:"omitempty"`
+	ProtocolsValue       *PlayProtocolsSpecImpl `json:"protocols,omitempty" validate:"omitempty"`
 	ProviderValue        *string                `json:"provider,omitempty" validate:"omitempty"`
 	ReadQueueValue       *int                   `json:"read_queue,omitempty" validate:"omitempty"`
 	SegmentDurationValue *Milliseconds          `json:"segment_duration,omitempty" validate:"omitempty"`
-	URLPrefixValue       *URLPrefix             `json:"url_prefix,omitempty" validate:"omitempty"`
+	StoragesValue        []*VodStorageImpl      `json:"storages,omitempty" validate:"omitempty,dive"`
 	ThumbnailsValue      *ThumbnailsSpecImpl    `json:"thumbnails,omitempty" validate:"omitempty"`
 	TimeoutValue         *int                   `json:"timeout,omitempty" validate:"omitempty"`
-	StoragesValue        []*VodStorageImpl      `json:"storages,omitempty" validate:"omitempty,dive"`
+	URLPrefixValue       *URLPrefix             `json:"url_prefix,omitempty" validate:"omitempty"`
 }
 
 type VodStorageImpl struct {
@@ -16885,12 +16930,25 @@ type VsaasConfigImpl struct {
 }
 
 type WatcherAgentConfigImpl struct {
-	IDValue      *string                `json:"id,omitempty" validate:"omitempty"`
-	KeyValue     *string                `json:"key,omitempty" validate:"omitempty"`
-	ModelValue   *string                `json:"model,omitempty" validate:"omitempty"`
-	SerialValue  *string                `json:"serial,omitempty" validate:"omitempty"`
-	StatsValue   *WatcherAgentStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-	StreamsValue []any                  `json:"streams,omitempty" validate:"omitempty,dive"`
+	IDValue      *string                              `json:"id,omitempty" validate:"omitempty"`
+	KeyValue     *string                              `json:"key,omitempty" validate:"omitempty"`
+	ModelValue   *string                              `json:"model,omitempty" validate:"omitempty"`
+	SerialValue  *string                              `json:"serial,omitempty" validate:"omitempty"`
+	StatsValue   *WatcherAgentStatsImpl               `json:"stats,omitempty" validate:"omitempty"`
+	StreamsValue []*WatcherAgentConfigStreamsItemImpl `json:"streams,omitempty" validate:"omitempty,dive"`
+}
+
+type WatcherAgentConfigStreamsItemImpl struct {
+	CommentValue                        *string               `json:"comment,omitempty" validate:"omitempty"`
+	NameValue                           *MediaName            `json:"name,omitempty" validate:"omitempty" openmetrics_label:"name"`
+	NamedByValue                        *NamedBy              `json:"named_by,omitempty" validate:"omitempty"`
+	NmosValue                           *NmosConfigImpl       `json:"nmos,omitempty" validate:"omitempty"`
+	OrganizationValue                   *OrganizationBaseImpl `json:"organization,omitempty" validate:"omitempty"`
+	PositionValue                       *SortIndex            `json:"position,omitempty" validate:"omitempty"`
+	RecheckSecondaryInputsIntervalValue *Seconds              `json:"recheck_secondary_inputs_interval,omitempty" validate:"omitempty"`
+	SrtPortResolveValue                 *bool                 `json:"srt_port_resolve,omitempty" validate:"omitempty"`
+	TemplateValue                       *MediaName            `json:"template,omitempty" validate:"omitempty"`
+	TitleValue                          *string               `json:"title,omitempty" validate:"omitempty"`
 }
 
 type WatcherAgentControlConnectionImpl struct {
@@ -16898,8 +16956,8 @@ type WatcherAgentControlConnectionImpl struct {
 	BytesFromServerValue *Bytes  `json:"bytes_from_server,omitempty" validate:"omitempty"`
 	BytesToServerValue   *Bytes  `json:"bytes_to_server,omitempty" validate:"omitempty"`
 	HostnameValue        *string `json:"hostname,omitempty" validate:"omitempty"`
-	OpenedAtValue        *UtcMs  `json:"opened_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StatusChangedAtValue *Utc    `json:"status_changed_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	OpenedAtValue        *UtcMs  `json:"opened_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StatusChangedAtValue *Utc    `json:"status_changed_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 type WatcherAgentDataConnectionsImpl struct {
@@ -16929,8 +16987,8 @@ type WatcherAgentStatsStreampointConnectionImpl struct {
 	ConnectionsCurrentValue   *int    `json:"connections_current,omitempty" validate:"omitempty"`
 	ConnectionsOpenedValue    *int    `json:"connections_opened,omitempty" validate:"omitempty"`
 	HostnameValue             *string `json:"hostname,omitempty" validate:"omitempty"`
-	OpenedAtValue             *UtcMs  `json:"opened_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StatusChangedAtValue      *Utc    `json:"status_changed_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	OpenedAtValue             *UtcMs  `json:"opened_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StatusChangedAtValue      *Utc    `json:"status_changed_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 type WatcherStatusImpl struct {
@@ -16940,51 +16998,16 @@ type WatcherStatusImpl struct {
 
 // List of Watcher checks
 type WatcherStatusChecksImpl struct {
+	ErrorsDetailsValue         []*WatcherStatusChecksErrorsDetailsItemImpl `json:"errors_details,omitempty" validate:"omitempty,dive"`
 	IsDomainAPIKeyMatchedValue *bool                                       `json:"is_domain_api_key_matched,omitempty" validate:"omitempty"`
 	IsWatcherURLAvailableValue *bool                                       `json:"is_watcher_url_available,omitempty" validate:"omitempty"`
 	IsWatcherURLMatchedValue   *bool                                       `json:"is_watcher_url_matched,omitempty" validate:"omitempty"`
-	ErrorsDetailsValue         []*WatcherStatusChecksErrorsDetailsItemImpl `json:"errors_details,omitempty" validate:"omitempty,dive"`
 }
 
 // Error details
 type WatcherStatusChecksErrorsDetailsItemImpl struct {
 	CheckValue *string `json:"check,omitempty" validate:"omitempty"`
 	ErrorValue *string `json:"error,omitempty" validate:"omitempty"`
-}
-
-type WatcherStreamConfigImpl struct {
-	LayoutRulesValue            *StreamZoneConfigImpl                       `json:"layout_rules,omitempty" validate:"omitempty"`
-	CanPublishValue             *bool                                       `json:"can_publish,omitempty" validate:"omitempty"`
-	CoordinatesValue            *MapSpecImpl                                `json:"coordinates,omitempty" validate:"omitempty"`
-	CreatedAtValue              *UtcMs                                      `json:"created_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	DomainValue                 *DomainBaseImpl                             `json:"domain,omitempty" validate:"omitempty"`
-	FirmwareUpdateDurationValue *Milliseconds                               `json:"firmware_update_duration,omitempty" validate:"omitempty"`
-	FolderIDValue               *int                                        `json:"folder_id,omitempty" validate:"omitempty"`
-	LastChangeValue             *AuditLogRecordImpl                         `json:"last_change,omitempty" validate:"omitempty"`
-	LayoutValue                 *CentralStreamLayoutImpl                    `json:"layout,omitempty" validate:"omitempty"`
-	LastEpisodeAtValue          *UtcMs                                      `json:"last_episode_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	PresetIDValue               *int                                        `json:"preset_id,omitempty" validate:"omitempty"`
-	MapCoordinatesValue         *MapSpecImpl                                `json:"map_coordinates,omitempty" validate:"omitempty"`
-	AudioValue                  *WatcherStreamConfigAudioImpl               `json:"audio,omitempty" validate:"omitempty"`
-	OnvifValue                  *StreamOnvifConfigImpl                      `json:"onvif,omitempty" validate:"omitempty"`
-	OrganizationValue           *OrganizationStreamImpl                     `json:"organization,omitempty" validate:"omitempty"`
-	OrganizationIDValue         *int                                        `json:"organization_id,omitempty" validate:"omitempty"`
-	PresetValue                 *StreamPresetImpl                           `json:"preset,omitempty" validate:"omitempty"`
-	PostalAddressValue          *string                                     `json:"postal_address,omitempty" validate:"omitempty"`
-	PathValue                   []*StreamPathItemImpl                       `json:"path,omitempty" validate:"omitempty,dive"`
-	NotificationsValue          []*WatcherStreamConfigNotificationsItemImpl `json:"notifications,omitempty" validate:"omitempty,dive"`
-}
-
-// Audio settings for the stream.
-type WatcherStreamConfigAudioImpl struct {
-	DisabledValue            *bool            `json:"disabled,omitempty" validate:"omitempty"`
-	TranscodeAudioCodecValue *FrameAudioCodec `json:"transcode_audio_codec,omitempty" validate:"omitempty"`
-}
-
-// Notification subscription details for a specific event type.
-type WatcherStreamConfigNotificationsItemImpl struct {
-	EventTypesValue       *EventTypesImpl   `json:"event_types,omitempty" validate:"omitempty"`
-	NotificationTypeValue *NotificationType `json:"notification_type,omitempty" validate:"omitempty"`
 }
 
 type WebLogoSpecImpl struct {
@@ -16998,24 +17021,24 @@ type WebLogoSpecImpl struct {
 
 // Required: ports
 type WebrtcRouterConfigImpl struct {
-	TransportValue *WebrtcTransport `json:"transport,omitempty" validate:"omitempty"`
 	PortsValue     []int            `json:"ports" validate:"required,dive"`
+	TransportValue *WebrtcTransport `json:"transport,omitempty" validate:"omitempty"`
 }
 
 // Required: name
 type ZoneImpl struct {
 	CreatedValue     *CreationInfoImpl `json:"created,omitempty" validate:"omitempty"`
 	IsDedicatedValue *bool             `json:"is_dedicated,omitempty" validate:"omitempty"`
-	StatsValue       *ZoneStatsImpl    `json:"stats,omitempty" validate:"omitempty"`
 	NameValue        UnixName          `json:"name" validate:"required"`
+	StatsValue       *ZoneStatsImpl    `json:"stats,omitempty" validate:"omitempty"`
 }
 
 // Statistics of the zone.
 type ZoneStatsImpl struct {
 	PreferredStreamsCountValue *int     `json:"preferred_streams_count,omitempty" validate:"omitempty"`
 	RequiredStreamsCountValue  *int     `json:"required_streams_count,omitempty" validate:"omitempty"`
-	StreamersCountValue        *int     `json:"streamers_count,omitempty" validate:"omitempty"`
 	StreamersValue             []string `json:"streamers,omitempty" validate:"omitempty,dive"`
+	StreamersCountValue        *int     `json:"streamers_count,omitempty" validate:"omitempty"`
 }
 
 type ZonesListImpl struct {
@@ -17557,16 +17580,31 @@ func (s *AgentImpl) SetStats(v WatcherAgentStats) Agent {
 }
 
 // List of streams info that have this agent in their inputs
-func (s AgentImpl) Streams() []any {
-	return s.StreamsValue
+func (s AgentImpl) Streams() []WatcherAgentConfigStreamsItem {
+	if s.StreamsValue == nil {
+		return nil
+	}
+	result := make([]WatcherAgentConfigStreamsItem, len(s.StreamsValue))
+	for i, item := range s.StreamsValue {
+		result[i] = item
+	}
+	return result
 }
 
 // List of streams info that have this agent in their inputs
-func (s *AgentImpl) SetStreams(v []any) Agent {
+func (s *AgentImpl) SetStreams(v []WatcherAgentConfigStreamsItem) Agent {
 	if s == nil {
 		return nil
 	}
-	s.StreamsValue = v
+	if v != nil {
+		impl := make([]*WatcherAgentConfigStreamsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*WatcherAgentConfigStreamsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.StreamsValue = impl
+	}
 	return s
 }
 
@@ -18389,135 +18427,6 @@ func (s *AuthSpecImpl) SetURL(v AuthURL) AuthSpec {
 	return s
 }
 
-// NewBalancerConfig creates a new BalancerConfig instance
-func NewBalancerConfig() BalancerConfig {
-	return &BalancerConfigImpl{}
-}
-
-// Balancing mode
-func (s BalancerConfigImpl) Mode() *BalancerConfigMode {
-	return s.ModeValue
-}
-
-// Balancing mode
-func (s *BalancerConfigImpl) SetMode(v BalancerConfigMode) BalancerConfig {
-	if s == nil {
-		return nil
-	}
-	s.ModeValue = &v
-	return s
-}
-
-// Globally unique balancer name.
-// Format: media_name (media_name)
-func (s BalancerConfigImpl) Name() *MediaName {
-	return s.NameValue
-}
-
-// Globally unique balancer name.
-// Format: media_name (media_name)
-func (s *BalancerConfigImpl) SetName(v MediaName) BalancerConfig {
-	if s == nil {
-		return nil
-	}
-	s.NameValue = &v
-	return s
-}
-
-// Balancer will distribute requests between these servers.
-func (s BalancerConfigImpl) Servers() []BalancerServerConfig {
-	if s.ServersValue == nil {
-		return nil
-	}
-	result := make([]BalancerServerConfig, len(s.ServersValue))
-	for i, item := range s.ServersValue {
-		result[i] = item
-	}
-	return result
-}
-
-// Balancer will distribute requests between these servers.
-func (s *BalancerConfigImpl) SetServers(v []BalancerServerConfig) BalancerConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*BalancerServerConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*BalancerServerConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.ServersValue = impl
-	}
-	return s
-}
-
-// NewBalancerServerConfig creates a new BalancerServerConfig instance
-func NewBalancerServerConfig() BalancerServerConfig {
-	return &BalancerServerConfigImpl{}
-}
-
-// Client will be redirected to the peer if its IP belongs to one of these countries.
-func (s BalancerServerConfigImpl) Countries() []Iso3166 {
-	return s.CountriesValue
-}
-
-// Client will be redirected to the peer if its IP belongs to one of these countries.
-func (s *BalancerServerConfigImpl) SetCountries(v []Iso3166) BalancerServerConfig {
-	if s == nil {
-		return nil
-	}
-	s.CountriesValue = v
-	return s
-}
-
-// This flag allows to redirect a request to this peer if "countries" list not matched.
-func (s BalancerServerConfigImpl) CountriesDefault() *bool {
-	return s.CountriesDefaultValue
-}
-
-// This flag allows to redirect a request to this peer if "countries" list not matched.
-func (s *BalancerServerConfigImpl) SetCountriesDefault(v bool) BalancerServerConfig {
-	if s == nil {
-		return nil
-	}
-	s.CountriesDefaultValue = &v
-	return s
-}
-
-// Maximum allowed bitrate, request is redirecting if current bitrate is lower.
-// Format: speed (speed)
-func (s BalancerServerConfigImpl) MaxBitrate() *Speed {
-	return s.MaxBitrateValue
-}
-
-// Maximum allowed bitrate, request is redirecting if current bitrate is lower.
-// Format: speed (speed)
-func (s *BalancerServerConfigImpl) SetMaxBitrate(v Speed) BalancerServerConfig {
-	if s == nil {
-		return nil
-	}
-	s.MaxBitrateValue = &v
-	return s
-}
-
-// Hostname of the peer. Can refer to globally defined peer.
-// Format: server_name (server_name)
-func (s BalancerServerConfigImpl) Name() *ServerName {
-	return s.NameValue
-}
-
-// Hostname of the peer. Can refer to globally defined peer.
-// Format: server_name (server_name)
-func (s *BalancerServerConfigImpl) SetName(v ServerName) BalancerServerConfig {
-	if s == nil {
-		return nil
-	}
-	s.NameValue = &v
-	return s
-}
-
 // NewCacheConfig creates a new CacheConfig instance
 func NewCacheConfig() CacheConfig {
 	return &CacheConfigImpl{}
@@ -18835,9 +18744,256 @@ func (s *CameraInfoImpl) SetSerialNumber(v string) CameraInfo {
 	return s
 }
 
-// NewCameraTagWb creates a new CameraTagWb instance
-func NewCameraTagWb() CameraTagWb {
-	return &CameraTagWbImpl{}
+// NewCameraUsage creates a new CameraUsage instance
+func NewCameraUsage() CameraUsage {
+	return &CameraUsageImpl{}
+}
+
+// The internal identifier of the organization in Watcher.
+// Example: 12345
+func (s CameraUsageImpl) AccountID() *int {
+	return s.AccountIDValue
+}
+
+// The internal identifier of the organization in Watcher.
+// Example: 12345
+func (s *CameraUsageImpl) SetAccountID(v int) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.AccountIDValue = &v
+	return s
+}
+
+// The external identifier of the plan in the operator's own billing system.
+// This value comes from the preset's billing_external_id field.
+// Allows operators to bill their subscribers.
+// Example: billing-plan-456
+func (s CameraUsageImpl) BillingPlanID() *string {
+	return s.BillingPlanIDValue
+}
+
+// The external identifier of the plan in the operator's own billing system.
+// This value comes from the preset's billing_external_id field.
+// Allows operators to bill their subscribers.
+// Example: billing-plan-456
+func (s *CameraUsageImpl) SetBillingPlanID(v string) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.BillingPlanIDValue = &v
+	return s
+}
+
+// The external identifier of the account in the operator's billing system.
+// Example: 12345
+func (s CameraUsageImpl) ExternalAccountID() *string {
+	return s.ExternalAccountIDValue
+}
+
+// The external identifier of the account in the operator's billing system.
+// Example: 12345
+func (s *CameraUsageImpl) SetExternalAccountID(v string) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.ExternalAccountIDValue = &v
+	return s
+}
+
+// Start date of the period when the camera was active on this plan (inclusive).
+// Format: YYYY-MM-DD (ISO 8601 date).
+// Format: date (date)
+// Example: 2025-01-01
+func (s CameraUsageImpl) From() *Date {
+	return s.FromValue
+}
+
+// Start date of the period when the camera was active on this plan (inclusive).
+// Format: YYYY-MM-DD (ISO 8601 date).
+// Format: date (date)
+// Example: 2025-01-01
+func (s *CameraUsageImpl) SetFrom(v Date) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.FromValue = &v
+	return s
+}
+
+// The identifier of the license.
+// Example: 12345
+func (s CameraUsageImpl) LicenseID() *string {
+	return s.LicenseIDValue
+}
+
+// The identifier of the license.
+// Example: 12345
+func (s *CameraUsageImpl) SetLicenseID(v string) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.LicenseIDValue = &v
+	return s
+}
+
+// The external identifier of the plan in billing system.
+// This value comes from the preset's external_id field.
+// Example: episodes-30d-123
+func (s CameraUsageImpl) PlanID() *string {
+	return s.PlanIDValue
+}
+
+// The external identifier of the plan in billing system.
+// This value comes from the preset's external_id field.
+// Example: episodes-30d-123
+func (s *CameraUsageImpl) SetPlanID(v string) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.PlanIDValue = &v
+	return s
+}
+
+// The unique identifier of the camera.
+// Example: ag-123456
+func (s CameraUsageImpl) StreamName() *string {
+	return s.StreamNameValue
+}
+
+// The unique identifier of the camera.
+// Example: ag-123456
+func (s *CameraUsageImpl) SetStreamName(v string) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.StreamNameValue = &v
+	return s
+}
+
+// End date of the period when the camera was active on this plan (inclusive).
+// Format: YYYY-MM-DD (ISO 8601 date).
+// Format: date (date)
+// Example: 2025-01-30
+func (s CameraUsageImpl) To() *Date {
+	return s.ToValue
+}
+
+// End date of the period when the camera was active on this plan (inclusive).
+// Format: YYYY-MM-DD (ISO 8601 date).
+// Format: date (date)
+// Example: 2025-01-30
+func (s *CameraUsageImpl) SetTo(v Date) CameraUsage {
+	if s == nil {
+		return nil
+	}
+	s.ToValue = &v
+	return s
+}
+
+// NewCameraUsagesList creates a new CameraUsagesList instance
+func NewCameraUsagesList() CameraUsagesList {
+	return &CameraUsagesListImpl{}
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s CameraUsagesListImpl) EstimatedCount() *int {
+	return s.EstimatedCountValue
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s *CameraUsagesListImpl) SetEstimatedCount(v int) CameraUsagesList {
+	if s == nil {
+		return nil
+	}
+	s.EstimatedCountValue = &v
+	return s
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s CameraUsagesListImpl) Next() *string {
+	return s.NextValue
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s *CameraUsagesListImpl) SetNext(v string) CameraUsagesList {
+	if s == nil {
+		return nil
+	}
+	s.NextValue = &v
+	return s
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s CameraUsagesListImpl) Prev() *string {
+	return s.PrevValue
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s *CameraUsagesListImpl) SetPrev(v string) CameraUsagesList {
+	if s == nil {
+		return nil
+	}
+	s.PrevValue = &v
+	return s
+}
+
+// An object with a list of different timings measured during this API call.
+func (s CameraUsagesListImpl) Timing() any {
+	return s.TimingValue
+}
+
+// An object with a list of different timings measured during this API call.
+func (s *CameraUsagesListImpl) SetTiming(v any) CameraUsagesList {
+	if s == nil {
+		return nil
+	}
+	s.TimingValue = v
+	return s
+}
+
+// List of camera usage entries.
+func (s CameraUsagesListImpl) Usage() []CameraUsage {
+	if s.UsageValue == nil {
+		return nil
+	}
+	result := make([]CameraUsage, len(s.UsageValue))
+	for i, item := range s.UsageValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of camera usage entries.
+func (s *CameraUsagesListImpl) SetUsage(v []CameraUsage) CameraUsagesList {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*CameraUsageImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*CameraUsageImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.UsageValue = impl
+	}
+	return s
+}
+
+// Collection returns the collection items from CameraUsagesList
+func (s CameraUsagesListImpl) Collection() []CameraUsage {
+	return s.Usage()
 }
 
 // NewCentralDiskPredictions creates a new CentralDiskPredictions instance
@@ -18866,6 +19022,242 @@ func (s *CentralDiskPredictionsImpl) SetEstimatedDiskUsage(v Percent) CentralDis
 		return nil
 	}
 	s.EstimatedDiskUsageValue = &v
+	return s
+}
+
+// NewCentralHealthcheckStatus creates a new CentralHealthcheckStatus instance
+func NewCentralHealthcheckStatus() CentralHealthcheckStatus {
+	return &CentralHealthcheckStatusImpl{}
+}
+
+// List of healthcheck checks with their results.
+func (s CentralHealthcheckStatusImpl) Checks() CentralHealthcheckStatusChecks {
+	return s.ChecksValue
+}
+
+// List of healthcheck checks with their results.
+func (s *CentralHealthcheckStatusImpl) SetChecks(v CentralHealthcheckStatusChecks) CentralHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*CentralHealthcheckStatusChecksImpl); ok {
+		s.ChecksValue = impl
+	}
+	return s
+}
+
+// Status of the healthcheck.
+func (s CentralHealthcheckStatusImpl) Status() *CentralHealthcheckStatusStatus {
+	return s.StatusValue
+}
+
+// Status of the healthcheck.
+func (s *CentralHealthcheckStatusImpl) SetStatus(v CentralHealthcheckStatusStatus) CentralHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	s.StatusValue = &v
+	return s
+}
+
+// Unix timestamp of the last status change.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s CentralHealthcheckStatusImpl) StatusChangedAt() *UtcMs {
+	return s.StatusChangedAtValue
+}
+
+// Unix timestamp of the last status change.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s *CentralHealthcheckStatusImpl) SetStatusChangedAt(v UtcMs) CentralHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	s.StatusChangedAtValue = &v
+	return s
+}
+
+// NewCentralHealthcheckStatusChecks creates a new CentralHealthcheckStatusChecks instance
+func NewCentralHealthcheckStatusChecks() CentralHealthcheckStatusChecks {
+	return &CentralHealthcheckStatusChecksImpl{}
+}
+
+// `true` if peer has no `error` in
+// [stats.config_external_status](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_external_status) field.
+func (s CentralHealthcheckStatusChecksImpl) ConfigExternalOk() *bool {
+	return s.ConfigExternalOkValue
+}
+
+// `true` if peer has no `error` in
+// [stats.config_external_status](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_external_status) field.
+func (s *CentralHealthcheckStatusChecksImpl) SetConfigExternalOk(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.ConfigExternalOkValue = &v
+	return s
+}
+
+// `true` if peer has no `error` in
+// [stats.config_error](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_error) field.
+func (s CentralHealthcheckStatusChecksImpl) ConfigOk() *bool {
+	return s.ConfigOkValue
+}
+
+// `true` if peer has no `error` in
+// [stats.config_error](https://flussonic.com/doc/api/central/#tag/streamer/operation/streamer_get/response__0%7Cstats%7Cconfig_error) field.
+func (s *CentralHealthcheckStatusChecksImpl) SetConfigOk(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.ConfigOkValue = &v
+	return s
+}
+
+// List of errors details
+func (s CentralHealthcheckStatusChecksImpl) ErrorsDetails() []CentralHealthcheckStatusChecksErrorsDetailsItem {
+	if s.ErrorsDetailsValue == nil {
+		return nil
+	}
+	result := make([]CentralHealthcheckStatusChecksErrorsDetailsItem, len(s.ErrorsDetailsValue))
+	for i, item := range s.ErrorsDetailsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of errors details
+func (s *CentralHealthcheckStatusChecksImpl) SetErrorsDetails(v []CentralHealthcheckStatusChecksErrorsDetailsItem) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*CentralHealthcheckStatusChecksErrorsDetailsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*CentralHealthcheckStatusChecksErrorsDetailsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.ErrorsDetailsValue = impl
+	}
+	return s
+}
+
+// `true` if peer is reachable from central by its credentials
+func (s CentralHealthcheckStatusChecksImpl) Reachable() *bool {
+	return s.ReachableValue
+}
+
+// `true` if peer is reachable from central by its credentials
+func (s *CentralHealthcheckStatusChecksImpl) SetReachable(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.ReachableValue = &v
+	return s
+}
+
+// `true` if rproxy configuration is valid
+func (s CentralHealthcheckStatusChecksImpl) RproxyOk() *bool {
+	return s.RproxyOkValue
+}
+
+// `true` if rproxy configuration is valid
+func (s *CentralHealthcheckStatusChecksImpl) SetRproxyOk(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.RproxyOkValue = &v
+	return s
+}
+
+// `true` if peer is running
+func (s CentralHealthcheckStatusChecksImpl) Running() *bool {
+	return s.RunningValue
+}
+
+// `true` if peer is running
+func (s *CentralHealthcheckStatusChecksImpl) SetRunning(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.RunningValue = &v
+	return s
+}
+
+// `true` if peer has fewer "ok" to "error" transitions within the last hour than the [limit](https://flussonic.com/doc/api/central/#tag/config/operation/config_get/response%7Cstreamer_healthcheck_fails_threshold).
+// If `false`, the limit is exceeded and the peer is marked offline until the one-hour sliding window clears enough errors to fall below the limit.
+func (s CentralHealthcheckStatusChecksImpl) Stable() *bool {
+	return s.StableValue
+}
+
+// `true` if peer has fewer "ok" to "error" transitions within the last hour than the [limit](https://flussonic.com/doc/api/central/#tag/config/operation/config_get/response%7Cstreamer_healthcheck_fails_threshold).
+// If `false`, the limit is exceeded and the peer is marked offline until the one-hour sliding window clears enough errors to fall below the limit.
+func (s *CentralHealthcheckStatusChecksImpl) SetStable(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.StableValue = &v
+	return s
+}
+
+// `true` if server time is synchronized between peer and central
+func (s CentralHealthcheckStatusChecksImpl) TimeSynchronized() *bool {
+	return s.TimeSynchronizedValue
+}
+
+// `true` if server time is synchronized between peer and central
+func (s *CentralHealthcheckStatusChecksImpl) SetTimeSynchronized(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.TimeSynchronizedValue = &v
+	return s
+}
+
+// `true` if peer has a valid cluster key
+func (s CentralHealthcheckStatusChecksImpl) ValidClusterKey() *bool {
+	return s.ValidClusterKeyValue
+}
+
+// `true` if peer has a valid cluster key
+func (s *CentralHealthcheckStatusChecksImpl) SetValidClusterKey(v bool) CentralHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.ValidClusterKeyValue = &v
+	return s
+}
+
+// NewCentralHealthcheckStatusChecksErrorsDetailsItem creates a new CentralHealthcheckStatusChecksErrorsDetailsItem instance
+func NewCentralHealthcheckStatusChecksErrorsDetailsItem() CentralHealthcheckStatusChecksErrorsDetailsItem {
+	return &CentralHealthcheckStatusChecksErrorsDetailsItemImpl{}
+}
+
+// Error message
+func (s CentralHealthcheckStatusChecksErrorsDetailsItemImpl) Error() *string {
+	return s.ErrorValue
+}
+
+// Error message
+func (s *CentralHealthcheckStatusChecksErrorsDetailsItemImpl) SetError(v string) CentralHealthcheckStatusChecksErrorsDetailsItem {
+	if s == nil {
+		return nil
+	}
+	s.ErrorValue = &v
+	return s
+}
+
+// Failed healthcheck rule name
+func (s CentralHealthcheckStatusChecksErrorsDetailsItemImpl) Rule() *string {
+	return s.RuleValue
+}
+
+// Failed healthcheck rule name
+func (s *CentralHealthcheckStatusChecksErrorsDetailsItemImpl) SetRule(v string) CentralHealthcheckStatusChecksErrorsDetailsItem {
+	if s == nil {
+		return nil
+	}
+	s.RuleValue = &v
 	return s
 }
 
@@ -18935,6 +19327,38 @@ func (s *CentralNodeLayoutDecisionImpl) SetRole(v CentralNodeRoleRole) CentralNo
 		return nil
 	}
 	s.RoleValue = &v
+	return s
+}
+
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s CentralNodeLayoutDecisionImpl) TranscoderDeviceID() *int {
+	return s.TranscoderDeviceIDValue
+}
+
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s *CentralNodeLayoutDecisionImpl) SetTranscoderDeviceID(v int) CentralNodeLayoutDecision {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceIDValue = &v
+	return s
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s CentralNodeLayoutDecisionImpl) TranscoderDeviceType() *TranscoderDevice {
+	return s.TranscoderDeviceTypeValue
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s *CentralNodeLayoutDecisionImpl) SetTranscoderDeviceType(v TranscoderDevice) CentralNodeLayoutDecision {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceTypeValue = &v
 	return s
 }
 
@@ -19008,6 +19432,20 @@ func (s *CentralStreamLayoutImpl) SetDvrBackups(v []ServerName) CentralStreamLay
 	return s
 }
 
+// Streamers that have DVR archive for the stream.
+func (s CentralStreamLayoutImpl) DvrParts() []ServerName {
+	return s.DvrPartsValue
+}
+
+// Streamers that have DVR archive for the stream.
+func (s *CentralStreamLayoutImpl) SetDvrParts(v []ServerName) CentralStreamLayout {
+	if s == nil {
+		return nil
+	}
+	s.DvrPartsValue = v
+	return s
+}
+
 // Hostname of current inference node on which stream analytics running.
 // Format: server_name (server_name)
 func (s CentralStreamLayoutImpl) Inference() *ServerName {
@@ -19071,6 +19509,22 @@ func (s *CentralStreamLayoutImpl) SetIngestHistory(v []CentralStreamLayoutBase) 
 	return s
 }
 
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s CentralStreamLayoutImpl) IterationID() *UUID {
+	return s.IterationIDValue
+}
+
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s *CentralStreamLayoutImpl) SetIterationID(v UUID) CentralStreamLayout {
+	if s == nil {
+		return nil
+	}
+	s.IterationIDValue = &v
+	return s
+}
+
 // List of decisions made by [layouter](https://flussonic.com/doc/api/layouter/) for each node.
 // These decisions are used to determine the final layout of the stream.
 func (s CentralStreamLayoutImpl) NodeLayoutDecisions() []CentralNodeLayoutDecision {
@@ -19116,6 +19570,38 @@ func (s *CentralStreamLayoutImpl) SetOriginator(v CentralStreamLayoutOriginator)
 	return s
 }
 
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s CentralStreamLayoutImpl) TranscoderDeviceID() *int {
+	return s.TranscoderDeviceIDValue
+}
+
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s *CentralStreamLayoutImpl) SetTranscoderDeviceID(v int) CentralStreamLayout {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceIDValue = &v
+	return s
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s CentralStreamLayoutImpl) TranscoderDeviceType() *TranscoderDevice {
+	return s.TranscoderDeviceTypeValue
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s *CentralStreamLayoutImpl) SetTranscoderDeviceType(v TranscoderDevice) CentralStreamLayout {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceTypeValue = &v
+	return s
+}
+
 // NewCentralStreamLayoutBase creates a new CentralStreamLayoutBase instance
 func NewCentralStreamLayoutBase() CentralStreamLayoutBase {
 	return &CentralStreamLayoutBaseImpl{}
@@ -19152,6 +19638,22 @@ func (s *CentralStreamLayoutBaseImpl) SetIngest(v ServerName) CentralStreamLayou
 		return nil
 	}
 	s.IngestValue = &v
+	return s
+}
+
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s CentralStreamLayoutBaseImpl) IterationID() *UUID {
+	return s.IterationIDValue
+}
+
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s *CentralStreamLayoutBaseImpl) SetIterationID(v UUID) CentralStreamLayoutBase {
+	if s == nil {
+		return nil
+	}
+	s.IterationIDValue = &v
 	return s
 }
 
@@ -19220,6 +19722,20 @@ func (s *CentralStreamLayoutListItemImpl) SetDvrBackups(v []ServerName) CentralS
 	return s
 }
 
+// Streamers that have DVR archive for the stream.
+func (s CentralStreamLayoutListItemImpl) DvrParts() []ServerName {
+	return s.DvrPartsValue
+}
+
+// Streamers that have DVR archive for the stream.
+func (s *CentralStreamLayoutListItemImpl) SetDvrParts(v []ServerName) CentralStreamLayoutListItem {
+	if s == nil {
+		return nil
+	}
+	s.DvrPartsValue = v
+	return s
+}
+
 // Hostname of current inference node on which stream analytics running.
 // Format: server_name (server_name)
 func (s CentralStreamLayoutListItemImpl) Inference() *ServerName {
@@ -19283,8 +19799,24 @@ func (s *CentralStreamLayoutListItemImpl) SetIngestHistory(v []CentralStreamLayo
 	return s
 }
 
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s CentralStreamLayoutListItemImpl) IterationID() *UUID {
+	return s.IterationIDValue
+}
+
+// Layout iteration identifier.
+// Format: uuid (uuid)
+func (s *CentralStreamLayoutListItemImpl) SetIterationID(v UUID) CentralStreamLayoutListItem {
+	if s == nil {
+		return nil
+	}
+	s.IterationIDValue = &v
+	return s
+}
+
 // Name of the stream
-func (s CentralStreamLayoutListItemImpl) Name() *string {
+func (s CentralStreamLayoutListItemImpl) Name() string {
 	return s.NameValue
 }
 
@@ -19293,7 +19825,7 @@ func (s *CentralStreamLayoutListItemImpl) SetName(v string) CentralStreamLayoutL
 	if s == nil {
 		return nil
 	}
-	s.NameValue = &v
+	s.NameValue = v
 	return s
 }
 
@@ -19339,6 +19871,38 @@ func (s *CentralStreamLayoutListItemImpl) SetOriginator(v CentralStreamLayoutOri
 		return nil
 	}
 	s.OriginatorValue = &v
+	return s
+}
+
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s CentralStreamLayoutListItemImpl) TranscoderDeviceID() *int {
+	return s.TranscoderDeviceIDValue
+}
+
+// The ID of the transcoder device selected on this node for the stream. Only for steams with transcoding enabled.
+// Example: 0
+func (s *CentralStreamLayoutListItemImpl) SetTranscoderDeviceID(v int) CentralStreamLayoutListItem {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceIDValue = &v
+	return s
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s CentralStreamLayoutListItemImpl) TranscoderDeviceType() *TranscoderDevice {
+	return s.TranscoderDeviceTypeValue
+}
+
+// The type of the transcoder device with the selected `transcoder_device_id`. Only for steams with transcoding enabled.
+// Example: nvenc
+func (s *CentralStreamLayoutListItemImpl) SetTranscoderDeviceType(v TranscoderDevice) CentralStreamLayoutListItem {
+	if s == nil {
+		return nil
+	}
+	s.TranscoderDeviceTypeValue = &v
 	return s
 }
 
@@ -19823,446 +20387,6 @@ func (s *CertificateInfoImpl) SetPublicKey(v string) CertificateInfo {
 	return s
 }
 
-// NewChassisConfig creates a new ChassisConfig instance
-func NewChassisConfig() ChassisConfig {
-	return &ChassisConfigImpl{}
-}
-
-// Private port for API requests to the chassis from coders.
-func (s ChassisConfigImpl) APIPort() *ListenSpec {
-	return s.APIPortValue
-}
-
-// Private port for API requests to the chassis from coders.
-func (s *ChassisConfigImpl) SetAPIPort(v *ListenSpec) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.APIPortValue = v
-	return s
-}
-
-// Shows if auto restart of coders when (re)starting chassis is enabled.
-func (s ChassisConfigImpl) AutoReboot() *bool {
-	return s.AutoRebootValue
-}
-
-// Shows if auto restart of coders when (re)starting chassis is enabled.
-func (s *ChassisConfigImpl) SetAutoReboot(v bool) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.AutoRebootValue = &v
-	return s
-}
-
-// If `default_gateway` parameters are set the individual interfaces config,
-// this gateway is only used for checking license and updates.
-// Otherwise, it is used as gateway for all traffic.
-// Example: streaming
-func (s ChassisConfigImpl) DefaultGatewayInterface() *string {
-	return s.DefaultGatewayInterfaceValue
-}
-
-// If `default_gateway` parameters are set the individual interfaces config,
-// this gateway is only used for checking license and updates.
-// Otherwise, it is used as gateway for all traffic.
-// Example: streaming
-func (s *ChassisConfigImpl) SetDefaultGatewayInterface(v string) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.DefaultGatewayInterfaceValue = &v
-	return s
-}
-
-// Network interface for automatic reception of IP address from DHCP server.
-// This interface will be used for launching coders.
-// Format: interface_name (interface_name)
-func (s ChassisConfigImpl) DhcpdIface() *InterfaceName {
-	return s.DhcpdIfaceValue
-}
-
-// Network interface for automatic reception of IP address from DHCP server.
-// This interface will be used for launching coders.
-// Format: interface_name (interface_name)
-func (s *ChassisConfigImpl) SetDhcpdIface(v InterfaceName) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.DhcpdIfaceValue = &v
-	return s
-}
-
-// Source port for DHCP requests.
-func (s ChassisConfigImpl) DhcpdPort() *ListenSpec {
-	return s.DhcpdPortValue
-}
-
-// Source port for DHCP requests.
-func (s *ChassisConfigImpl) SetDhcpdPort(v *ListenSpec) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.DhcpdPortValue = v
-	return s
-}
-
-// Destination port for DHCP requests.
-func (s ChassisConfigImpl) DhcpdPortDest() *ListenSpec {
-	return s.DhcpdPortDestValue
-}
-
-// Destination port for DHCP requests.
-func (s *ChassisConfigImpl) SetDhcpdPortDest(v *ListenSpec) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.DhcpdPortDestValue = v
-	return s
-}
-
-// Directory to boot the device from. This is also where the firmware is downloaded on updates.
-// Format: disk_path (disk_path)
-func (s ChassisConfigImpl) FirmwareBootDir() *DiskPath {
-	return s.FirmwareBootDirValue
-}
-
-// Directory to boot the device from. This is also where the firmware is downloaded on updates.
-// Format: disk_path (disk_path)
-func (s *ChassisConfigImpl) SetFirmwareBootDir(v DiskPath) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.FirmwareBootDirValue = &v
-	return s
-}
-
-// URL for downloading firmware.
-// Format: url (url)
-func (s ChassisConfigImpl) FirmwareHost() *URL {
-	return s.FirmwareHostValue
-}
-
-// URL for downloading firmware.
-// Format: url (url)
-func (s *ChassisConfigImpl) SetFirmwareHost(v URL) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.FirmwareHostValue = &v
-	return s
-}
-
-// Firmware version installed on the device.
-func (s ChassisConfigImpl) FirmwareVersion() *string {
-	return s.FirmwareVersionValue
-}
-
-// Firmware version installed on the device.
-func (s *ChassisConfigImpl) SetFirmwareVersion(v string) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.FirmwareVersionValue = &v
-	return s
-}
-
-// The name of the chassis server.
-// Format: server_name (server_name)
-// Example: coder1.example.com
-func (s ChassisConfigImpl) Hostname() *ServerName {
-	return s.HostnameValue
-}
-
-// The name of the chassis server.
-// Format: server_name (server_name)
-// Example: coder1.example.com
-func (s *ChassisConfigImpl) SetHostname(v ServerName) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.HostnameValue = &v
-	return s
-}
-
-// Shows if LCD monitor capabilities are enabled in the firmware.
-func (s ChassisConfigImpl) Lcd() *bool {
-	return s.LcdValue
-}
-
-// Shows if LCD monitor capabilities are enabled in the firmware.
-func (s *ChassisConfigImpl) SetLcd(v bool) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.LcdValue = &v
-	return s
-}
-
-// List of NTP server host names or IP addresses
-func (s ChassisConfigImpl) NtpServers() []string {
-	return s.NtpServersValue
-}
-
-// List of NTP server host names or IP addresses
-func (s *ChassisConfigImpl) SetNtpServers(v []string) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.NtpServersValue = v
-	return s
-}
-
-// Network interface for NTP daemon.
-// Format: interface_name (interface_name)
-func (s ChassisConfigImpl) NtpdIface() *InterfaceName {
-	return s.NtpdIfaceValue
-}
-
-// Network interface for NTP daemon.
-// Format: interface_name (interface_name)
-func (s *ChassisConfigImpl) SetNtpdIface(v InterfaceName) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.NtpdIfaceValue = &v
-	return s
-}
-
-// Port for NTP daemon.
-func (s ChassisConfigImpl) NtpdPort() *ListenSpec {
-	return s.NtpdPortValue
-}
-
-// Port for NTP daemon.
-func (s *ChassisConfigImpl) SetNtpdPort(v *ListenSpec) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.NtpdPortValue = v
-	return s
-}
-
-// Coder product name
-func (s ChassisConfigImpl) ProductName() *ChassisProduct {
-	return s.ProductNameValue
-}
-
-// Coder product name
-func (s *ChassisConfigImpl) SetProductName(v ChassisProduct) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.ProductNameValue = &v
-	return s
-}
-
-// Timeout for restarting coders.
-func (s ChassisConfigImpl) RestartCoderTimeout() *int {
-	return s.RestartCoderTimeoutValue
-}
-
-// Timeout for restarting coders.
-func (s *ChassisConfigImpl) SetRestartCoderTimeout(v int) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.RestartCoderTimeoutValue = &v
-	return s
-}
-
-// Statistics of the chassis connections.
-func (s ChassisConfigImpl) Stats() ChassisStats {
-	return s.StatsValue
-}
-
-// Statistics of the chassis connections.
-func (s *ChassisConfigImpl) SetStats(v ChassisStats) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*ChassisStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// Port for TFTP used for loading program core to the coders.
-func (s ChassisConfigImpl) TftpPort() *ListenSpec {
-	return s.TftpPortValue
-}
-
-// Port for TFTP used for loading program core to the coders.
-func (s *ChassisConfigImpl) SetTftpPort(v *ListenSpec) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.TftpPortValue = v
-	return s
-}
-
-// TFTP root directory.
-// Format: disk_path (disk_path)
-func (s ChassisConfigImpl) TftpRoot() *DiskPath {
-	return s.TftpRootValue
-}
-
-// TFTP root directory.
-// Format: disk_path (disk_path)
-func (s *ChassisConfigImpl) SetTftpRoot(v DiskPath) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.TftpRootValue = &v
-	return s
-}
-
-// Update channel specified in the config file.
-func (s ChassisConfigImpl) UpdateChannel() *string {
-	return s.UpdateChannelValue
-}
-
-// Update channel specified in the config file.
-func (s *ChassisConfigImpl) SetUpdateChannel(v string) ChassisConfig {
-	if s == nil {
-		return nil
-	}
-	s.UpdateChannelValue = &v
-	return s
-}
-
-// NewChassisStats creates a new ChassisStats instance
-func NewChassisStats() ChassisStats {
-	return &ChassisStatsImpl{}
-}
-
-// MAC address of the manage0 interface.
-func (s ChassisStatsImpl) HardwareID() *string {
-	return s.HardwareIDValue
-}
-
-// MAC address of the manage0 interface.
-func (s *ChassisStatsImpl) SetHardwareID(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.HardwareIDValue = &v
-	return s
-}
-
-// Hostname of the server.
-// Example: coder1.example.com
-func (s ChassisStatsImpl) Hostname() *string {
-	return s.HostnameValue
-}
-
-// Hostname of the server.
-// Example: coder1.example.com
-func (s *ChassisStatsImpl) SetHostname(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.HostnameValue = &v
-	return s
-}
-
-// The chassis model name.
-// Example: chassis_model
-func (s ChassisStatsImpl) Model() *string {
-	return s.ModelValue
-}
-
-// The chassis model name.
-// Example: chassis_model
-func (s *ChassisStatsImpl) SetModel(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.ModelValue = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 24.10
-// The latest available version of the firmware, if any. Deprecated. Last available version could be obtained from `chassis_firmwares_list`
-func (s ChassisStatsImpl) NextVersion() *string {
-	return s.NextVersionValue
-}
-
-// Deprecated field. Will be deleted at 24.10
-// The latest available version of the firmware, if any. Deprecated. Last available version could be obtained from `chassis_firmwares_list`
-func (s *ChassisStatsImpl) SetNextVersion(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.NextVersionValue = &v
-	return s
-}
-
-// Whether a system clock synchronized with NTP server
-func (s ChassisStatsImpl) NtpClockSynchronized() *bool {
-	return s.NtpClockSynchronizedValue
-}
-
-// Whether a system clock synchronized with NTP server
-func (s *ChassisStatsImpl) SetNtpClockSynchronized(v bool) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.NtpClockSynchronizedValue = &v
-	return s
-}
-
-// The serial number of the chassis.
-// Example: 2174220024
-func (s ChassisStatsImpl) SerialNumber() *string {
-	return s.SerialNumberValue
-}
-
-// The serial number of the chassis.
-// Example: 2174220024
-func (s *ChassisStatsImpl) SetSerialNumber(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.SerialNumberValue = &v
-	return s
-}
-
-// Chassis system time (in UTC milliseconds)
-// Format: utc_ms (Unix timestamp in milliseconds)
-func (s ChassisStatsImpl) SystemTime() *UtcMs {
-	return s.SystemTimeValue
-}
-
-// Chassis system time (in UTC milliseconds)
-// Format: utc_ms (Unix timestamp in milliseconds)
-func (s *ChassisStatsImpl) SetSystemTime(v UtcMs) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.SystemTimeValue = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 24.10
-// Full version number of the firmware. Deprecated. Version could be found at `chassis_config/firmware_version`
-// Example: 21.09.1-234
-func (s ChassisStatsImpl) Version() *string {
-	return s.VersionValue
-}
-
-// Deprecated field. Will be deleted at 24.10
-// Full version number of the firmware. Deprecated. Version could be found at `chassis_config/firmware_version`
-// Example: 21.09.1-234
-func (s *ChassisStatsImpl) SetVersion(v string) ChassisStats {
-	if s == nil {
-		return nil
-	}
-	s.VersionValue = &v
-	return s
-}
-
 // NewClosedCaptions creates a new ClosedCaptions instance
 func NewClosedCaptions() ClosedCaptions {
 	return &ClosedCaptionsImpl{}
@@ -20611,6 +20735,22 @@ func (s *ClusterHealthStreamerStatsImpl) SetConfig(v ClusterHealthStreamerStatsC
 	return s
 }
 
+// Information about current external config status
+func (s ClusterHealthStreamerStatsImpl) ConfigExternalStatus() ConfigExternalErrorStatus {
+	return s.ConfigExternalStatusValue
+}
+
+// Information about current external config status
+func (s *ClusterHealthStreamerStatsImpl) SetConfigExternalStatus(v ConfigExternalErrorStatus) ClusterHealthStreamerStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*ConfigExternalErrorStatusImpl); ok {
+		s.ConfigExternalStatusValue = impl
+	}
+	return s
+}
+
 // CPU usage info.
 func (s ClusterHealthStreamerStatsImpl) Cpu() ClusterHealthStreamerStatsCpu {
 	return s.CpuValue
@@ -20623,6 +20763,20 @@ func (s *ClusterHealthStreamerStatsImpl) SetCpu(v ClusterHealthStreamerStatsCpu)
 	}
 	if impl, ok := v.(*ClusterHealthStreamerStatsCpuImpl); ok {
 		s.CpuValue = impl
+	}
+	return s
+}
+
+func (s ClusterHealthStreamerStatsImpl) HealthcheckStatus() CentralHealthcheckStatus {
+	return s.HealthcheckStatusValue
+}
+
+func (s *ClusterHealthStreamerStatsImpl) SetHealthcheckStatus(v CentralHealthcheckStatus) ClusterHealthStreamerStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*CentralHealthcheckStatusImpl); ok {
+		s.HealthcheckStatusValue = impl
 	}
 	return s
 }
@@ -20671,6 +20825,22 @@ func (s *ClusterHealthStreamerStatsImpl) SetNetwork(v ClusterHealthStreamerStats
 	}
 	if impl, ok := v.(*ClusterHealthStreamerStatsNetworkImpl); ok {
 		s.NetworkValue = impl
+	}
+	return s
+}
+
+// Predictions of future stats based on the current state of the cluster.
+func (s ClusterHealthStreamerStatsImpl) Predictions() ClusterHealthStreamerStatsPredictions {
+	return s.PredictionsValue
+}
+
+// Predictions of future stats based on the current state of the cluster.
+func (s *ClusterHealthStreamerStatsImpl) SetPredictions(v ClusterHealthStreamerStatsPredictions) ClusterHealthStreamerStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*ClusterHealthStreamerStatsPredictionsImpl); ok {
+		s.PredictionsValue = impl
 	}
 	return s
 }
@@ -21025,6 +21195,25 @@ func (s *ClusterHealthStreamerStatsNetworkOutKbitImpl) SetUsage(v Speed) Cluster
 		return nil
 	}
 	s.UsageValue = &v
+	return s
+}
+
+// NewClusterHealthStreamerStatsPredictions creates a new ClusterHealthStreamerStatsPredictions instance
+func NewClusterHealthStreamerStatsPredictions() ClusterHealthStreamerStatsPredictions {
+	return &ClusterHealthStreamerStatsPredictionsImpl{}
+}
+
+func (s ClusterHealthStreamerStatsPredictionsImpl) Disk() CentralDiskPredictions {
+	return s.DiskValue
+}
+
+func (s *ClusterHealthStreamerStatsPredictionsImpl) SetDisk(v CentralDiskPredictions) ClusterHealthStreamerStatsPredictions {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*CentralDiskPredictionsImpl); ok {
+		s.DiskValue = impl
+	}
 	return s
 }
 
@@ -21616,6 +21805,22 @@ func NewDomainBase() DomainBase {
 	return &DomainBaseImpl{}
 }
 
+// Domain code. Auto-generated if not set.
+// Example: 54321
+func (s DomainBaseImpl) DomainCode() *string {
+	return s.DomainCodeValue
+}
+
+// Domain code. Auto-generated if not set.
+// Example: 54321
+func (s *DomainBaseImpl) SetDomainCode(v string) DomainBase {
+	if s == nil {
+		return nil
+	}
+	s.DomainCodeValue = &v
+	return s
+}
+
 // Domain ID.
 // Example: 123
 func (s DomainBaseImpl) ID() *int {
@@ -21629,6 +21834,36 @@ func (s *DomainBaseImpl) SetID(v int) DomainBase {
 		return nil
 	}
 	s.IDValue = &v
+	return s
+}
+
+// Owner user ID.
+// Example: 1
+func (s DomainBaseImpl) OwnerID() *int {
+	return s.OwnerIDValue
+}
+
+// Owner user ID.
+// Example: 1
+func (s *DomainBaseImpl) SetOwnerID(v int) DomainBase {
+	if s == nil {
+		return nil
+	}
+	s.OwnerIDValue = &v
+	return s
+}
+
+func (s DomainBaseImpl) Settings() DomainSettings {
+	return s.SettingsValue
+}
+
+func (s *DomainBaseImpl) SetSettings(v DomainSettings) DomainBase {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*DomainSettingsImpl); ok {
+		s.SettingsValue = impl
+	}
 	return s
 }
 
@@ -21680,6 +21915,99 @@ func (s *DomainConfigImpl) SetMail(v MailSpec) DomainConfig {
 	if impl, ok := v.(*MailSpecImpl); ok {
 		s.MailValue = impl
 	}
+	return s
+}
+
+// NewDomainSettings creates a new DomainSettings instance
+func NewDomainSettings() DomainSettings {
+	return &DomainSettingsImpl{}
+}
+
+// Locale id used as the default for this domain when a user has no personal locale
+// and for UI fallbacks. Should match a locale id returned by
+// `GET /domains/{id}/locales` in the Client API (for example `en` or `ru`).
+// Example: en
+func (s DomainSettingsImpl) DefaultLocale() *string {
+	return s.DefaultLocaleValue
+}
+
+// Locale id used as the default for this domain when a user has no personal locale
+// and for UI fallbacks. Should match a locale id returned by
+// `GET /domains/{id}/locales` in the Client API (for example `en` or `ru`).
+// Example: en
+func (s *DomainSettingsImpl) SetDefaultLocale(v string) DomainSettings {
+	if s == nil {
+		return nil
+	}
+	s.DefaultLocaleValue = &v
+	return s
+}
+
+// Default organization ID.
+// Example: 1
+func (s DomainSettingsImpl) DefaultOrganizationID() *int {
+	return s.DefaultOrganizationIDValue
+}
+
+// Default organization ID.
+// Example: 1
+func (s *DomainSettingsImpl) SetDefaultOrganizationID(v int) DomainSettings {
+	if s == nil {
+		return nil
+	}
+	s.DefaultOrganizationIDValue = &v
+	return s
+}
+
+// When enabled, the domain is provisioned with a demo user that uses the default
+// credentials `demo` / `demo`. That account can access demo cameras so you can let
+// visitors explore the interface and see representative footage without handing
+// out production logins.
+func (s DomainSettingsImpl) DemoAccessEnabled() *bool {
+	return s.DemoAccessEnabledValue
+}
+
+// When enabled, the domain is provisioned with a demo user that uses the default
+// credentials `demo` / `demo`. That account can access demo cameras so you can let
+// visitors explore the interface and see representative footage without handing
+// out production logins.
+func (s *DomainSettingsImpl) SetDemoAccessEnabled(v bool) DomainSettings {
+	if s == nil {
+		return nil
+	}
+	s.DemoAccessEnabledValue = &v
+	return s
+}
+
+// DNS names for domain. First should start with license_id.
+// Example: [12345.example.com]
+func (s DomainSettingsImpl) DNSNames() []string {
+	return s.DNSNamesValue
+}
+
+// DNS names for domain. First should start with license_id.
+// Example: [12345.example.com]
+func (s *DomainSettingsImpl) SetDNSNames(v []string) DomainSettings {
+	if s == nil {
+		return nil
+	}
+	s.DNSNamesValue = v
+	return s
+}
+
+// Peeklio license ID.
+// Example: 12345
+func (s DomainSettingsImpl) LicenseID() *int {
+	return s.LicenseIDValue
+}
+
+// Peeklio license ID.
+// Example: 12345
+func (s *DomainSettingsImpl) SetLicenseID(v int) DomainSettings {
+	if s == nil {
+		return nil
+	}
+	s.LicenseIDValue = &v
 	return s
 }
 
@@ -26363,16 +26691,16 @@ func (s *DvrConfigImpl) SetRoot(v DvrURL) DvrConfig {
 }
 
 // The runtime statistics about DVR.
-func (s DvrConfigImpl) Stats() DvrStorageConfigStats {
+func (s DvrConfigImpl) Stats() DvrConfigStats {
 	return s.StatsValue
 }
 
 // The runtime statistics about DVR.
-func (s *DvrConfigImpl) SetStats(v DvrStorageConfigStats) DvrConfig {
+func (s *DvrConfigImpl) SetStats(v DvrConfigStats) DvrConfig {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*DvrStorageConfigStatsImpl); ok {
+	if impl, ok := v.(*DvrConfigStatsImpl); ok {
 		s.StatsValue = impl
 	}
 	return s
@@ -26401,6 +26729,131 @@ func (s *DvrConfigImpl) SetStorageLimit(v Bytes) DvrConfig {
 		return nil
 	}
 	s.StorageLimitValue = &v
+	return s
+}
+
+// NewDvrConfigStats creates a new DvrConfigStats instance
+func NewDvrConfigStats() DvrConfigStats {
+	return &DvrConfigStatsImpl{}
+}
+
+// The number of blobs on the disk that are enlisted in individual stream indexes.
+// It must be equal to blobs_count_db and can be different in case of software
+// or hardware errors.
+func (s DvrConfigStatsImpl) BlobsCount() *int {
+	return s.BlobsCountValue
+}
+
+// The number of blobs on the disk that are enlisted in individual stream indexes.
+// It must be equal to blobs_count_db and can be different in case of software
+// or hardware errors.
+func (s *DvrConfigStatsImpl) SetBlobsCount(v int) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.BlobsCountValue = &v
+	return s
+}
+
+// The number of blobs on the disk according to centralized Raid DB that is
+// used to allocate blobs across whole storage.
+func (s DvrConfigStatsImpl) BlobsCountDb() *int {
+	return s.BlobsCountDbValue
+}
+
+// The number of blobs on the disk according to centralized Raid DB that is
+// used to allocate blobs across whole storage.
+func (s *DvrConfigStatsImpl) SetBlobsCountDb(v int) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.BlobsCountDbValue = &v
+	return s
+}
+
+// The runtime DVR errors.
+func (s DvrConfigStatsImpl) Errors() DvrStorageErrors {
+	return s.ErrorsValue
+}
+
+// The runtime DVR errors.
+func (s *DvrConfigStatsImpl) SetErrors(v DvrStorageErrors) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*DvrStorageErrorsImpl); ok {
+		s.ErrorsValue = impl
+	}
+	return s
+}
+
+// Disk capacity in bytes.
+// Format: bytes (bytes)
+func (s DvrConfigStatsImpl) Size() *Bytes {
+	return s.SizeValue
+}
+
+// Disk capacity in bytes.
+// Format: bytes (bytes)
+func (s *DvrConfigStatsImpl) SetSize(v Bytes) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.SizeValue = &v
+	return s
+}
+
+// Disk utilization percentage.
+// Format: percent (percent)
+func (s DvrConfigStatsImpl) Usage() *Percent {
+	return s.UsageValue
+}
+
+// Disk utilization percentage.
+// Format: percent (percent)
+func (s *DvrConfigStatsImpl) SetUsage(v Percent) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.UsageValue = &v
+	return s
+}
+
+// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
+// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
+// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
+// database and repairing is required.
+// Format: bytes (bytes)
+func (s DvrConfigStatsImpl) Used() *Bytes {
+	return s.UsedValue
+}
+
+// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
+// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
+// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
+// database and repairing is required.
+// Format: bytes (bytes)
+func (s *DvrConfigStatsImpl) SetUsed(v Bytes) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.UsedValue = &v
+	return s
+}
+
+// Used disk space in bytes according to internal database index.
+// Format: bytes (bytes)
+func (s DvrConfigStatsImpl) UsedIndex() *Bytes {
+	return s.UsedIndexValue
+}
+
+// Used disk space in bytes according to internal database index.
+// Format: bytes (bytes)
+func (s *DvrConfigStatsImpl) SetUsedIndex(v Bytes) DvrConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.UsedIndexValue = &v
 	return s
 }
 
@@ -26629,257 +27082,6 @@ func (s *DvrRangeImpl) SetOpenedAt(v UtcMs) DvrRange {
 	return s
 }
 
-// NewDvrStorageConfig creates a new DvrStorageConfig instance
-func NewDvrStorageConfig() DvrStorageConfig {
-	return &DvrStorageConfigImpl{}
-}
-
-// The number of disks to write the archive.
-func (s DvrStorageConfigImpl) Active() *int {
-	return s.ActiveValue
-}
-
-// The number of disks to write the archive.
-func (s *DvrStorageConfigImpl) SetActive(v int) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	s.ActiveValue = &v
-	return s
-}
-
-// RAID disks mounted on the server.
-func (s DvrStorageConfigImpl) Disks() []RaidDiskConfig {
-	if s.DisksValue == nil {
-		return nil
-	}
-	result := make([]RaidDiskConfig, len(s.DisksValue))
-	for i, item := range s.DisksValue {
-		result[i] = item
-	}
-	return result
-}
-
-// RAID disks mounted on the server.
-func (s *DvrStorageConfigImpl) SetDisks(v []RaidDiskConfig) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*RaidDiskConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*RaidDiskConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.DisksValue = impl
-	}
-	return s
-}
-
-// A directory on an SSD disk where the data will be cached.
-// Format: disk_path (disk_path)
-func (s DvrStorageConfigImpl) Index() *DiskPath {
-	return s.IndexValue
-}
-
-// A directory on an SSD disk where the data will be cached.
-// Format: disk_path (disk_path)
-func (s *DvrStorageConfigImpl) SetIndex(v DiskPath) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	s.IndexValue = &v
-	return s
-}
-
-// DVR configuration name.
-// Format: dvr_name (dvr_name)
-func (s DvrStorageConfigImpl) Name() DvrName {
-	return s.NameValue
-}
-
-// DVR configuration name.
-// Format: dvr_name (dvr_name)
-func (s *DvrStorageConfigImpl) SetName(v DvrName) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	s.NameValue = v
-	return s
-}
-
-// This value is present if RAID (redundant array of independent disks) is enabled. Learn more in [Flussonic RAID for DVR](https://flussonic.com/doc/extend-video-storage-on-fly/).
-func (s DvrStorageConfigImpl) Raid() *DvrRaidLevel {
-	return s.RaidValue
-}
-
-// This value is present if RAID (redundant array of independent disks) is enabled. Learn more in [Flussonic RAID for DVR](https://flussonic.com/doc/extend-video-storage-on-fly/).
-func (s *DvrStorageConfigImpl) SetRaid(v DvrRaidLevel) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	s.RaidValue = &v
-	return s
-}
-
-// A path where the DVR archive is stored.
-// Format: dvr_url (dvr_url)
-func (s DvrStorageConfigImpl) Root() DvrURL {
-	return s.RootValue
-}
-
-// A path where the DVR archive is stored.
-// Format: dvr_url (dvr_url)
-func (s *DvrStorageConfigImpl) SetRoot(v DvrURL) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	s.RootValue = v
-	return s
-}
-
-// The runtime statistics about DVR.
-func (s DvrStorageConfigImpl) Stats() DvrStorageConfigStats {
-	return s.StatsValue
-}
-
-// The runtime statistics about DVR.
-func (s *DvrStorageConfigImpl) SetStats(v DvrStorageConfigStats) DvrStorageConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*DvrStorageConfigStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// NewDvrStorageConfigStats creates a new DvrStorageConfigStats instance
-func NewDvrStorageConfigStats() DvrStorageConfigStats {
-	return &DvrStorageConfigStatsImpl{}
-}
-
-// The number of blobs on the disk that are enlisted in individual stream indexes.
-// It must be equal to blobs_count_db and can be different in case of software
-// or hardware errors.
-func (s DvrStorageConfigStatsImpl) BlobsCount() *int {
-	return s.BlobsCountValue
-}
-
-// The number of blobs on the disk that are enlisted in individual stream indexes.
-// It must be equal to blobs_count_db and can be different in case of software
-// or hardware errors.
-func (s *DvrStorageConfigStatsImpl) SetBlobsCount(v int) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.BlobsCountValue = &v
-	return s
-}
-
-// The number of blobs on the disk according to centralized Raid DB that is
-// used to allocate blobs across whole storage.
-func (s DvrStorageConfigStatsImpl) BlobsCountDb() *int {
-	return s.BlobsCountDbValue
-}
-
-// The number of blobs on the disk according to centralized Raid DB that is
-// used to allocate blobs across whole storage.
-func (s *DvrStorageConfigStatsImpl) SetBlobsCountDb(v int) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.BlobsCountDbValue = &v
-	return s
-}
-
-// The runtime DVR errors.
-func (s DvrStorageConfigStatsImpl) Errors() DvrStorageErrors {
-	return s.ErrorsValue
-}
-
-// The runtime DVR errors.
-func (s *DvrStorageConfigStatsImpl) SetErrors(v DvrStorageErrors) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*DvrStorageErrorsImpl); ok {
-		s.ErrorsValue = impl
-	}
-	return s
-}
-
-// Disk capacity in bytes.
-// Format: bytes (bytes)
-func (s DvrStorageConfigStatsImpl) Size() *Bytes {
-	return s.SizeValue
-}
-
-// Disk capacity in bytes.
-// Format: bytes (bytes)
-func (s *DvrStorageConfigStatsImpl) SetSize(v Bytes) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.SizeValue = &v
-	return s
-}
-
-// Disk utilization percentage.
-// Format: percent (percent)
-func (s DvrStorageConfigStatsImpl) Usage() *Percent {
-	return s.UsageValue
-}
-
-// Disk utilization percentage.
-// Format: percent (percent)
-func (s *DvrStorageConfigStatsImpl) SetUsage(v Percent) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.UsageValue = &v
-	return s
-}
-
-// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
-// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
-// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
-// database and repairing is required.
-// Format: bytes (bytes)
-func (s DvrStorageConfigStatsImpl) Used() *Bytes {
-	return s.UsedValue
-}
-
-// Used disk space in bytes according to linux metrics. It must be equal (almost equal) to
-// `used_index`. If it differs more than in 1%, then it means that there are lot of unknown files.
-// If this disk is used exclusively for Raid, then it may mean that some blobs are lost from
-// database and repairing is required.
-// Format: bytes (bytes)
-func (s *DvrStorageConfigStatsImpl) SetUsed(v Bytes) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.UsedValue = &v
-	return s
-}
-
-// Used disk space in bytes according to internal database index.
-// Format: bytes (bytes)
-func (s DvrStorageConfigStatsImpl) UsedIndex() *Bytes {
-	return s.UsedIndexValue
-}
-
-// Used disk space in bytes according to internal database index.
-// Format: bytes (bytes)
-func (s *DvrStorageConfigStatsImpl) SetUsedIndex(v Bytes) DvrStorageConfigStats {
-	if s == nil {
-		return nil
-	}
-	s.UsedIndexValue = &v
-	return s
-}
-
 // NewDvrStorageErrors creates a new DvrStorageErrors instance
 func NewDvrStorageErrors() DvrStorageErrors {
 	return &DvrStorageErrorsImpl{}
@@ -27010,12 +27212,12 @@ func (s *ErrorImpl) SetID(v string) Error {
 }
 
 // a meta object containing non-standard meta-information about the error.
-func (s ErrorImpl) Meta() map[string]string {
+func (s ErrorImpl) Meta() map[string]any {
 	return s.MetaValue
 }
 
 // a meta object containing non-standard meta-information about the error.
-func (s *ErrorImpl) SetMeta(v map[string]string) Error {
+func (s *ErrorImpl) SetMeta(v map[string]any) Error {
 	if s == nil {
 		return nil
 	}
@@ -27869,27 +28071,6 @@ func (s *EventsListImpl) SetTiming(v any) EventsList {
 // Collection returns the collection items from EventsList
 func (s EventsListImpl) Collection() []Event {
 	return s.Events()
-}
-
-// NewFileProcessorConfig creates a new FileProcessorConfig instance
-func NewFileProcessorConfig() FileProcessorConfig {
-	return &FileProcessorConfigImpl{}
-}
-
-// The directory where Flussonic puts output files.
-// Format: disk_path (disk_path)
-func (s FileProcessorConfigImpl) Path() *DiskPath {
-	return s.PathValue
-}
-
-// The directory where Flussonic puts output files.
-// Format: disk_path (disk_path)
-func (s *FileProcessorConfigImpl) SetPath(v DiskPath) FileProcessorConfig {
-	if s == nil {
-		return nil
-	}
-	s.PathValue = &v
-	return s
 }
 
 // NewFirmwareUpdate creates a new FirmwareUpdate instance
@@ -29036,6 +29217,20 @@ func (s *InputCountersImpl) SetErrorsLostPackets(v int) InputCounters {
 	return s
 }
 
+// Number of connection restarts when very long jump of stream timestamp detected.
+func (s InputCountersImpl) ErrorsTSJumpRestarts() *int {
+	return s.ErrorsTSJumpRestartsValue
+}
+
+// Number of connection restarts when very long jump of stream timestamp detected.
+func (s *InputCountersImpl) SetErrorsTSJumpRestarts(v int) InputCounters {
+	if s == nil {
+		return nil
+	}
+	s.ErrorsTSJumpRestartsValue = &v
+	return s
+}
+
 // how many times PAT was missing during 0,5 seconds or pid 0 misses PAT
 // `PAT_error`
 func (s InputCountersImpl) ErrorsTSPat() *int {
@@ -29360,6 +29555,20 @@ func (s *InputCountersImpl) SetSrt(v InputSrtCounters) InputCounters {
 	}
 	if impl, ok := v.(*InputSrtCountersImpl); ok {
 		s.SrtValue = impl
+	}
+	return s
+}
+
+func (s InputCountersImpl) UDPMpegts() InputUDPMpegtsCounters {
+	return s.UDPMpegtsValue
+}
+
+func (s *InputCountersImpl) SetUDPMpegts(v InputUDPMpegtsCounters) InputCounters {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*InputUDPMpegtsCountersImpl); ok {
+		s.UDPMpegtsValue = impl
 	}
 	return s
 }
@@ -30072,6 +30281,24 @@ func (s *InputRTPCountersImpl) SetErrorsLostPackets(v int) InputRTPCounters {
 		return nil
 	}
 	s.ErrorsLostPacketsValue = &v
+	return s
+}
+
+// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+// Each increment represents a synchronization with potentially incorrect camera time.
+// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+func (s InputRTPCountersImpl) ErrorsSrClockDeviation() *int {
+	return s.ErrorsSrClockDeviationValue
+}
+
+// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+// Each increment represents a synchronization with potentially incorrect camera time.
+// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+func (s *InputRTPCountersImpl) SetErrorsSrClockDeviation(v int) InputRTPCounters {
+	if s == nil {
+		return nil
+	}
+	s.ErrorsSrClockDeviationValue = &v
 	return s
 }
 
@@ -31088,6 +31315,20 @@ func (s *InputStatsImpl) SetErrorsLostPackets(v int) InputStats {
 	return s
 }
 
+// Number of connection restarts when very long jump of stream timestamp detected.
+func (s InputStatsImpl) ErrorsTSJumpRestarts() *int {
+	return s.ErrorsTSJumpRestartsValue
+}
+
+// Number of connection restarts when very long jump of stream timestamp detected.
+func (s *InputStatsImpl) SetErrorsTSJumpRestarts(v int) InputStats {
+	if s == nil {
+		return nil
+	}
+	s.ErrorsTSJumpRestartsValue = &v
+	return s
+}
+
 // how many times PAT was missing during 0,5 seconds or pid 0 misses PAT
 // `PAT_error`
 func (s InputStatsImpl) ErrorsTSPat() *int {
@@ -31545,6 +31786,20 @@ func (s *InputStatsImpl) SetTSDelayPerTracks(v []Ticks) InputStats {
 	return s
 }
 
+func (s InputStatsImpl) UDPMpegts() InputUDPMpegtsCounters {
+	return s.UDPMpegtsValue
+}
+
+func (s *InputStatsImpl) SetUDPMpegts(v InputUDPMpegtsCounters) InputStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*InputUDPMpegtsCountersImpl); ok {
+		s.UDPMpegtsValue = impl
+	}
+	return s
+}
+
 // Deprecated field. Will be deleted at 25.03
 // Final URL after redirects.
 // Deprecated because was never actually used.
@@ -31634,22 +31889,66 @@ func (s *InputStatsStopEventsItemImpl) SetTimestamp(v UtcMs) InputStatsStopEvent
 	return s
 }
 
-// NewIptvConfig creates a new IptvConfig instance
-func NewIptvConfig() IptvConfig {
-	return &IptvConfigImpl{}
+// NewInputUDPMpegtsCounters creates a new InputUDPMpegtsCounters instance
+func NewInputUDPMpegtsCounters() InputUDPMpegtsCounters {
+	return &InputUDPMpegtsCountersImpl{}
 }
 
-// DB connection string.
-func (s IptvConfigImpl) Database() *string {
-	return s.DatabaseValue
+// Total number of payload bytes read from the UDP socket for this input.
+// Format: bytes (bytes)
+func (s InputUDPMpegtsCountersImpl) Bytes() *Bytes {
+	return s.BytesValue
 }
 
-// DB connection string.
-func (s *IptvConfigImpl) SetDatabase(v string) IptvConfig {
+// Total number of payload bytes read from the UDP socket for this input.
+// Format: bytes (bytes)
+func (s *InputUDPMpegtsCountersImpl) SetBytes(v Bytes) InputUDPMpegtsCounters {
 	if s == nil {
 		return nil
 	}
-	s.DatabaseValue = &v
+	s.BytesValue = &v
+	return s
+}
+
+// Number of UDP packets whose MPEG-TS payload length is **not** a multiple of 188 bytes.
+func (s InputUDPMpegtsCountersImpl) NotAlignedPackets() *int {
+	return s.NotAlignedPacketsValue
+}
+
+// Number of UDP packets whose MPEG-TS payload length is **not** a multiple of 188 bytes.
+func (s *InputUDPMpegtsCountersImpl) SetNotAlignedPackets(v int) InputUDPMpegtsCounters {
+	if s == nil {
+		return nil
+	}
+	s.NotAlignedPacketsValue = &v
+	return s
+}
+
+// Total number of UDP packets successfully received for this input.
+func (s InputUDPMpegtsCountersImpl) Packets() *int {
+	return s.PacketsValue
+}
+
+// Total number of UDP packets successfully received for this input.
+func (s *InputUDPMpegtsCountersImpl) SetPackets(v int) InputUDPMpegtsCounters {
+	if s == nil {
+		return nil
+	}
+	s.PacketsValue = &v
+	return s
+}
+
+// Number of UDP packets which are MPEG-TS over RTP (i.e. has 12-byte RTP header).
+func (s InputUDPMpegtsCountersImpl) RTPPackets() *int {
+	return s.RTPPacketsValue
+}
+
+// Number of UDP packets which are MPEG-TS over RTP (i.e. has 12-byte RTP header).
+func (s *InputUDPMpegtsCountersImpl) SetRTPPackets(v int) InputUDPMpegtsCounters {
+	if s == nil {
+		return nil
+	}
+	s.RTPPacketsValue = &v
 	return s
 }
 
@@ -32545,6 +32844,48 @@ func (s *MultiplexerStatsImpl) SetBitrate(v Speed) MultiplexerStats {
 	return s
 }
 
+// Number of network errors between transponder and ECMG.
+func (s MultiplexerStatsImpl) EcmgNetworkErrors() *int {
+	return s.EcmgNetworkErrorsValue
+}
+
+// Number of network errors between transponder and ECMG.
+func (s *MultiplexerStatsImpl) SetEcmgNetworkErrors(v int) MultiplexerStats {
+	if s == nil {
+		return nil
+	}
+	s.EcmgNetworkErrorsValue = &v
+	return s
+}
+
+// Number of EMM received from EMMG.
+func (s MultiplexerStatsImpl) EmmCount() *int {
+	return s.EmmCountValue
+}
+
+// Number of EMM received from EMMG.
+func (s *MultiplexerStatsImpl) SetEmmCount(v int) MultiplexerStats {
+	if s == nil {
+		return nil
+	}
+	s.EmmCountValue = &v
+	return s
+}
+
+// Number of network errors between transponder and EMMG.
+func (s MultiplexerStatsImpl) EmmgNetworkErrors() *int {
+	return s.EmmgNetworkErrorsValue
+}
+
+// Number of network errors between transponder and EMMG.
+func (s *MultiplexerStatsImpl) SetEmmgNetworkErrors(v int) MultiplexerStats {
+	if s == nil {
+		return nil
+	}
+	s.EmmgNetworkErrorsValue = &v
+	return s
+}
+
 // The encoded bytes count.
 // Format: bytes (bytes)
 func (s MultiplexerStatsImpl) Encoded() *Bytes {
@@ -32735,6 +33076,36 @@ func (s *MultiplexerStatsImpl) SetPrograms(v []TransponderProgramStats) Multiple
 	return s
 }
 
+// Number of successfully completed key rotations.
+func (s MultiplexerStatsImpl) RotatedKeysCount() *int {
+	return s.RotatedKeysCountValue
+}
+
+// Number of successfully completed key rotations.
+func (s *MultiplexerStatsImpl) SetRotatedKeysCount(v int) MultiplexerStats {
+	if s == nil {
+		return nil
+	}
+	s.RotatedKeysCountValue = &v
+	return s
+}
+
+// Number of scrambled bytes.
+// Format: bytes (bytes)
+func (s MultiplexerStatsImpl) ScrambledBytes() *Bytes {
+	return s.ScrambledBytesValue
+}
+
+// Number of scrambled bytes.
+// Format: bytes (bytes)
+func (s *MultiplexerStatsImpl) SetScrambledBytes(v Bytes) MultiplexerStats {
+	if s == nil {
+		return nil
+	}
+	s.ScrambledBytesValue = &v
+	return s
+}
+
 // The stuff packets count.
 func (s MultiplexerStatsImpl) Stuffing() *int {
 	return s.StuffingValue
@@ -32837,6 +33208,718 @@ func (s *MultiplexerStatsImpl) SetTSOverflow(v bool) MultiplexerStats {
 	return s
 }
 
+// NewNmosConfig creates a new NmosConfig instance
+func NewNmosConfig() NmosConfig {
+	return &NmosConfigImpl{}
+}
+
+// interface to which all receivers and senders will be bound
+func (s NmosConfigImpl) BindToDevice() *string {
+	return s.BindToDeviceValue
+}
+
+// interface to which all receivers and senders will be bound
+func (s *NmosConfigImpl) SetBindToDevice(v string) NmosConfig {
+	if s == nil {
+		return nil
+	}
+	s.BindToDeviceValue = &v
+	return s
+}
+
+// Whether NMOS is enabled for stream or not.
+func (s NmosConfigImpl) Enabled() *bool {
+	return s.EnabledValue
+}
+
+// Whether NMOS is enabled for stream or not.
+func (s *NmosConfigImpl) SetEnabled(v bool) NmosConfig {
+	if s == nil {
+		return nil
+	}
+	s.EnabledValue = &v
+	return s
+}
+
+// NewNvr creates a new Nvr instance
+func NewNvr() Nvr {
+	return &NvrImpl{}
+}
+
+// NVR identifier
+// Example: 1
+func (s NvrImpl) ID() *int {
+	return s.IDValue
+}
+
+// NVR identifier
+// Example: 1
+func (s *NvrImpl) SetID(v int) Nvr {
+	if s == nil {
+		return nil
+	}
+	s.IDValue = &v
+	return s
+}
+
+// Additional note for the NVR
+// Example: Note
+func (s NvrImpl) Note() *string {
+	return s.NoteValue
+}
+
+// Additional note for the NVR
+// Example: Note
+func (s *NvrImpl) SetNote(v string) Nvr {
+	if s == nil {
+		return nil
+	}
+	s.NoteValue = &v
+	return s
+}
+
+// Organization information
+func (s NvrImpl) Organization() OrganizationBase {
+	return s.OrganizationValue
+}
+
+// Organization information
+func (s *NvrImpl) SetOrganization(v OrganizationBase) Nvr {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*OrganizationBaseImpl); ok {
+		s.OrganizationValue = impl
+	}
+	return s
+}
+
+func (s NvrImpl) Stats() NvrStats {
+	return s.StatsValue
+}
+
+func (s *NvrImpl) SetStats(v NvrStats) Nvr {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrStatsImpl); ok {
+		s.StatsValue = impl
+	}
+	return s
+}
+
+func (s NvrImpl) Sync() NvrSyncSettings {
+	return s.SyncValue
+}
+
+func (s *NvrImpl) SetSync(v NvrSyncSettings) Nvr {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrSyncSettingsImpl); ok {
+		s.SyncValue = impl
+	}
+	return s
+}
+
+// NVR title
+// Example: NVR Title
+func (s NvrImpl) Title() *string {
+	return s.TitleValue
+}
+
+// NVR title
+// Example: NVR Title
+func (s *NvrImpl) SetTitle(v string) Nvr {
+	if s == nil {
+		return nil
+	}
+	s.TitleValue = &v
+	return s
+}
+
+// User permissions for this NVR
+func (s NvrImpl) UserPermissions() NvrPermissions {
+	return s.UserPermissionsValue
+}
+
+// User permissions for this NVR
+func (s *NvrImpl) SetUserPermissions(v NvrPermissions) Nvr {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrPermissionsImpl); ok {
+		s.UserPermissionsValue = impl
+	}
+	return s
+}
+
+// NewNvrBase creates a new NvrBase instance
+func NewNvrBase() NvrBase {
+	return &NvrBaseImpl{}
+}
+
+// Additional note for the NVR
+// Example: Note
+func (s NvrBaseImpl) Note() *string {
+	return s.NoteValue
+}
+
+// Additional note for the NVR
+// Example: Note
+func (s *NvrBaseImpl) SetNote(v string) NvrBase {
+	if s == nil {
+		return nil
+	}
+	s.NoteValue = &v
+	return s
+}
+
+func (s NvrBaseImpl) Stats() NvrStats {
+	return s.StatsValue
+}
+
+func (s *NvrBaseImpl) SetStats(v NvrStats) NvrBase {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrStatsImpl); ok {
+		s.StatsValue = impl
+	}
+	return s
+}
+
+// NVR title
+// Example: NVR Title
+func (s NvrBaseImpl) Title() *string {
+	return s.TitleValue
+}
+
+// NVR title
+// Example: NVR Title
+func (s *NvrBaseImpl) SetTitle(v string) NvrBase {
+	if s == nil {
+		return nil
+	}
+	s.TitleValue = &v
+	return s
+}
+
+// NewNvrHealthcheckStatus creates a new NvrHealthcheckStatus instance
+func NewNvrHealthcheckStatus() NvrHealthcheckStatus {
+	return &NvrHealthcheckStatusImpl{}
+}
+
+// List of healthcheck checks with their results.
+func (s NvrHealthcheckStatusImpl) Checks() NvrHealthcheckStatusChecks {
+	return s.ChecksValue
+}
+
+// List of healthcheck checks with their results.
+func (s *NvrHealthcheckStatusImpl) SetChecks(v NvrHealthcheckStatusChecks) NvrHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrHealthcheckStatusChecksImpl); ok {
+		s.ChecksValue = impl
+	}
+	return s
+}
+
+// Status of the healthcheck.
+func (s NvrHealthcheckStatusImpl) Status() *NvrHealthcheckStatusStatus {
+	return s.StatusValue
+}
+
+// Status of the healthcheck.
+func (s *NvrHealthcheckStatusImpl) SetStatus(v NvrHealthcheckStatusStatus) NvrHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	s.StatusValue = &v
+	return s
+}
+
+// Unix timestamp of the last status change.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s NvrHealthcheckStatusImpl) StatusChangedAt() *UtcMs {
+	return s.StatusChangedAtValue
+}
+
+// Unix timestamp of the last status change.
+// Format: utc_ms (Unix timestamp in milliseconds)
+func (s *NvrHealthcheckStatusImpl) SetStatusChangedAt(v UtcMs) NvrHealthcheckStatus {
+	if s == nil {
+		return nil
+	}
+	s.StatusChangedAtValue = &v
+	return s
+}
+
+// NewNvrHealthcheckStatusChecks creates a new NvrHealthcheckStatusChecks instance
+func NewNvrHealthcheckStatusChecks() NvrHealthcheckStatusChecks {
+	return &NvrHealthcheckStatusChecksImpl{}
+}
+
+// `true` if NVR is reachable from cloud
+func (s NvrHealthcheckStatusChecksImpl) Reachable() *bool {
+	return s.ReachableValue
+}
+
+// `true` if NVR is reachable from cloud
+func (s *NvrHealthcheckStatusChecksImpl) SetReachable(v bool) NvrHealthcheckStatusChecks {
+	if s == nil {
+		return nil
+	}
+	s.ReachableValue = &v
+	return s
+}
+
+// NewNvrList creates a new NvrList instance
+func NewNvrList() NvrList {
+	return &NvrListImpl{}
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s NvrListImpl) EstimatedCount() *int {
+	return s.EstimatedCountValue
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s *NvrListImpl) SetEstimatedCount(v int) NvrList {
+	if s == nil {
+		return nil
+	}
+	s.EstimatedCountValue = &v
+	return s
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s NvrListImpl) Next() *string {
+	return s.NextValue
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s *NvrListImpl) SetNext(v string) NvrList {
+	if s == nil {
+		return nil
+	}
+	s.NextValue = &v
+	return s
+}
+
+// List of NVR.
+func (s NvrListImpl) Nvrs() []Nvr {
+	if s.NvrsValue == nil {
+		return nil
+	}
+	result := make([]Nvr, len(s.NvrsValue))
+	for i, item := range s.NvrsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of NVR.
+func (s *NvrListImpl) SetNvrs(v []Nvr) NvrList {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*NvrImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*NvrImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.NvrsValue = impl
+	}
+	return s
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s NvrListImpl) Prev() *string {
+	return s.PrevValue
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s *NvrListImpl) SetPrev(v string) NvrList {
+	if s == nil {
+		return nil
+	}
+	s.PrevValue = &v
+	return s
+}
+
+// An object with a list of different timings measured during this API call.
+func (s NvrListImpl) Timing() any {
+	return s.TimingValue
+}
+
+// An object with a list of different timings measured during this API call.
+func (s *NvrListImpl) SetTiming(v any) NvrList {
+	if s == nil {
+		return nil
+	}
+	s.TimingValue = v
+	return s
+}
+
+// Collection returns the collection items from NvrList
+func (s NvrListImpl) Collection() []Nvr {
+	return s.Nvrs()
+}
+
+// NewNvrPermissions creates a new NvrPermissions instance
+func NewNvrPermissions() NvrPermissions {
+	return &NvrPermissionsImpl{}
+}
+
+// Whether the user can edit NVR settings. Such as title, note, api key, etc.
+func (s NvrPermissionsImpl) CanEditSettings() *bool {
+	return s.CanEditSettingsValue
+}
+
+// Whether the user can edit NVR settings. Such as title, note, api key, etc.
+func (s *NvrPermissionsImpl) SetCanEditSettings(v bool) NvrPermissions {
+	if s == nil {
+		return nil
+	}
+	s.CanEditSettingsValue = &v
+	return s
+}
+
+// Whether the user can sync NVR with the Cloud
+func (s NvrPermissionsImpl) CanSync() *bool {
+	return s.CanSyncValue
+}
+
+// Whether the user can sync NVR with the Cloud
+func (s *NvrPermissionsImpl) SetCanSync(v bool) NvrPermissions {
+	if s == nil {
+		return nil
+	}
+	s.CanSyncValue = &v
+	return s
+}
+
+// NewNvrStats creates a new NvrStats instance
+func NewNvrStats() NvrStats {
+	return &NvrStatsImpl{}
+}
+
+func (s NvrStatsImpl) HealthcheckStatus() NvrHealthcheckStatus {
+	return s.HealthcheckStatusValue
+}
+
+func (s *NvrStatsImpl) SetHealthcheckStatus(v NvrHealthcheckStatus) NvrStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrHealthcheckStatusImpl); ok {
+		s.HealthcheckStatusValue = impl
+	}
+	return s
+}
+
+func (s NvrStatsImpl) Streams() NvrStreamsStats {
+	return s.StreamsValue
+}
+
+func (s *NvrStatsImpl) SetStreams(v NvrStreamsStats) NvrStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrStreamsStatsImpl); ok {
+		s.StreamsValue = impl
+	}
+	return s
+}
+
+// NewNvrStreamSettings creates a new NvrStreamSettings instance
+func NewNvrStreamSettings() NvrStreamSettings {
+	return &NvrStreamSettingsImpl{}
+}
+
+// Audio settings for the stream.
+func (s NvrStreamSettingsImpl) Audio() NvrStreamSettingsAudio {
+	return s.AudioValue
+}
+
+// Audio settings for the stream.
+func (s *NvrStreamSettingsImpl) SetAudio(v NvrStreamSettingsAudio) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrStreamSettingsAudioImpl); ok {
+		s.AudioValue = impl
+	}
+	return s
+}
+
+// A publishable stream.
+// Example: false
+func (s NvrStreamSettingsImpl) CanPublish() *bool {
+	return s.CanPublishValue
+}
+
+// A publishable stream.
+// Example: false
+func (s *NvrStreamSettingsImpl) SetCanPublish(v bool) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	s.CanPublishValue = &v
+	return s
+}
+
+// Whether a stream is disabled. Disabled streams are inactive and do not run.
+// Displayed only with the API calls.
+// Example: false
+func (s NvrStreamSettingsImpl) Disabled() *bool {
+	return s.DisabledValue
+}
+
+// Whether a stream is disabled. Disabled streams are inactive and do not run.
+// Displayed only with the API calls.
+// Example: false
+func (s *NvrStreamSettingsImpl) SetDisabled(v bool) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	s.DisabledValue = &v
+	return s
+}
+
+// DVR configuraton.
+func (s NvrStreamSettingsImpl) Dvr() StreamDvrSpec {
+	return s.DvrValue
+}
+
+// DVR configuraton.
+func (s *NvrStreamSettingsImpl) SetDvr(v StreamDvrSpec) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*StreamDvrSpecImpl); ok {
+		s.DvrValue = impl
+	}
+	return s
+}
+
+// List of stream inputs.
+// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
+func (s NvrStreamSettingsImpl) Inputs() []StreamInput {
+	return s.InputsValue
+}
+
+// List of stream inputs.
+// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
+func (s *NvrStreamSettingsImpl) SetInputs(v []StreamInput) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	s.InputsValue = v
+	return s
+}
+
+// Onvif configuration
+func (s NvrStreamSettingsImpl) Onvif() StreamOnvifConfig {
+	return s.OnvifValue
+}
+
+// Onvif configuration
+func (s *NvrStreamSettingsImpl) SetOnvif(v StreamOnvifConfig) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*StreamOnvifConfigImpl); ok {
+		s.OnvifValue = impl
+	}
+	return s
+}
+
+// Whether a stream is `static` or not.
+// If set to `True` the server will try to keep this stream running even if
+// there are no viewers or errors encountered.
+// Streamer restarts *all* `static` streams even if any internal errors occur
+// and the `static` streams crash.
+// Example: true
+func (s NvrStreamSettingsImpl) Static() *bool {
+	return s.StaticValue
+}
+
+// Whether a stream is `static` or not.
+// If set to `True` the server will try to keep this stream running even if
+// there are no viewers or errors encountered.
+// Streamer restarts *all* `static` streams even if any internal errors occur
+// and the `static` streams crash.
+// Example: true
+func (s *NvrStreamSettingsImpl) SetStatic(v bool) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	s.StaticValue = &v
+	return s
+}
+
+// Video analytics parameters.
+func (s NvrStreamSettingsImpl) Vision() VisionSpec {
+	return s.VisionValue
+}
+
+// Video analytics parameters.
+func (s *NvrStreamSettingsImpl) SetVision(v VisionSpec) NvrStreamSettings {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*VisionSpecImpl); ok {
+		s.VisionValue = impl
+	}
+	return s
+}
+
+// NewNvrStreamSettingsAudio creates a new NvrStreamSettingsAudio instance
+func NewNvrStreamSettingsAudio() NvrStreamSettingsAudio {
+	return &NvrStreamSettingsAudioImpl{}
+}
+
+// A flag showing if the audio is captured (false) or not (true) from the stream.
+// Example: false
+func (s NvrStreamSettingsAudioImpl) Disabled() *bool {
+	return s.DisabledValue
+}
+
+// A flag showing if the audio is captured (false) or not (true) from the stream.
+// Example: false
+func (s *NvrStreamSettingsAudioImpl) SetDisabled(v bool) NvrStreamSettingsAudio {
+	if s == nil {
+		return nil
+	}
+	s.DisabledValue = &v
+	return s
+}
+
+// Audio codec (the AAC codec is used by default).
+func (s NvrStreamSettingsAudioImpl) TranscodeAudioCodec() *FrameAudioCodec {
+	return s.TranscodeAudioCodecValue
+}
+
+// Audio codec (the AAC codec is used by default).
+func (s *NvrStreamSettingsAudioImpl) SetTranscodeAudioCodec(v FrameAudioCodec) NvrStreamSettingsAudio {
+	if s == nil {
+		return nil
+	}
+	s.TranscodeAudioCodecValue = &v
+	return s
+}
+
+// NewNvrStreamsStats creates a new NvrStreamsStats instance
+func NewNvrStreamsStats() NvrStreamsStats {
+	return &NvrStreamsStatsImpl{}
+}
+
+// Number of disabled streams
+func (s NvrStreamsStatsImpl) Disabled() *int {
+	return s.DisabledValue
+}
+
+// Number of disabled streams
+func (s *NvrStreamsStatsImpl) SetDisabled(v int) NvrStreamsStats {
+	if s == nil {
+		return nil
+	}
+	s.DisabledValue = &v
+	return s
+}
+
+// Number of streams with error
+func (s NvrStreamsStatsImpl) Error() *int {
+	return s.ErrorValue
+}
+
+// Number of streams with error
+func (s *NvrStreamsStatsImpl) SetError(v int) NvrStreamsStats {
+	if s == nil {
+		return nil
+	}
+	s.ErrorValue = &v
+	return s
+}
+
+// Number of running streams
+func (s NvrStreamsStatsImpl) Running() *int {
+	return s.RunningValue
+}
+
+// Number of running streams
+func (s *NvrStreamsStatsImpl) SetRunning(v int) NvrStreamsStats {
+	if s == nil {
+		return nil
+	}
+	s.RunningValue = &v
+	return s
+}
+
+// Total number of streams
+func (s NvrStreamsStatsImpl) Total() *int {
+	return s.TotalValue
+}
+
+// Total number of streams
+func (s *NvrStreamsStatsImpl) SetTotal(v int) NvrStreamsStats {
+	if s == nil {
+		return nil
+	}
+	s.TotalValue = &v
+	return s
+}
+
+// Number of waiting streams
+func (s NvrStreamsStatsImpl) Waiting() *int {
+	return s.WaitingValue
+}
+
+// Number of waiting streams
+func (s *NvrStreamsStatsImpl) SetWaiting(v int) NvrStreamsStats {
+	if s == nil {
+		return nil
+	}
+	s.WaitingValue = &v
+	return s
+}
+
+// NewNvrSyncSettings creates a new NvrSyncSettings instance
+func NewNvrSyncSettings() NvrSyncSettings {
+	return &NvrSyncSettingsImpl{}
+}
+
+// Enables or disables automatic background synchronization of episodes with NVR.
+// Example: true
+func (s NvrSyncSettingsImpl) Episodes() *bool {
+	return s.EpisodesValue
+}
+
+// Enables or disables automatic background synchronization of episodes with NVR.
+// Example: true
+func (s *NvrSyncSettingsImpl) SetEpisodes(v bool) NvrSyncSettings {
+	if s == nil {
+		return nil
+	}
+	s.EpisodesValue = &v
+	return s
+}
+
 // NewOnOff creates a new OnOff instance
 func NewOnOff() OnOff {
 	return &OnOffImpl{}
@@ -32868,6 +33951,463 @@ func (s *OnOffAutoImpl) SetMode(v OnOffAutoMode) OnOffAuto {
 		return nil
 	}
 	s.ModeValue = &v
+	return s
+}
+
+// NewOnvifDiscoverRequest creates a new OnvifDiscoverRequest instance
+func NewOnvifDiscoverRequest() OnvifDiscoverRequest {
+	return &OnvifDiscoverRequestImpl{}
+}
+
+// IP address of a specific camera to probe via ONVIF. If omitted, a full network broadcast discovery is started.
+// Example: 192.168.0.11
+func (s OnvifDiscoverRequestImpl) Address() *string {
+	return s.AddressValue
+}
+
+// IP address of a specific camera to probe via ONVIF. If omitted, a full network broadcast discovery is started.
+// Example: 192.168.0.11
+func (s *OnvifDiscoverRequestImpl) SetAddress(v string) OnvifDiscoverRequest {
+	if s == nil {
+		return nil
+	}
+	s.AddressValue = &v
+	return s
+}
+
+// ONVIF login to authenticate with discovered cameras.
+// Example: admin
+func (s OnvifDiscoverRequestImpl) Login() *string {
+	return s.LoginValue
+}
+
+// ONVIF login to authenticate with discovered cameras.
+// Example: admin
+func (s *OnvifDiscoverRequestImpl) SetLogin(v string) OnvifDiscoverRequest {
+	if s == nil {
+		return nil
+	}
+	s.LoginValue = &v
+	return s
+}
+
+// ONVIF password to authenticate with discovered cameras.
+// Example: admin
+func (s OnvifDiscoverRequestImpl) Password() *string {
+	return s.PasswordValue
+}
+
+// ONVIF password to authenticate with discovered cameras.
+// Example: admin
+func (s *OnvifDiscoverRequestImpl) SetPassword(v string) OnvifDiscoverRequest {
+	if s == nil {
+		return nil
+	}
+	s.PasswordValue = &v
+	return s
+}
+
+// NewOnvifDiscoveredDevice creates a new OnvifDiscoveredDevice instance
+func NewOnvifDiscoveredDevice() OnvifDiscoveredDevice {
+	return &OnvifDiscoveredDeviceImpl{}
+}
+
+// ONVIF device service endpoint URL. Present when the camera supports ONVIF —
+// a non-empty value indicates that ONVIF services are available at this address.
+// Example: http://192.168.1.100:80/onvif/device_service
+func (s OnvifDiscoveredDeviceImpl) Endpoint() *string {
+	return s.EndpointValue
+}
+
+// ONVIF device service endpoint URL. Present when the camera supports ONVIF —
+// a non-empty value indicates that ONVIF services are available at this address.
+// Example: http://192.168.1.100:80/onvif/device_service
+func (s *OnvifDiscoveredDeviceImpl) SetEndpoint(v string) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.EndpointValue = &v
+	return s
+}
+
+// Error message if the camera could not be probed.
+func (s OnvifDiscoveredDeviceImpl) Error() *string {
+	return s.ErrorValue
+}
+
+// Error message if the camera could not be probed.
+func (s *OnvifDiscoveredDeviceImpl) SetError(v string) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.ErrorValue = &v
+	return s
+}
+
+// IP address of the discovered camera.
+// Example: 192.168.1.100
+func (s OnvifDiscoveredDeviceImpl) IP() *string {
+	return s.IPValue
+}
+
+// IP address of the discovered camera.
+// Example: 192.168.1.100
+func (s *OnvifDiscoveredDeviceImpl) SetIP(v string) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.IPValue = &v
+	return s
+}
+
+// Whether this camera is already added to Watcher as a stream.
+func (s OnvifDiscoveredDeviceImpl) IsKnown() *bool {
+	return s.IsKnownValue
+}
+
+// Whether this camera is already added to Watcher as a stream.
+func (s *OnvifDiscoveredDeviceImpl) SetIsKnown(v bool) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.IsKnownValue = &v
+	return s
+}
+
+// Camera manufacturer name reported via ONVIF.
+// Example: Hikvision
+func (s OnvifDiscoveredDeviceImpl) Manufacturer() *string {
+	return s.ManufacturerValue
+}
+
+// Camera manufacturer name reported via ONVIF.
+// Example: Hikvision
+func (s *OnvifDiscoveredDeviceImpl) SetManufacturer(v string) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.ManufacturerValue = &v
+	return s
+}
+
+// Camera model name reported via ONVIF.
+// Example: DS-2CD2143G2-I
+func (s OnvifDiscoveredDeviceImpl) Model() *string {
+	return s.ModelValue
+}
+
+// Camera model name reported via ONVIF.
+// Example: DS-2CD2143G2-I
+func (s *OnvifDiscoveredDeviceImpl) SetModel(v string) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.ModelValue = &v
+	return s
+}
+
+// Whether the camera reports PTZ support via ONVIF. Note that this value is unreliable —
+// many manufacturers use the same firmware for both PTZ and fixed camera models,
+// so both may report PTZ support regardless of whether physical motors are present.
+func (s OnvifDiscoveredDeviceImpl) Ptz() *bool {
+	return s.PtzValue
+}
+
+// Whether the camera reports PTZ support via ONVIF. Note that this value is unreliable —
+// many manufacturers use the same firmware for both PTZ and fixed camera models,
+// so both may report PTZ support regardless of whether physical motors are present.
+func (s *OnvifDiscoveredDeviceImpl) SetPtz(v bool) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	s.PtzValue = &v
+	return s
+}
+
+// List of media streams (ONVIF profiles) available on this camera.
+func (s OnvifDiscoveredDeviceImpl) Streams() []OnvifDiscoveredStream {
+	if s.StreamsValue == nil {
+		return nil
+	}
+	result := make([]OnvifDiscoveredStream, len(s.StreamsValue))
+	for i, item := range s.StreamsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of media streams (ONVIF profiles) available on this camera.
+func (s *OnvifDiscoveredDeviceImpl) SetStreams(v []OnvifDiscoveredStream) OnvifDiscoveredDevice {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*OnvifDiscoveredStreamImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*OnvifDiscoveredStreamImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.StreamsValue = impl
+	}
+	return s
+}
+
+// NewOnvifDiscoveredDevices creates a new OnvifDiscoveredDevices instance
+func NewOnvifDiscoveredDevices() OnvifDiscoveredDevices {
+	return &OnvifDiscoveredDevicesImpl{}
+}
+
+// List of discovered cameras, each with their available streams.
+func (s OnvifDiscoveredDevicesImpl) Devices() []OnvifDiscoveredDevice {
+	if s.DevicesValue == nil {
+		return nil
+	}
+	result := make([]OnvifDiscoveredDevice, len(s.DevicesValue))
+	for i, item := range s.DevicesValue {
+		result[i] = item
+	}
+	return result
+}
+
+// List of discovered cameras, each with their available streams.
+func (s *OnvifDiscoveredDevicesImpl) SetDevices(v []OnvifDiscoveredDevice) OnvifDiscoveredDevices {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*OnvifDiscoveredDeviceImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*OnvifDiscoveredDeviceImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.DevicesValue = impl
+	}
+	return s
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s OnvifDiscoveredDevicesImpl) EstimatedCount() *int {
+	return s.EstimatedCountValue
+}
+
+// Estimated total number of records for the query (regardless of the cursors).
+// Example: 5
+func (s *OnvifDiscoveredDevicesImpl) SetEstimatedCount(v int) OnvifDiscoveredDevices {
+	if s == nil {
+		return nil
+	}
+	s.EstimatedCountValue = &v
+	return s
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s OnvifDiscoveredDevicesImpl) Next() *string {
+	return s.NextValue
+}
+
+// Next cursor: a properly encoded equivalent of offset allowing to read the next bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fZ3Q9MA==
+func (s *OnvifDiscoveredDevicesImpl) SetNext(v string) OnvifDiscoveredDevices {
+	if s == nil {
+		return nil
+	}
+	s.NextValue = &v
+	return s
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s OnvifDiscoveredDevicesImpl) Prev() *string {
+	return s.PrevValue
+}
+
+// Previous cursor: a properly encoded equivalent of offset allowing to read the previous bunch of items.
+// Learn more in [Flussonic API design principles](https://flussonic.com/doc/rest-api-guidelines/#api-http-collections-cursor).
+// Example: JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl
+func (s *OnvifDiscoveredDevicesImpl) SetPrev(v string) OnvifDiscoveredDevices {
+	if s == nil {
+		return nil
+	}
+	s.PrevValue = &v
+	return s
+}
+
+// An object with a list of different timings measured during this API call.
+func (s OnvifDiscoveredDevicesImpl) Timing() any {
+	return s.TimingValue
+}
+
+// An object with a list of different timings measured during this API call.
+func (s *OnvifDiscoveredDevicesImpl) SetTiming(v any) OnvifDiscoveredDevices {
+	if s == nil {
+		return nil
+	}
+	s.TimingValue = v
+	return s
+}
+
+// Collection returns the collection items from OnvifDiscoveredDevices
+func (s OnvifDiscoveredDevicesImpl) Collection() []OnvifDiscoveredDevice {
+	return s.Devices()
+}
+
+// NewOnvifDiscoveredStream creates a new OnvifDiscoveredStream instance
+func NewOnvifDiscoveredStream() OnvifDiscoveredStream {
+	return &OnvifDiscoveredStreamImpl{}
+}
+
+// Video bitrate in kbps.
+// Example: 2048
+func (s OnvifDiscoveredStreamImpl) Bitrate() *int {
+	return s.BitrateValue
+}
+
+// Video bitrate in kbps.
+// Example: 2048
+func (s *OnvifDiscoveredStreamImpl) SetBitrate(v int) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.BitrateValue = &v
+	return s
+}
+
+// Video codec used by this profile.
+// Example: H264
+func (s OnvifDiscoveredStreamImpl) Codec() *string {
+	return s.CodecValue
+}
+
+// Video codec used by this profile.
+// Example: H264
+func (s *OnvifDiscoveredStreamImpl) SetCodec(v string) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.CodecValue = &v
+	return s
+}
+
+// Frames per second.
+// Example: 25
+func (s OnvifDiscoveredStreamImpl) FPS() *int {
+	return s.FPSValue
+}
+
+// Frames per second.
+// Example: 25
+func (s *OnvifDiscoveredStreamImpl) SetFPS(v int) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.FPSValue = &v
+	return s
+}
+
+// Video frame height in pixels.
+// Example: 1080
+func (s OnvifDiscoveredStreamImpl) Height() *int {
+	return s.HeightValue
+}
+
+// Video frame height in pixels.
+// Example: 1080
+func (s *OnvifDiscoveredStreamImpl) SetHeight(v int) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.HeightValue = &v
+	return s
+}
+
+// Snapshot URL for this profile, obtained via ONVIF GetSnapshotUri.
+// Per the ONVIF standard this is profile-specific, but in practice many cameras
+// return the same URL for all profiles.
+// Example: http://192.168.1.100:80/snapshot.jpg
+func (s OnvifDiscoveredStreamImpl) JpegURL() *string {
+	return s.JpegURLValue
+}
+
+// Snapshot URL for this profile, obtained via ONVIF GetSnapshotUri.
+// Per the ONVIF standard this is profile-specific, but in practice many cameras
+// return the same URL for all profiles.
+// Example: http://192.168.1.100:80/snapshot.jpg
+func (s *OnvifDiscoveredStreamImpl) SetJpegURL(v string) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.JpegURLValue = &v
+	return s
+}
+
+// ONVIF media profile token.
+// Example: Profile_1
+func (s OnvifDiscoveredStreamImpl) Profile() *string {
+	return s.ProfileValue
+}
+
+// ONVIF media profile token.
+// Example: Profile_1
+func (s *OnvifDiscoveredStreamImpl) SetProfile(v string) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.ProfileValue = &v
+	return s
+}
+
+// Human-readable name of the ONVIF profile.
+// Example: Main Stream
+func (s OnvifDiscoveredStreamImpl) ProfileName() *string {
+	return s.ProfileNameValue
+}
+
+// Human-readable name of the ONVIF profile.
+// Example: Main Stream
+func (s *OnvifDiscoveredStreamImpl) SetProfileName(v string) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.ProfileNameValue = &v
+	return s
+}
+
+// RTSP stream URL for this profile.
+// Example: rtsp://192.168.1.100:554/stream/main
+func (s OnvifDiscoveredStreamImpl) StreamURL() *string {
+	return s.StreamURLValue
+}
+
+// RTSP stream URL for this profile.
+// Example: rtsp://192.168.1.100:554/stream/main
+func (s *OnvifDiscoveredStreamImpl) SetStreamURL(v string) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.StreamURLValue = &v
+	return s
+}
+
+// Video frame width in pixels.
+// Example: 1920
+func (s OnvifDiscoveredStreamImpl) Width() *int {
+	return s.WidthValue
+}
+
+// Video frame width in pixels.
+// Example: 1920
+func (s *OnvifDiscoveredStreamImpl) SetWidth(v int) OnvifDiscoveredStream {
+	if s == nil {
+		return nil
+	}
+	s.WidthValue = &v
 	return s
 }
 
@@ -33025,6 +34565,59 @@ func (s *OrganizationPermissionsImpl) SetIsMember(v bool) OrganizationPermission
 	return s
 }
 
+// Permissions related to nvr management.
+func (s OrganizationPermissionsImpl) Nvrs() OrganizationPermissionsNvrs {
+	return s.NvrsValue
+}
+
+// Permissions related to nvr management.
+func (s *OrganizationPermissionsImpl) SetNvrs(v OrganizationPermissionsNvrs) OrganizationPermissions {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*OrganizationPermissionsNvrsImpl); ok {
+		s.NvrsValue = impl
+	}
+	return s
+}
+
+// NewOrganizationPermissionsNvrs creates a new OrganizationPermissionsNvrs instance
+func NewOrganizationPermissionsNvrs() OrganizationPermissionsNvrs {
+	return &OrganizationPermissionsNvrsImpl{}
+}
+
+// An indicator of whether the user has control over the nvrs.
+// Example: true
+func (s OrganizationPermissionsNvrsImpl) CanEdit() *bool {
+	return s.CanEditValue
+}
+
+// An indicator of whether the user has control over the nvrs.
+// Example: true
+func (s *OrganizationPermissionsNvrsImpl) SetCanEdit(v bool) OrganizationPermissionsNvrs {
+	if s == nil {
+		return nil
+	}
+	s.CanEditValue = &v
+	return s
+}
+
+// An indicator of whether the user can view the nvrs.
+// Example: true
+func (s OrganizationPermissionsNvrsImpl) CanView() *bool {
+	return s.CanViewValue
+}
+
+// An indicator of whether the user can view the nvrs.
+// Example: true
+func (s *OrganizationPermissionsNvrsImpl) SetCanView(v bool) OrganizationPermissionsNvrs {
+	if s == nil {
+		return nil
+	}
+	s.CanViewValue = &v
+	return s
+}
+
 // NewOrganizationPreset creates a new OrganizationPreset instance
 func NewOrganizationPreset() OrganizationPreset {
 	return &OrganizationPresetImpl{}
@@ -33107,6 +34700,20 @@ func (s *OutputMpegtsPidsImpl) SetDefault(v string) OutputMpegtsPids {
 		return nil
 	}
 	s.DefaultValue = &v
+	return s
+}
+
+// ECM simulcrypt pid
+func (s OutputMpegtsPidsImpl) Ecm() *int {
+	return s.EcmValue
+}
+
+// ECM simulcrypt pid
+func (s *OutputMpegtsPidsImpl) SetEcm(v int) OutputMpegtsPids {
+	if s == nil {
+		return nil
+	}
+	s.EcmValue = &v
 	return s
 }
 
@@ -33515,6 +35122,20 @@ func (s *PeerStatsImpl) SetError(v string) PeerStats {
 		return nil
 	}
 	s.ErrorValue = &v
+	return s
+}
+
+func (s PeerStatsImpl) HealthcheckStatus() CentralHealthcheckStatus {
+	return s.HealthcheckStatusValue
+}
+
+func (s *PeerStatsImpl) SetHealthcheckStatus(v CentralHealthcheckStatus) PeerStats {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*CentralHealthcheckStatusImpl); ok {
+		s.HealthcheckStatusValue = impl
+	}
 	return s
 }
 
@@ -34327,6 +35948,22 @@ func NewPreset() Preset {
 	return &PresetImpl{}
 }
 
+// External identifier for linking this preset to a tariff plan in the operator's own billing system.
+// This ID allows operators to bill their subscribers using their own tariff plans.
+func (s PresetImpl) BillingExternalID() *string {
+	return s.BillingExternalIDValue
+}
+
+// External identifier for linking this preset to a tariff plan in the operator's own billing system.
+// This ID allows operators to bill their subscribers using their own tariff plans.
+func (s *PresetImpl) SetBillingExternalID(v string) Preset {
+	if s == nil {
+		return nil
+	}
+	s.BillingExternalIDValue = &v
+	return s
+}
+
 // When this preset was marked as deleted
 // Format: utc_ms (Unix timestamp in milliseconds)
 // Example: 1.637095014573e+12
@@ -34346,18 +35983,34 @@ func (s *PresetImpl) SetDeletedAt(v UtcMs) Preset {
 }
 
 // DVR configuration
-func (s PresetImpl) Dvr() StreamDvrSpec {
+func (s PresetImpl) Dvr() PresetDvr {
 	return s.DvrValue
 }
 
 // DVR configuration
-func (s *PresetImpl) SetDvr(v StreamDvrSpec) Preset {
+func (s *PresetImpl) SetDvr(v PresetDvr) Preset {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*StreamDvrSpecImpl); ok {
+	if impl, ok := v.(*PresetDvrImpl); ok {
 		s.DvrValue = impl
 	}
+	return s
+}
+
+// External identifier for linking this preset to a tariff plan in the billing system.
+// This ID is used in usage reports sent to billing.
+func (s PresetImpl) ExternalID() *string {
+	return s.ExternalIDValue
+}
+
+// External identifier for linking this preset to a tariff plan in the billing system.
+// This ID is used in usage reports sent to billing.
+func (s *PresetImpl) SetExternalID(v string) Preset {
+	if s == nil {
+		return nil
+	}
+	s.ExternalIDValue = &v
 	return s
 }
 
@@ -34490,18 +36143,159 @@ func (s *PresetImpl) SetTitle(v string) Preset {
 }
 
 // Vision configuration
-func (s PresetImpl) Vision() VisionSpecPresets {
+func (s PresetImpl) Vision() PresetVision {
 	return s.VisionValue
 }
 
 // Vision configuration
-func (s *PresetImpl) SetVision(v VisionSpecPresets) Preset {
+func (s *PresetImpl) SetVision(v PresetVision) Preset {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*VisionSpecPresetsImpl); ok {
+	if impl, ok := v.(*PresetVisionImpl); ok {
 		s.VisionValue = impl
 	}
+	return s
+}
+
+// NewPresetDvr creates a new PresetDvr instance
+func NewPresetDvr() PresetDvr {
+	return &PresetDvrImpl{}
+}
+
+// Maximum disk consumption in percents. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// It important to understand that this is not a "per-stream" option, this option means
+// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+// empty.
+// Format: percent (percent)
+// Example: 98
+func (s PresetDvrImpl) DiskUsageLimit() *Percent {
+	return s.DiskUsageLimitValue
+}
+
+// Maximum disk consumption in percents. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// It important to understand that this is not a "per-stream" option, this option means
+// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+// empty.
+// Format: percent (percent)
+// Example: 98
+func (s *PresetDvrImpl) SetDiskUsageLimit(v Percent) PresetDvr {
+	if s == nil {
+		return nil
+	}
+	s.DiskUsageLimitValue = &v
+	return s
+}
+
+// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+// will be saved for `expiration + episodes_expiration` seconds.
+// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+// response of `episodes_url`.
+// Anything older than `expiration+episodes_expiration` seconds will
+// be cleaned even if `episodes_url` does not respond.
+// Format: seconds (seconds)
+// Examples: 6.048e+06
+func (s PresetDvrImpl) EpisodesExpiration() *Seconds {
+	return s.EpisodesExpirationValue
+}
+
+// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+// will be saved for `expiration + episodes_expiration` seconds.
+// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+// response of `episodes_url`.
+// Anything older than `expiration+episodes_expiration` seconds will
+// be cleaned even if `episodes_url` does not respond.
+// Format: seconds (seconds)
+// Examples: 6.048e+06
+func (s *PresetDvrImpl) SetEpisodesExpiration(v Seconds) PresetDvr {
+	if s == nil {
+		return nil
+	}
+	s.EpisodesExpirationValue = &v
+	return s
+}
+
+// Archive depth - a period (in seconds) back from the current moment during which the
+// contigious part of archive is stored.
+// As time goes, the parts of the recording which are older than the archive depth are deleted.
+// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+// Format: seconds (seconds)
+// Examples: 604800
+func (s PresetDvrImpl) Expiration() *Seconds {
+	return s.ExpirationValue
+}
+
+// Archive depth - a period (in seconds) back from the current moment during which the
+// contigious part of archive is stored.
+// As time goes, the parts of the recording which are older than the archive depth are deleted.
+// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+// Format: seconds (seconds)
+// Examples: 604800
+func (s *PresetDvrImpl) SetExpiration(v Seconds) PresetDvr {
+	if s == nil {
+		return nil
+	}
+	s.ExpirationValue = &v
+	return s
+}
+
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
+// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+// Example: 1
+func (s PresetDvrImpl) RedundancyFactor() *int {
+	return s.RedundancyFactorValue
+}
+
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
+// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+// Example: 1
+func (s *PresetDvrImpl) SetRedundancyFactor(v int) PresetDvr {
+	if s == nil {
+		return nil
+	}
+	s.RedundancyFactorValue = &v
+	return s
+}
+
+// Maximum disk consumption in bytes. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// This option affects both continuous recording and locked episodes (see `episodes_url`).
+// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+// to avoid deleting the recordings that should not be deleted.
+// Format: bytes (bytes)
+// Example: 4e+11
+func (s PresetDvrImpl) StorageLimit() *Bytes {
+	return s.StorageLimitValue
+}
+
+// Maximum disk consumption in bytes. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// This option affects both continuous recording and locked episodes (see `episodes_url`).
+// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+// to avoid deleting the recordings that should not be deleted.
+// Format: bytes (bytes)
+// Example: 4e+11
+func (s *PresetDvrImpl) SetStorageLimit(v Bytes) PresetDvr {
+	if s == nil {
+		return nil
+	}
+	s.StorageLimitValue = &v
 	return s
 }
 
@@ -34615,6 +36409,45 @@ func (s *PresetStatsImpl) SetStreamsCount(v int) PresetStats {
 		return nil
 	}
 	s.StreamsCountValue = &v
+	return s
+}
+
+// NewPresetVision creates a new PresetVision instance
+func NewPresetVision() PresetVision {
+	return &PresetVisionImpl{}
+}
+
+// Deprecated field. Will be deleted at 26.07
+// The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
+// Example: faces
+func (s PresetVisionImpl) Alg() *VisionSpecPresetsAlg {
+	return s.AlgValue
+}
+
+// Deprecated field. Will be deleted at 26.07
+// The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
+// Example: faces
+func (s *PresetVisionImpl) SetAlg(v VisionSpecPresetsAlg) PresetVision {
+	if s == nil {
+		return nil
+	}
+	s.AlgValue = &v
+	return s
+}
+
+// Vision detector type
+func (s PresetVisionImpl) DetectorType() *VisionDetector {
+	return s.DetectorTypeValue
+}
+
+// Vision detector type
+func (s *PresetVisionImpl) SetDetectorType(v VisionDetector) PresetVision {
+	if s == nil {
+		return nil
+	}
+	s.DetectorTypeValue = &v
 	return s
 }
 
@@ -35115,17 +36948,17 @@ func (s *PushCountersImpl) SetPusherRestarts(v int) PushCounters {
 	return s
 }
 
-// Number of retries since the last successful push.
-func (s PushCountersImpl) ResentPackets() *int {
-	return s.ResentPacketsValue
+// How many packets were retransmitted
+func (s PushCountersImpl) RetransmittedPackets() *int {
+	return s.RetransmittedPacketsValue
 }
 
-// Number of retries since the last successful push.
-func (s *PushCountersImpl) SetResentPackets(v int) PushCounters {
+// How many packets were retransmitted
+func (s *PushCountersImpl) SetRetransmittedPackets(v int) PushCounters {
 	if s == nil {
 		return nil
 	}
-	s.ResentPacketsValue = &v
+	s.RetransmittedPacketsValue = &v
 	return s
 }
 
@@ -35168,24 +37001,6 @@ func (s *PushCountersImpl) SetStatus(v *PusherStatus) PushCounters {
 		return nil
 	}
 	s.StatusValue = v
-	return s
-}
-
-// Deprecated field. Will be deleted at 26.03
-// The fillers bytes count for system traffic. Currently this field is always zero.
-// Format: bytes (bytes)
-func (s PushCountersImpl) SysFillersBytes() *Bytes {
-	return s.SysFillersBytesValue
-}
-
-// Deprecated field. Will be deleted at 26.03
-// The fillers bytes count for system traffic. Currently this field is always zero.
-// Format: bytes (bytes)
-func (s *PushCountersImpl) SetSysFillersBytes(v Bytes) PushCounters {
-	if s == nil {
-		return nil
-	}
-	s.SysFillersBytesValue = &v
 	return s
 }
 
@@ -35408,46 +37223,6 @@ func (s *PushPidCountersImpl) SetFillerPackets(v int) PushPidCounters {
 	return s
 }
 
-// Deprecated field. Will be deleted at 25.11
-// The filler bytes count.
-// Use `filler_packets` instead.
-// Format: bytes (bytes)
-func (s PushPidCountersImpl) Fillers() *Bytes {
-	return s.FillersValue
-}
-
-// Deprecated field. Will be deleted at 25.11
-// The filler bytes count.
-// Use `filler_packets` instead.
-// Format: bytes (bytes)
-func (s *PushPidCountersImpl) SetFillers(v Bytes) PushPidCounters {
-	if s == nil {
-		return nil
-	}
-	s.FillersValue = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.11
-// How many bytes were seen in NAL fillers.
-// Use `filler_packets` instead.
-// Format: bytes (bytes)
-func (s PushPidCountersImpl) FillersBytes() *Bytes {
-	return s.FillersBytesValue
-}
-
-// Deprecated field. Will be deleted at 25.11
-// How many bytes were seen in NAL fillers.
-// Use `filler_packets` instead.
-// Format: bytes (bytes)
-func (s *PushPidCountersImpl) SetFillersBytes(v Bytes) PushPidCounters {
-	if s == nil {
-		return nil
-	}
-	s.FillersBytesValue = &v
-	return s
-}
-
 // Highest recorded level of the TS buffer.
 // With too big values the HRD buffer may be filling up completely (overflow).
 // Format: milliseconds (milliseconds)
@@ -35498,26 +37273,6 @@ func (s *PushPidCountersImpl) SetPackets(v int) PushPidCounters {
 	return s
 }
 
-// Deprecated field. Will be deleted at 25.11
-// The payload bytes count.
-// Use `payload_bytes` instead.
-// Format: bytes (bytes)
-func (s PushPidCountersImpl) Payload() *Bytes {
-	return s.PayloadValue
-}
-
-// Deprecated field. Will be deleted at 25.11
-// The payload bytes count.
-// Use `payload_bytes` instead.
-// Format: bytes (bytes)
-func (s *PushPidCountersImpl) SetPayload(v Bytes) PushPidCounters {
-	if s == nil {
-		return nil
-	}
-	s.PayloadValue = &v
-	return s
-}
-
 // The payload bytes count.
 // Format: bytes (bytes)
 func (s PushPidCountersImpl) PayloadBytes() *Bytes {
@@ -35562,21 +37317,19 @@ func (s *PushPidCountersImpl) SetPnr(v int) PushPidCounters {
 	return s
 }
 
-// Deprecated field. Will be deleted at 25.11
-// The stuff packets count.
-// Use `stuffing_packets` instead.
-func (s PushPidCountersImpl) Stuffing() *int {
-	return s.StuffingValue
+// Total duration of media queued for this PID.
+// Format: milliseconds (milliseconds)
+func (s PushPidCountersImpl) QueuedTime() *Milliseconds {
+	return s.QueuedTimeValue
 }
 
-// Deprecated field. Will be deleted at 25.11
-// The stuff packets count.
-// Use `stuffing_packets` instead.
-func (s *PushPidCountersImpl) SetStuffing(v int) PushPidCounters {
+// Total duration of media queued for this PID.
+// Format: milliseconds (milliseconds)
+func (s *PushPidCountersImpl) SetQueuedTime(v Milliseconds) PushPidCounters {
 	if s == nil {
 		return nil
 	}
-	s.StuffingValue = &v
+	s.QueuedTimeValue = &v
 	return s
 }
 
@@ -35714,6 +37467,24 @@ func (s *RTPCountersBaseImpl) SetErrorsLostPackets(v int) RTPCountersBase {
 		return nil
 	}
 	s.ErrorsLostPacketsValue = &v
+	return s
+}
+
+// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+// Each increment represents a synchronization with potentially incorrect camera time.
+// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+func (s RTPCountersBaseImpl) ErrorsSrClockDeviation() *int {
+	return s.ErrorsSrClockDeviationValue
+}
+
+// Number of clock synchronization events where sender wallclock deviation exceeded acceptable limits.
+// Each increment represents a synchronization with potentially incorrect camera time.
+// This counter increments only when wait_rtcp option is enabled and |sender_clock_deviation| > max_allowed_threshold.
+func (s *RTPCountersBaseImpl) SetErrorsSrClockDeviation(v int) RTPCountersBase {
+	if s == nil {
+		return nil
+	}
+	s.ErrorsSrClockDeviationValue = &v
 	return s
 }
 
@@ -36013,6 +37784,22 @@ func (s *RaidDiskConfigStatsImpl) SetBlobsCountDb(v int) RaidDiskConfigStats {
 	return s
 }
 
+// The block device name backing this disk mount point.
+// Example: sda1
+func (s RaidDiskConfigStatsImpl) Device() *string {
+	return s.DeviceValue
+}
+
+// The block device name backing this disk mount point.
+// Example: sda1
+func (s *RaidDiskConfigStatsImpl) SetDevice(v string) RaidDiskConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.DeviceValue = &v
+	return s
+}
+
 // Errors of using the disk.
 func (s RaidDiskConfigStatsImpl) Errors() RaidDiskErrors {
 	return s.ErrorsValue
@@ -36136,6 +37923,22 @@ func (s *RaidDiskConfigStatsImpl) SetSize(v Bytes) RaidDiskConfigStats {
 		return nil
 	}
 	s.SizeValue = &v
+	return s
+}
+
+// The runtime status of the disk, automatically assigned by Flussonic.
+// Unlike `mode`, this field cannot be set via configuration.
+func (s RaidDiskConfigStatsImpl) Status() *RaidDiskStatus {
+	return s.StatusValue
+}
+
+// The runtime status of the disk, automatically assigned by Flussonic.
+// Unlike `mode`, this field cannot be set via configuration.
+func (s *RaidDiskConfigStatsImpl) SetStatus(v RaidDiskStatus) RaidDiskConfigStats {
+	if s == nil {
+		return nil
+	}
+	s.StatusValue = &v
 	return s
 }
 
@@ -36427,6 +38230,22 @@ func NewRaidDiskStats() RaidDiskStats {
 	return &RaidDiskStatsImpl{}
 }
 
+// The block device name backing this disk mount point.
+// Example: sda1
+func (s RaidDiskStatsImpl) Device() *string {
+	return s.DeviceValue
+}
+
+// The block device name backing this disk mount point.
+// Example: sda1
+func (s *RaidDiskStatsImpl) SetDevice(v string) RaidDiskStats {
+	if s == nil {
+		return nil
+	}
+	s.DeviceValue = &v
+	return s
+}
+
 // Errors of using the disk.
 func (s RaidDiskStatsImpl) Errors() RaidDiskErrors {
 	return s.ErrorsValue
@@ -36534,6 +38353,22 @@ func (s *RaidDiskStatsImpl) SetMounted(v bool) RaidDiskStats {
 		return nil
 	}
 	s.MountedValue = &v
+	return s
+}
+
+// The runtime status of the disk, automatically assigned by Flussonic.
+// Unlike `mode`, this field cannot be set via configuration.
+func (s RaidDiskStatsImpl) Status() *RaidDiskStatus {
+	return s.StatusValue
+}
+
+// The runtime status of the disk, automatically assigned by Flussonic.
+// Unlike `mode`, this field cannot be set via configuration.
+func (s *RaidDiskStatsImpl) SetStatus(v RaidDiskStatus) RaidDiskStats {
+	if s == nil {
+		return nil
+	}
+	s.StatusValue = &v
 	return s
 }
 
@@ -36903,6 +38738,7 @@ func (s *ServerConfigBaseImpl) SetNvidiaMonitor(v bool) ServerConfigBase {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.06
 // Directory to store Pulse statistics.
 // Format: disk_path (disk_path)
 // Example: /var/run/flussonic/pulsedb
@@ -36910,6 +38746,7 @@ func (s ServerConfigBaseImpl) Pulsedb() *DiskPath {
 	return s.PulsedbValue
 }
 
+// Deprecated field. Will be deleted at 26.06
 // Directory to store Pulse statistics.
 // Format: disk_path (disk_path)
 // Example: /var/run/flussonic/pulsedb
@@ -36986,11 +38823,13 @@ func (s *ServerConfigBaseImpl) SetSrt(v *ListenSpec) ServerConfigBase {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s ServerConfigBaseImpl) Srt2Play() SrtConfig {
 	return s.Srt2PlayValue
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s *ServerConfigBaseImpl) SetSrt2Play(v SrtConfig) ServerConfigBase {
 	if s == nil {
@@ -37002,11 +38841,13 @@ func (s *ServerConfigBaseImpl) SetSrt2Play(v SrtConfig) ServerConfigBase {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s ServerConfigBaseImpl) Srt2Publish() SrtConfig {
 	return s.Srt2PublishValue
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s *ServerConfigBaseImpl) SetSrt2Publish(v SrtConfig) ServerConfigBase {
 	if s == nil {
@@ -37047,6 +38888,22 @@ func (s *ServerConfigBaseImpl) SetSrtPublish(v SrtConfig) ServerConfigBase {
 	if impl, ok := v.(*SrtConfigImpl); ok {
 		s.SrtPublishValue = impl
 	}
+	return s
+}
+
+// Prefix of streaming api and all streaming requests that will be removed from the path
+// while calculating stream name.
+func (s ServerConfigBaseImpl) StreamingPrefix() *string {
+	return s.StreamingPrefixValue
+}
+
+// Prefix of streaming api and all streaming requests that will be removed from the path
+// while calculating stream name.
+func (s *ServerConfigBaseImpl) SetStreamingPrefix(v string) ServerConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.StreamingPrefixValue = &v
 	return s
 }
 
@@ -37170,35 +39027,6 @@ func (s *ServerConfigFullImpl) SetAuthBackends(v []AuthBackendConfig) ServerConf
 	return s
 }
 
-// The configuration of the balancers.
-func (s ServerConfigFullImpl) Balancers() []BalancerConfig {
-	if s.BalancersValue == nil {
-		return nil
-	}
-	result := make([]BalancerConfig, len(s.BalancersValue))
-	for i, item := range s.BalancersValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the balancers.
-func (s *ServerConfigFullImpl) SetBalancers(v []BalancerConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*BalancerConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*BalancerConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.BalancersValue = impl
-	}
-	return s
-}
-
 // The configuration of the cache.
 func (s ServerConfigFullImpl) Caches() []CacheConfig {
 	if s.CachesValue == nil {
@@ -37240,22 +39068,6 @@ func (s *ServerConfigFullImpl) SetCameraAlarm(v CameraAlarmConfig) ServerConfigF
 	}
 	if impl, ok := v.(*CameraAlarmConfigImpl); ok {
 		s.CameraAlarmValue = impl
-	}
-	return s
-}
-
-// The configuration of the chassis.
-func (s ServerConfigFullImpl) Chassis() ChassisConfig {
-	return s.ChassisValue
-}
-
-// The configuration of the chassis.
-func (s *ServerConfigFullImpl) SetChassis(v ChassisConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*ChassisConfigImpl); ok {
-		s.ChassisValue = impl
 	}
 	return s
 }
@@ -37376,22 +39188,6 @@ func (s *ServerConfigFullImpl) SetEventSinks(v []EventSinkConfig) ServerConfigFu
 	return s
 }
 
-// The configuration of the file processor.
-func (s ServerConfigFullImpl) FileProcessor() FileProcessorConfig {
-	return s.FileProcessorValue
-}
-
-// The configuration of the file processor.
-func (s *ServerConfigFullImpl) SetFileProcessor(v FileProcessorConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*FileProcessorConfigImpl); ok {
-		s.FileProcessorValue = impl
-	}
-	return s
-}
-
 // List of HTTP prefixes that can be handled via call to remote http server
 func (s ServerConfigFullImpl) HTTPProxies() []HTTPProxyConfig {
 	if s.HTTPProxiesValue == nil {
@@ -37421,51 +39217,6 @@ func (s *ServerConfigFullImpl) SetHTTPProxies(v []HTTPProxyConfig) ServerConfigF
 	return s
 }
 
-// The configuration of the IPTV
-func (s ServerConfigFullImpl) Iptv() IptvConfig {
-	return s.IptvValue
-}
-
-// The configuration of the IPTV
-func (s *ServerConfigFullImpl) SetIptv(v IptvConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*IptvConfigImpl); ok {
-		s.IptvValue = impl
-	}
-	return s
-}
-
-// The configuration of peers in the cluster.
-func (s ServerConfigFullImpl) Peers() []PeerConfig {
-	if s.PeersValue == nil {
-		return nil
-	}
-	result := make([]PeerConfig, len(s.PeersValue))
-	for i, item := range s.PeersValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of peers in the cluster.
-func (s *ServerConfigFullImpl) SetPeers(v []PeerConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*PeerConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*PeerConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.PeersValue = impl
-	}
-	return s
-}
-
 // The configuration of the port forwarding.
 func (s ServerConfigFullImpl) Rproxy() RproxyConfig {
 	return s.RproxyValue
@@ -37478,93 +39229,6 @@ func (s *ServerConfigFullImpl) SetRproxy(v RproxyConfig) ServerConfigFull {
 	}
 	if impl, ok := v.(*RproxyConfigImpl); ok {
 		s.RproxyValue = impl
-	}
-	return s
-}
-
-// The configuration of the video sources.
-func (s ServerConfigFullImpl) Sources() []SourceConfig {
-	if s.SourcesValue == nil {
-		return nil
-	}
-	result := make([]SourceConfig, len(s.SourcesValue))
-	for i, item := range s.SourcesValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the video sources.
-func (s *ServerConfigFullImpl) SetSources(v []SourceConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*SourceConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*SourceConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.SourcesValue = impl
-	}
-	return s
-}
-
-// The configuration of the streams.
-func (s ServerConfigFullImpl) Streams() []StreamConfig {
-	if s.StreamsValue == nil {
-		return nil
-	}
-	result := make([]StreamConfig, len(s.StreamsValue))
-	for i, item := range s.StreamsValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the streams.
-func (s *ServerConfigFullImpl) SetStreams(v []StreamConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*StreamConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*StreamConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.StreamsValue = impl
-	}
-	return s
-}
-
-// The configuration of the templates.
-func (s ServerConfigFullImpl) Templates() []TemplateConfig {
-	if s.TemplatesValue == nil {
-		return nil
-	}
-	result := make([]TemplateConfig, len(s.TemplatesValue))
-	for i, item := range s.TemplatesValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the templates.
-func (s *ServerConfigFullImpl) SetTemplates(v []TemplateConfig) ServerConfigFull {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*TemplateConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*TemplateConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.TemplatesValue = impl
 	}
 	return s
 }
@@ -38593,83 +40257,115 @@ func (s SharedTokensListImpl) Collection() []SharedToken {
 	return s.SharedTokens()
 }
 
-// NewSourceConfig creates a new SourceConfig instance
-func NewSourceConfig() SourceConfig {
-	return &SourceConfigImpl{}
-}
-
-// DVR configuraton.
-func (s SourceConfigImpl) Dvr() StreamDvrSpec {
-	return s.DvrValue
-}
-
-// DVR configuraton.
-func (s *SourceConfigImpl) SetDvr(v StreamDvrSpec) SourceConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamDvrSpecImpl); ok {
-		s.DvrValue = impl
-	}
-	return s
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s SourceConfigImpl) Labels() map[string]UnixName {
-	return s.LabelsValue
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s *SourceConfigImpl) SetLabels(v map[string]UnixName) SourceConfig {
-	if s == nil {
-		return nil
-	}
-	s.LabelsValue = v
-	return s
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s SourceConfigImpl) Pushes() []StreamPush {
-	return s.PushesValue
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s *SourceConfigImpl) SetPushes(v []StreamPush) SourceConfig {
-	if s == nil {
-		return nil
-	}
-	s.PushesValue = v
-	return s
-}
-
-// Video analytics parameters.
-func (s SourceConfigImpl) Vision() VisionSpec {
-	return s.VisionValue
-}
-
-// Video analytics parameters.
-func (s *SourceConfigImpl) SetVision(v VisionSpec) SourceConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*VisionSpecImpl); ok {
-		s.VisionValue = impl
-	}
-	return s
-}
-
-// NewSourceSpecificConfig creates a new SourceSpecificConfig instance
-func NewSourceSpecificConfig() SourceSpecificConfig {
-	return &SourceSpecificConfigImpl{}
-}
-
 // NewSrtConfig creates a new SrtConfig instance
 func NewSrtConfig() SrtConfig {
 	return &SrtConfigImpl{}
+}
+
+// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+// The default value is `true`.
+// Example: true
+func (s SrtConfigImpl) Enforcedencryption() *bool {
+	return s.EnforcedencryptionValue
+}
+
+// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+// The default value is `true`.
+// Example: true
+func (s *SrtConfigImpl) SetEnforcedencryption(v bool) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.EnforcedencryptionValue = &v
+	return s
+}
+
+// The latency value for both directions of the socket.
+// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+// Actual value established after connection handshake.
+// Increased value helps tolerate network losses and delays.
+// Format: milliseconds (milliseconds)
+// Example: 150
+func (s SrtConfigImpl) Latency() *Milliseconds {
+	return s.LatencyValue
+}
+
+// The latency value for both directions of the socket.
+// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+// Actual value established after connection handshake.
+// Increased value helps tolerate network losses and delays.
+// Format: milliseconds (milliseconds)
+// Example: 150
+func (s *SrtConfigImpl) SetLatency(v Milliseconds) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.LatencyValue = &v
+	return s
+}
+
+// The time, in seconds, that the socket waits for the unsent data before closing.
+// The default value is 180.
+// Format: seconds (seconds)
+// Example: 15
+func (s SrtConfigImpl) Linger() *Seconds {
+	return s.LingerValue
+}
+
+// The time, in seconds, that the socket waits for the unsent data before closing.
+// The default value is 180.
+// Format: seconds (seconds)
+// Example: 15
+func (s *SrtConfigImpl) SetLinger(v Seconds) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.LingerValue = &v
+	return s
+}
+
+// The minimum SRT version that is required from the peer for SRT publication.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.1.0
+func (s SrtConfigImpl) Minversion() *string {
+	return s.MinversionValue
+}
+
+// The minimum SRT version that is required from the peer for SRT publication.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.1.0
+func (s *SrtConfigImpl) SetMinversion(v string) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.MinversionValue = &v
+	return s
+}
+
+// The password for the encrypted transmission.
+// Its length should be not less than 10 and not more than 79 characters.
+// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+// and decoded by Listener.
+// Example: 9876543210
+func (s SrtConfigImpl) Passphrase() *string {
+	return s.PassphraseValue
+}
+
+// The password for the encrypted transmission.
+// Its length should be not less than 10 and not more than 79 characters.
+// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+// and decoded by Listener.
+// Example: 9876543210
+func (s *SrtConfigImpl) SetPassphrase(v string) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.PassphraseValue = &v
+	return s
 }
 
 // Listening port or a `host:port` pair for the SRT configuration.
@@ -38687,6 +40383,42 @@ func (s *SrtConfigImpl) SetPort(v *ListenSpec) SrtConfig {
 		return nil
 	}
 	s.PortValue = v
+	return s
+}
+
+// A string of maximum 512 characters set on the socket before the connection.
+// This string is a part of a callback that is sent by the caller and regisered by the listener.
+// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+// Its format is `#!::` optionally followed by the parameters:
+// * `r=` - stream name
+// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+// During SRT sessions the following parameters are automaticly added to streamid:
+// * `s=` - the identifier of a session
+// * `a=` - Flussonic version
+// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+// Example: #!::r=my-stream,m=publish
+func (s SrtConfigImpl) Streamid() *string {
+	return s.StreamidValue
+}
+
+// A string of maximum 512 characters set on the socket before the connection.
+// This string is a part of a callback that is sent by the caller and regisered by the listener.
+// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+// Its format is `#!::` optionally followed by the parameters:
+// * `r=` - stream name
+// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+// During SRT sessions the following parameters are automaticly added to streamid:
+// * `s=` - the identifier of a session
+// * `a=` - Flussonic version
+// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+// Example: #!::r=my-stream,m=publish
+func (s *SrtConfigImpl) SetStreamid(v string) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.StreamidValue = &v
 	return s
 }
 
@@ -38708,9 +40440,187 @@ func (s *SrtConfigImpl) SetTimeout(v any) SrtConfig {
 	return s
 }
 
+// Required SRT version.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.3.0
+func (s SrtConfigImpl) Version() *string {
+	return s.VersionValue
+}
+
+// Required SRT version.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.3.0
+func (s *SrtConfigImpl) SetVersion(v string) SrtConfig {
+	if s == nil {
+		return nil
+	}
+	s.VersionValue = &v
+	return s
+}
+
 // NewSrtConfigBase creates a new SrtConfigBase instance
 func NewSrtConfigBase() SrtConfigBase {
 	return &SrtConfigBaseImpl{}
+}
+
+// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+// The default value is `true`.
+// Example: true
+func (s SrtConfigBaseImpl) Enforcedencryption() *bool {
+	return s.EnforcedencryptionValue
+}
+
+// Whether both connection parties must have the same password set (including empty, in other words, with no encryption).
+// If the passwords do not match or only one side is unencrypted, the connection is rejected.
+// The default value is `true`.
+// Example: true
+func (s *SrtConfigBaseImpl) SetEnforcedencryption(v bool) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.EnforcedencryptionValue = &v
+	return s
+}
+
+// The latency value for both directions of the socket.
+// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+// Actual value established after connection handshake.
+// Increased value helps tolerate network losses and delays.
+// Format: milliseconds (milliseconds)
+// Example: 150
+func (s SrtConfigBaseImpl) Latency() *Milliseconds {
+	return s.LatencyValue
+}
+
+// The latency value for both directions of the socket.
+// By default initial value latency is 0 when transmitting and 120ms when receiving video.
+// Actual value established after connection handshake.
+// Increased value helps tolerate network losses and delays.
+// Format: milliseconds (milliseconds)
+// Example: 150
+func (s *SrtConfigBaseImpl) SetLatency(v Milliseconds) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.LatencyValue = &v
+	return s
+}
+
+// The time, in seconds, that the socket waits for the unsent data before closing.
+// The default value is 180.
+// Format: seconds (seconds)
+// Example: 15
+func (s SrtConfigBaseImpl) Linger() *Seconds {
+	return s.LingerValue
+}
+
+// The time, in seconds, that the socket waits for the unsent data before closing.
+// The default value is 180.
+// Format: seconds (seconds)
+// Example: 15
+func (s *SrtConfigBaseImpl) SetLinger(v Seconds) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.LingerValue = &v
+	return s
+}
+
+// The minimum SRT version that is required from the peer for SRT publication.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.1.0
+func (s SrtConfigBaseImpl) Minversion() *string {
+	return s.MinversionValue
+}
+
+// The minimum SRT version that is required from the peer for SRT publication.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.1.0
+func (s *SrtConfigBaseImpl) SetMinversion(v string) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.MinversionValue = &v
+	return s
+}
+
+// The password for the encrypted transmission.
+// Its length should be not less than 10 and not more than 79 characters.
+// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+// and decoded by Listener.
+// Example: 9876543210
+func (s SrtConfigBaseImpl) Passphrase() *string {
+	return s.PassphraseValue
+}
+
+// The password for the encrypted transmission.
+// Its length should be not less than 10 and not more than 79 characters.
+// Unlike [password](https://flussonic.com/doc/api/reference/#tag/stream/operation/stream_save%7Cbody%7Cpassword),
+// the passphrase is not transmitted openly but is used to encrypt the key that is transmitted by the Caller
+// and decoded by Listener.
+// Example: 9876543210
+func (s *SrtConfigBaseImpl) SetPassphrase(v string) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.PassphraseValue = &v
+	return s
+}
+
+// A string of maximum 512 characters set on the socket before the connection.
+// This string is a part of a callback that is sent by the caller and regisered by the listener.
+// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+// Its format is `#!::` optionally followed by the parameters:
+// * `r=` - stream name
+// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+// During SRT sessions the following parameters are automaticly added to streamid:
+// * `s=` - the identifier of a session
+// * `a=` - Flussonic version
+// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+// Example: #!::r=my-stream,m=publish
+func (s SrtConfigBaseImpl) Streamid() *string {
+	return s.StreamidValue
+}
+
+// A string of maximum 512 characters set on the socket before the connection.
+// This string is a part of a callback that is sent by the caller and regisered by the listener.
+// Based on this information the listener can accept or reject the connection, select the desired data stream, or set an appropriate passphrase for the connection.
+// Its format is `#!::` optionally followed by the parameters:
+// * `r=` - stream name
+// * `m=` - mode expected for the connection: `publish` (if the caller wants to send the stream data) or `request` (if the caller wants to receive the stream).
+// * `password=` - a password for the authorization in a publish session (not recommended, better use `passphrase` option instead)
+// During SRT sessions the following parameters are automaticly added to streamid:
+// * `s=` - the identifier of a session
+// * `a=` - Flussonic version
+// NOTE: you can specify a string in the format you need; to disable this extension, you need specify empty string.
+// Example: #!::r=my-stream,m=publish
+func (s *SrtConfigBaseImpl) SetStreamid(v string) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.StreamidValue = &v
+	return s
+}
+
+// Required SRT version.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.3.0
+func (s SrtConfigBaseImpl) Version() *string {
+	return s.VersionValue
+}
+
+// Required SRT version.
+// Pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
+// Example: 1.3.0
+func (s *SrtConfigBaseImpl) SetVersion(v string) SrtConfigBase {
+	if s == nil {
+		return nil
+	}
+	s.VersionValue = &v
+	return s
 }
 
 // NewStreamConfig creates a new StreamConfig instance
@@ -38719,16 +40629,16 @@ func NewStreamConfig() StreamConfig {
 }
 
 // Audio settings for the stream.
-func (s StreamConfigImpl) Audio() WatcherStreamConfigAudio {
+func (s StreamConfigImpl) Audio() StreamConfigAudio {
 	return s.AudioValue
 }
 
 // Audio settings for the stream.
-func (s *StreamConfigImpl) SetAudio(v WatcherStreamConfigAudio) StreamConfig {
+func (s *StreamConfigImpl) SetAudio(v StreamConfigAudio) StreamConfig {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*WatcherStreamConfigAudioImpl); ok {
+	if impl, ok := v.(*StreamConfigAudioImpl); ok {
 		s.AudioValue = impl
 	}
 	return s
@@ -39000,7 +40910,7 @@ func (s *StreamConfigImpl) SetMapCoordinates(v MapSpec) StreamConfig {
 // Note that the name could not be changed after the stream is created.
 // Format: media_name (media_name)
 // Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-func (s StreamConfigImpl) Name() MediaName {
+func (s StreamConfigImpl) Name() *MediaName {
 	return s.NameValue
 }
 
@@ -39012,17 +40922,17 @@ func (s *StreamConfigImpl) SetName(v MediaName) StreamConfig {
 	if s == nil {
 		return nil
 	}
-	s.NameValue = v
+	s.NameValue = &v
 	return s
 }
 
 // User's active notification subscriptions for this camera.
 // Each subscription represents a specific event type the user is subscribed to receive notifications about.
-func (s StreamConfigImpl) Notifications() []WatcherStreamConfigNotificationsItem {
+func (s StreamConfigImpl) Notifications() []StreamConfigNotificationsItem {
 	if s.NotificationsValue == nil {
 		return nil
 	}
-	result := make([]WatcherStreamConfigNotificationsItem, len(s.NotificationsValue))
+	result := make([]StreamConfigNotificationsItem, len(s.NotificationsValue))
 	for i, item := range s.NotificationsValue {
 		result[i] = item
 	}
@@ -39031,18 +40941,48 @@ func (s StreamConfigImpl) Notifications() []WatcherStreamConfigNotificationsItem
 
 // User's active notification subscriptions for this camera.
 // Each subscription represents a specific event type the user is subscribed to receive notifications about.
-func (s *StreamConfigImpl) SetNotifications(v []WatcherStreamConfigNotificationsItem) StreamConfig {
+func (s *StreamConfigImpl) SetNotifications(v []StreamConfigNotificationsItem) StreamConfig {
 	if s == nil {
 		return nil
 	}
 	if v != nil {
-		impl := make([]*WatcherStreamConfigNotificationsItemImpl, len(v))
+		impl := make([]*StreamConfigNotificationsItemImpl, len(v))
 		for i, item := range v {
-			if itemImpl, ok := item.(*WatcherStreamConfigNotificationsItemImpl); ok {
+			if itemImpl, ok := item.(*StreamConfigNotificationsItemImpl); ok {
 				impl[i] = itemImpl
 			}
 		}
 		s.NotificationsValue = impl
+	}
+	return s
+}
+
+// NVR identifier. If present, indicates that the stream was imported from the NVR with this ID.
+func (s StreamConfigImpl) NvrID() *int {
+	return s.NvrIDValue
+}
+
+// NVR identifier. If present, indicates that the stream was imported from the NVR with this ID.
+func (s *StreamConfigImpl) SetNvrID(v int) StreamConfig {
+	if s == nil {
+		return nil
+	}
+	s.NvrIDValue = &v
+	return s
+}
+
+// NVR-specific stream configuration. This field contains the stream configuration that may differ between NVR and Cloud. Common fields (title, comment, coordinates, postal_address) are not included here.
+func (s StreamConfigImpl) NvrSettings() NvrStreamSettings {
+	return s.NvrSettingsValue
+}
+
+// NVR-specific stream configuration. This field contains the stream configuration that may differ between NVR and Cloud. Common fields (title, comment, coordinates, postal_address) are not included here.
+func (s *StreamConfigImpl) SetNvrSettings(v NvrStreamSettings) StreamConfig {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NvrStreamSettingsImpl); ok {
+		s.NvrSettingsValue = impl
 	}
 	return s
 }
@@ -39266,43 +41206,20 @@ func (s *StreamConfigImpl) SetVision(v VisionSpec) StreamConfig {
 	return s
 }
 
-// NewStreamConfigAdditional creates a new StreamConfigAdditional instance
-func NewStreamConfigAdditional() StreamConfigAdditional {
-	return &StreamConfigAdditionalImpl{}
+// NewStreamConfigAudio creates a new StreamConfigAudio instance
+func NewStreamConfigAudio() StreamConfigAudio {
+	return &StreamConfigAudioImpl{}
 }
 
-// Stream's metrics and other statistical information.
-func (s StreamConfigAdditionalImpl) Stats() StreamStats {
-	return s.StatsValue
-}
-
-// Stream's metrics and other statistical information.
-func (s *StreamConfigAdditionalImpl) SetStats(v StreamStats) StreamConfigAdditional {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// NewStreamConfigBase creates a new StreamConfigBase instance
-func NewStreamConfigBase() StreamConfigBase {
-	return &StreamConfigBaseImpl{}
-}
-
-// Whether a stream is disabled. Disabled streams are inactive and do not run.
-// Displayed only with the API calls.
+// A flag showing if the audio is captured (false) or not (true) from the stream.
 // Example: false
-func (s StreamConfigBaseImpl) Disabled() *bool {
+func (s StreamConfigAudioImpl) Disabled() *bool {
 	return s.DisabledValue
 }
 
-// Whether a stream is disabled. Disabled streams are inactive and do not run.
-// Displayed only with the API calls.
+// A flag showing if the audio is captured (false) or not (true) from the stream.
 // Example: false
-func (s *StreamConfigBaseImpl) SetDisabled(v bool) StreamConfigBase {
+func (s *StreamConfigAudioImpl) SetDisabled(v bool) StreamConfigAudio {
 	if s == nil {
 		return nil
 	}
@@ -39310,106 +41227,17 @@ func (s *StreamConfigBaseImpl) SetDisabled(v bool) StreamConfigBase {
 	return s
 }
 
-// Whether a stream is `static` or not.
-// If set to `True` the server will try to keep this stream running even if
-// there are no viewers or errors encountered.
-// Streamer restarts *all* `static` streams even if any internal errors occur
-// and the `static` streams crash.
-// Example: true
-func (s StreamConfigBaseImpl) Static() *bool {
-	return s.StaticValue
+// Audio codec (the AAC codec is used by default).
+func (s StreamConfigAudioImpl) TranscodeAudioCodec() *FrameAudioCodec {
+	return s.TranscodeAudioCodecValue
 }
 
-// Whether a stream is `static` or not.
-// If set to `True` the server will try to keep this stream running even if
-// there are no viewers or errors encountered.
-// Streamer restarts *all* `static` streams even if any internal errors occur
-// and the `static` streams crash.
-// Example: true
-func (s *StreamConfigBaseImpl) SetStatic(v bool) StreamConfigBase {
+// Audio codec (the AAC codec is used by default).
+func (s *StreamConfigAudioImpl) SetTranscodeAudioCodec(v FrameAudioCodec) StreamConfigAudio {
 	if s == nil {
 		return nil
 	}
-	s.StaticValue = &v
-	return s
-}
-
-// NewStreamConfigDeprecated creates a new StreamConfigDeprecated instance
-func NewStreamConfigDeprecated() StreamConfigDeprecated {
-	return &StreamConfigDeprecatedImpl{}
-}
-
-// NewStreamConfigInput creates a new StreamConfigInput instance
-func NewStreamConfigInput() StreamConfigInput {
-	return &StreamConfigInputImpl{}
-}
-
-// List of stream inputs.
-// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-func (s StreamConfigInputImpl) Inputs() []StreamInput {
-	return s.InputsValue
-}
-
-// List of stream inputs.
-// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-func (s *StreamConfigInputImpl) SetInputs(v []StreamInput) StreamConfigInput {
-	if s == nil {
-		return nil
-	}
-	s.InputsValue = v
-	return s
-}
-
-// NewStreamConfigMedia creates a new StreamConfigMedia instance
-func NewStreamConfigMedia() StreamConfigMedia {
-	return &StreamConfigMediaImpl{}
-}
-
-// DVR configuraton.
-func (s StreamConfigMediaImpl) Dvr() StreamDvrSpec {
-	return s.DvrValue
-}
-
-// DVR configuraton.
-func (s *StreamConfigMediaImpl) SetDvr(v StreamDvrSpec) StreamConfigMedia {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamDvrSpecImpl); ok {
-		s.DvrValue = impl
-	}
-	return s
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s StreamConfigMediaImpl) Labels() map[string]UnixName {
-	return s.LabelsValue
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s *StreamConfigMediaImpl) SetLabels(v map[string]UnixName) StreamConfigMedia {
-	if s == nil {
-		return nil
-	}
-	s.LabelsValue = v
-	return s
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s StreamConfigMediaImpl) Pushes() []StreamPush {
-	return s.PushesValue
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s *StreamConfigMediaImpl) SetPushes(v []StreamPush) StreamConfigMedia {
-	if s == nil {
-		return nil
-	}
-	s.PushesValue = v
+	s.TranscodeAudioCodecValue = &v
 	return s
 }
 
@@ -39419,16 +41247,16 @@ func NewStreamConfigMultiedit() StreamConfigMultiedit {
 }
 
 // DVR configuration.
-func (s StreamConfigMultieditImpl) Dvr() StreamDvrSpec {
+func (s StreamConfigMultieditImpl) Dvr() StreamConfigMultieditDvr {
 	return s.DvrValue
 }
 
 // DVR configuration.
-func (s *StreamConfigMultieditImpl) SetDvr(v StreamDvrSpec) StreamConfigMultiedit {
+func (s *StreamConfigMultieditImpl) SetDvr(v StreamConfigMultieditDvr) StreamConfigMultiedit {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*StreamDvrSpecImpl); ok {
+	if impl, ok := v.(*StreamConfigMultieditDvrImpl); ok {
 		s.DvrValue = impl
 	}
 	return s
@@ -39478,83 +41306,175 @@ func (s *StreamConfigMultieditImpl) SetPresetID(v int) StreamConfigMultiedit {
 	return s
 }
 
-// NewStreamConfigOnpremises creates a new StreamConfigOnpremises instance
-func NewStreamConfigOnpremises() StreamConfigOnpremises {
-	return &StreamConfigOnpremisesImpl{}
+// NewStreamConfigMultieditDvr creates a new StreamConfigMultieditDvr instance
+func NewStreamConfigMultieditDvr() StreamConfigMultieditDvr {
+	return &StreamConfigMultieditDvrImpl{}
 }
 
-// Video analytics parameters.
-func (s StreamConfigOnpremisesImpl) Vision() VisionSpec {
-	return s.VisionValue
+// Maximum disk consumption in percents. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// It important to understand that this is not a "per-stream" option, this option means
+// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+// empty.
+// Format: percent (percent)
+// Example: 98
+func (s StreamConfigMultieditDvrImpl) DiskUsageLimit() *Percent {
+	return s.DiskUsageLimitValue
 }
 
-// Video analytics parameters.
-func (s *StreamConfigOnpremisesImpl) SetVision(v VisionSpec) StreamConfigOnpremises {
+// Maximum disk consumption in percents. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// It important to understand that this is not a "per-stream" option, this option means
+// that cleaning of this stream will be triggered if overall disk usage reaches this number.
+// If you have all streams with configuration 98% and one stream with 95%, it will be permanently
+// empty.
+// Format: percent (percent)
+// Example: 98
+func (s *StreamConfigMultieditDvrImpl) SetDiskUsageLimit(v Percent) StreamConfigMultieditDvr {
 	if s == nil {
 		return nil
 	}
-	if impl, ok := v.(*VisionSpecImpl); ok {
-		s.VisionValue = impl
+	s.DiskUsageLimitValue = &v
+	return s
+}
+
+// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+// will be saved for `expiration + episodes_expiration` seconds.
+// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+// response of `episodes_url`.
+// Anything older than `expiration+episodes_expiration` seconds will
+// be cleaned even if `episodes_url` does not respond.
+// Format: seconds (seconds)
+// Examples: 6.048e+06
+func (s StreamConfigMultieditDvrImpl) EpisodesExpiration() *Seconds {
+	return s.EpisodesExpirationValue
+}
+
+// Additional archive depth in seconds for episodes. If set, episodes and their corresponding DVR record
+// will be saved for `expiration + episodes_expiration` seconds.
+// The archive clean-up within `[expiration, expiration+episodes_expiration]` seconds of the
+// recording performed depending on [external_episodes_list](https://flussonic.com/doc/api/config-external/#tag/dvr/operation/external_episodes_list)
+// response of `episodes_url`.
+// Anything older than `expiration+episodes_expiration` seconds will
+// be cleaned even if `episodes_url` does not respond.
+// Format: seconds (seconds)
+// Examples: 6.048e+06
+func (s *StreamConfigMultieditDvrImpl) SetEpisodesExpiration(v Seconds) StreamConfigMultieditDvr {
+	if s == nil {
+		return nil
+	}
+	s.EpisodesExpirationValue = &v
+	return s
+}
+
+// Archive depth - a period (in seconds) back from the current moment during which the
+// contigious part of archive is stored.
+// As time goes, the parts of the recording which are older than the archive depth are deleted.
+// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+// Format: seconds (seconds)
+// Examples: 604800
+func (s StreamConfigMultieditDvrImpl) Expiration() *Seconds {
+	return s.ExpirationValue
+}
+
+// Archive depth - a period (in seconds) back from the current moment during which the
+// contigious part of archive is stored.
+// As time goes, the parts of the recording which are older than the archive depth are deleted.
+// If you have option `episodes_expiration` enabled, then some parts of DVR that are
+// locked by episode signalling mechanism may be kept more than this `expiration` depth.
+// If `episodes_url` does not respond, the archive clean-up by `expiration` is not performed;
+// only the archive with expired episodes (`episodes_expiration`) is cleaned up until the `episodes_url` restores.
+// Format: seconds (seconds)
+// Examples: 604800
+func (s *StreamConfigMultieditDvrImpl) SetExpiration(v Seconds) StreamConfigMultieditDvr {
+	if s == nil {
+		return nil
+	}
+	s.ExpirationValue = &v
+	return s
+}
+
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
+// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+// Example: 1
+func (s StreamConfigMultieditDvrImpl) RedundancyFactor() *int {
+	return s.RedundancyFactorValue
+}
+
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
+// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
+// Example: 1
+func (s *StreamConfigMultieditDvrImpl) SetRedundancyFactor(v int) StreamConfigMultieditDvr {
+	if s == nil {
+		return nil
+	}
+	s.RedundancyFactorValue = &v
+	return s
+}
+
+// Maximum disk consumption in bytes. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// This option affects both continuous recording and locked episodes (see `episodes_url`).
+// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+// to avoid deleting the recordings that should not be deleted.
+// Format: bytes (bytes)
+// Example: 4e+11
+func (s StreamConfigMultieditDvrImpl) StorageLimit() *Bytes {
+	return s.StorageLimitValue
+}
+
+// Maximum disk consumption in bytes. When this limit is reached,
+// the oldest segment of the recording will be overridden by later data.
+// This option affects both continuous recording and locked episodes (see `episodes_url`).
+// If `episodes_url` does not respond, the archive clean-up by `storage_limit` is not performed
+// to avoid deleting the recordings that should not be deleted.
+// Format: bytes (bytes)
+// Example: 4e+11
+func (s *StreamConfigMultieditDvrImpl) SetStorageLimit(v Bytes) StreamConfigMultieditDvr {
+	if s == nil {
+		return nil
+	}
+	s.StorageLimitValue = &v
+	return s
+}
+
+// NewStreamConfigNotificationsItem creates a new StreamConfigNotificationsItem instance
+func NewStreamConfigNotificationsItem() StreamConfigNotificationsItem {
+	return &StreamConfigNotificationsItemImpl{}
+}
+
+func (s StreamConfigNotificationsItemImpl) EventTypes() EventTypes {
+	return s.EventTypesValue
+}
+
+func (s *StreamConfigNotificationsItemImpl) SetEventTypes(v EventTypes) StreamConfigNotificationsItem {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*EventTypesImpl); ok {
+		s.EventTypesValue = impl
 	}
 	return s
 }
 
-// NewStreamConfigSpecific creates a new StreamConfigSpecific instance
-func NewStreamConfigSpecific() StreamConfigSpecific {
-	return &StreamConfigSpecificImpl{}
+func (s StreamConfigNotificationsItemImpl) NotificationType() *NotificationType {
+	return s.NotificationTypeValue
 }
 
-// Human-readable description of the stream.
-// Example: This is a test stream
-func (s StreamConfigSpecificImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the stream.
-// Example: This is a test stream
-func (s *StreamConfigSpecificImpl) SetComment(v string) StreamConfigSpecific {
+func (s *StreamConfigNotificationsItemImpl) SetNotificationType(v NotificationType) StreamConfigNotificationsItem {
 	if s == nil {
 		return nil
 	}
-	s.CommentValue = &v
-	return s
-}
-
-// Globally unique stream name.
-// Note that the name could not be changed after the stream is created.
-// Format: media_name (media_name)
-// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-func (s StreamConfigSpecificImpl) Name() MediaName {
-	return s.NameValue
-}
-
-// Globally unique stream name.
-// Note that the name could not be changed after the stream is created.
-// Format: media_name (media_name)
-// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-func (s *StreamConfigSpecificImpl) SetName(v MediaName) StreamConfigSpecific {
-	if s == nil {
-		return nil
-	}
-	s.NameValue = v
-	return s
-}
-
-// Human-readable title of the stream. Provided for SDT MPEG-TS table or
-// SDP RTSP title parameter.
-// Example: Hockey channel
-func (s StreamConfigSpecificImpl) Title() *string {
-	return s.TitleValue
-}
-
-// Human-readable title of the stream. Provided for SDT MPEG-TS table or
-// SDP RTSP title parameter.
-// Example: Hockey channel
-func (s *StreamConfigSpecificImpl) SetTitle(v string) StreamConfigSpecific {
-	if s == nil {
-		return nil
-	}
-	s.TitleValue = &v
+	s.NotificationTypeValue = &v
 	return s
 }
 
@@ -39651,14 +41571,18 @@ func (s *StreamDvrSpecImpl) SetExpiration(v Seconds) StreamDvrSpec {
 	return s
 }
 
-// How many servers will contain a copy of the DVR archive.
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
 // You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
 // Example: 1
 func (s StreamDvrSpecImpl) RedundancyFactor() *int {
 	return s.RedundancyFactorValue
 }
 
-// How many servers will contain a copy of the DVR archive.
+// Number of additional copies of the DVR archive to guarantee.
+// A value of `1` means the archive will be stored on **2 servers** (original + 1 copy), a value of `2` means **3 servers**, and so on.
+// A value of `0` disables redundancy.
 // You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
 // Example: 1
 func (s *StreamDvrSpecImpl) SetRedundancyFactor(v int) StreamDvrSpec {
@@ -39695,369 +41619,9 @@ func (s *StreamDvrSpecImpl) SetStorageLimit(v Bytes) StreamDvrSpec {
 	return s
 }
 
-// NewStreamDvrSpecificSpec creates a new StreamDvrSpecificSpec instance
-func NewStreamDvrSpecificSpec() StreamDvrSpecificSpec {
-	return &StreamDvrSpecificSpecImpl{}
-}
-
-// How many servers will contain a copy of the DVR archive.
-// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
-// Example: 1
-func (s StreamDvrSpecificSpecImpl) RedundancyFactor() *int {
-	return s.RedundancyFactorValue
-}
-
-// How many servers will contain a copy of the DVR archive.
-// You can find more information [here](https://flussonic.com/doc/api/layouter/#tag/stream/operation/streams_list/response%7Cstreams%7Cdvr%7Credundancy_factor)
-// Example: 1
-func (s *StreamDvrSpecificSpecImpl) SetRedundancyFactor(v int) StreamDvrSpecificSpec {
-	if s == nil {
-		return nil
-	}
-	s.RedundancyFactorValue = &v
-	return s
-}
-
-// NewStreamInputBase creates a new StreamInputBase instance
-func NewStreamInputBase() StreamInputBase {
-	return &StreamInputBaseImpl{}
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s StreamInputBaseImpl) AllowIf() *string {
-	return s.AllowIfValue
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s *StreamInputBaseImpl) SetAllowIf(v string) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.AllowIfValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputBaseImpl) AudioTimeout() *Seconds {
-	return s.AudioTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputBaseImpl) SetAudioTimeout(v Seconds) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.AudioTimeoutValue = &v
-	return s
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s StreamInputBaseImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s *StreamInputBaseImpl) SetComment(v string) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s StreamInputBaseImpl) DenyIf() *string {
-	return s.DenyIfValue
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s *StreamInputBaseImpl) SetDenyIf(v string) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.DenyIfValue = &v
-	return s
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s StreamInputBaseImpl) FramesTimeout() *int {
-	return s.FramesTimeoutValue
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s *StreamInputBaseImpl) SetFramesTimeout(v int) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.FramesTimeoutValue = &v
-	return s
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s StreamInputBaseImpl) Headers() map[string]string {
-	return s.HeadersValue
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s *StreamInputBaseImpl) SetHeaders(v map[string]string) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.HeadersValue = v
-	return s
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s StreamInputBaseImpl) MaxRetryTimeout() *Seconds {
-	return s.MaxRetryTimeoutValue
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s *StreamInputBaseImpl) SetMaxRetryTimeout(v Seconds) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.MaxRetryTimeoutValue = &v
-	return s
-}
-
-// Skip input start if the stream has no clients.
-func (s StreamInputBaseImpl) NoClientsReconnectDelay() *int {
-	return s.NoClientsReconnectDelayValue
-}
-
-// Skip input start if the stream has no clients.
-func (s *StreamInputBaseImpl) SetNoClientsReconnectDelay(v int) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.NoClientsReconnectDelayValue = &v
-	return s
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s StreamInputBaseImpl) OutputAudio() *OutputAudio {
-	return s.OutputAudioValue
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s *StreamInputBaseImpl) SetOutputAudio(v OutputAudio) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.OutputAudioValue = &v
-	return s
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s StreamInputBaseImpl) Priority() *int {
-	return s.PriorityValue
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s *StreamInputBaseImpl) SetPriority(v int) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.PriorityValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s StreamInputBaseImpl) SourceTimeout() any {
-	return s.SourceTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s *StreamInputBaseImpl) SetSourceTimeout(v any) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.SourceTimeoutValue = v
-	return s
-}
-
-// Detailed runtime information about the input.
-func (s StreamInputBaseImpl) Stats() InputStats {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the input.
-func (s *StreamInputBaseImpl) SetStats(v InputStats) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*InputStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s StreamInputBaseImpl) Timeout() *int {
-	return s.TimeoutValue
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s *StreamInputBaseImpl) SetTimeout(v int) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
-	return s
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s StreamInputBaseImpl) UserAgent() *string {
-	return s.UserAgentValue
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s *StreamInputBaseImpl) SetUserAgent(v string) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.UserAgentValue = &v
-	return s
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s StreamInputBaseImpl) Via() *AgentURL {
-	return s.ViaValue
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s *StreamInputBaseImpl) SetVia(v AgentURL) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.ViaValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputBaseImpl) VideoTimeout() *Seconds {
-	return s.VideoTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputBaseImpl) SetVideoTimeout(v Seconds) StreamInputBase {
-	if s == nil {
-		return nil
-	}
-	s.VideoTimeoutValue = &v
-	return s
-}
-
 // NewStreamInputFake creates a new StreamInputFake instance
 func NewStreamInputFake() StreamInputFake {
 	return &StreamInputFakeImpl{}
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s StreamInputFakeImpl) AllowIf() *string {
-	return s.AllowIfValue
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s *StreamInputFakeImpl) SetAllowIf(v string) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.AllowIfValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputFakeImpl) AudioTimeout() *Seconds {
-	return s.AudioTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputFakeImpl) SetAudioTimeout(v Seconds) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.AudioTimeoutValue = &v
-	return s
 }
 
 // Bitrate of an artificially created test video stream.
@@ -40078,84 +41642,6 @@ func (s *StreamInputFakeImpl) SetBitrate(v Speed) StreamInputFake {
 	return s
 }
 
-// Human-readable description of the input.
-// Example: This is a test input
-func (s StreamInputFakeImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s *StreamInputFakeImpl) SetComment(v string) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s StreamInputFakeImpl) DenyIf() *string {
-	return s.DenyIfValue
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s *StreamInputFakeImpl) SetDenyIf(v string) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.DenyIfValue = &v
-	return s
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s StreamInputFakeImpl) FramesTimeout() *int {
-	return s.FramesTimeoutValue
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s *StreamInputFakeImpl) SetFramesTimeout(v int) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.FramesTimeoutValue = &v
-	return s
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s StreamInputFakeImpl) Headers() map[string]string {
-	return s.HeadersValue
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s *StreamInputFakeImpl) SetHeaders(v map[string]string) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.HeadersValue = v
-	return s
-}
-
 // Height of an artificially created test video stream.
 // Applicable to the `fake://fake` URL.
 func (s StreamInputFakeImpl) Height() *int {
@@ -40169,128 +41655,6 @@ func (s *StreamInputFakeImpl) SetHeight(v int) StreamInputFake {
 		return nil
 	}
 	s.HeightValue = &v
-	return s
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s StreamInputFakeImpl) MaxRetryTimeout() *Seconds {
-	return s.MaxRetryTimeoutValue
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s *StreamInputFakeImpl) SetMaxRetryTimeout(v Seconds) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.MaxRetryTimeoutValue = &v
-	return s
-}
-
-// Skip input start if the stream has no clients.
-func (s StreamInputFakeImpl) NoClientsReconnectDelay() *int {
-	return s.NoClientsReconnectDelayValue
-}
-
-// Skip input start if the stream has no clients.
-func (s *StreamInputFakeImpl) SetNoClientsReconnectDelay(v int) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.NoClientsReconnectDelayValue = &v
-	return s
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s StreamInputFakeImpl) OutputAudio() *OutputAudio {
-	return s.OutputAudioValue
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s *StreamInputFakeImpl) SetOutputAudio(v OutputAudio) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.OutputAudioValue = &v
-	return s
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s StreamInputFakeImpl) Priority() *int {
-	return s.PriorityValue
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s *StreamInputFakeImpl) SetPriority(v int) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.PriorityValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s StreamInputFakeImpl) SourceTimeout() any {
-	return s.SourceTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s *StreamInputFakeImpl) SetSourceTimeout(v any) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.SourceTimeoutValue = v
-	return s
-}
-
-// Detailed runtime information about the input.
-func (s StreamInputFakeImpl) Stats() InputStats {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the input.
-func (s *StreamInputFakeImpl) SetStats(v InputStats) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*InputStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s StreamInputFakeImpl) Timeout() *int {
-	return s.TimeoutValue
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s *StreamInputFakeImpl) SetTimeout(v int) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
 	return s
 }
 
@@ -40311,54 +41675,6 @@ func (s *StreamInputFakeImpl) SetURL(v InputURL) StreamInputFake {
 		return nil
 	}
 	s.URLValue = v
-	return s
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s StreamInputFakeImpl) UserAgent() *string {
-	return s.UserAgentValue
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s *StreamInputFakeImpl) SetUserAgent(v string) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.UserAgentValue = &v
-	return s
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s StreamInputFakeImpl) Via() *AgentURL {
-	return s.ViaValue
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s *StreamInputFakeImpl) SetVia(v AgentURL) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.ViaValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputFakeImpl) VideoTimeout() *Seconds {
-	return s.VideoTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputFakeImpl) SetVideoTimeout(v Seconds) StreamInputFake {
-	if s == nil {
-		return nil
-	}
-	s.VideoTimeoutValue = &v
 	return s
 }
 
@@ -40383,360 +41699,6 @@ func NewStreamInputFile() StreamInputFile {
 	return &StreamInputFileImpl{}
 }
 
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s StreamInputFileImpl) AllowIf() *string {
-	return s.AllowIfValue
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s *StreamInputFileImpl) SetAllowIf(v string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.AllowIfValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputFileImpl) AudioTimeout() *Seconds {
-	return s.AudioTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputFileImpl) SetAudioTimeout(v Seconds) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.AudioTimeoutValue = &v
-	return s
-}
-
-// The rules for handling the closed captions.
-func (s StreamInputFileImpl) ClosedCaptions() map[string]string {
-	return s.ClosedCaptionsValue
-}
-
-// The rules for handling the closed captions.
-func (s *StreamInputFileImpl) SetClosedCaptions(v map[string]string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.ClosedCaptionsValue = v
-	return s
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s StreamInputFileImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s *StreamInputFileImpl) SetComment(v string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s StreamInputFileImpl) DenyIf() *string {
-	return s.DenyIfValue
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s *StreamInputFileImpl) SetDenyIf(v string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.DenyIfValue = &v
-	return s
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s StreamInputFileImpl) FramesTimeout() *int {
-	return s.FramesTimeoutValue
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s *StreamInputFileImpl) SetFramesTimeout(v int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.FramesTimeoutValue = &v
-	return s
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s StreamInputFileImpl) Headers() map[string]string {
-	return s.HeadersValue
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s *StreamInputFileImpl) SetHeaders(v map[string]string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.HeadersValue = v
-	return s
-}
-
-// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-func (s StreamInputFileImpl) Languages() map[string]string {
-	return s.LanguagesValue
-}
-
-// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-func (s *StreamInputFileImpl) SetLanguages(v map[string]string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.LanguagesValue = v
-	return s
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s StreamInputFileImpl) MaxRetryTimeout() *Seconds {
-	return s.MaxRetryTimeoutValue
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s *StreamInputFileImpl) SetMaxRetryTimeout(v Seconds) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.MaxRetryTimeoutValue = &v
-	return s
-}
-
-// Skip input start if the stream has no clients.
-func (s StreamInputFileImpl) NoClientsReconnectDelay() *int {
-	return s.NoClientsReconnectDelayValue
-}
-
-// Skip input start if the stream has no clients.
-func (s *StreamInputFileImpl) SetNoClientsReconnectDelay(v int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.NoClientsReconnectDelayValue = &v
-	return s
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s StreamInputFileImpl) OutputAudio() *OutputAudio {
-	return s.OutputAudioValue
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s *StreamInputFileImpl) SetOutputAudio(v OutputAudio) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.OutputAudioValue = &v
-	return s
-}
-
-// Choose a specific PID to ingest from an MPEG-TS stream.
-// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-// Example: [211]
-func (s StreamInputFileImpl) Pids() []int {
-	return s.PidsValue
-}
-
-// Choose a specific PID to ingest from an MPEG-TS stream.
-// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-// Example: [211]
-func (s *StreamInputFileImpl) SetPids(v []int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.PidsValue = v
-	return s
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s StreamInputFileImpl) Priority() *int {
-	return s.PriorityValue
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s *StreamInputFileImpl) SetPriority(v int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.PriorityValue = &v
-	return s
-}
-
-// Choose a program to ingest from an MPEG-TS stream.
-// Example: [1]
-func (s StreamInputFileImpl) Programs() []int {
-	return s.ProgramsValue
-}
-
-// Choose a program to ingest from an MPEG-TS stream.
-// Example: [1]
-func (s *StreamInputFileImpl) SetPrograms(v []int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.ProgramsValue = v
-	return s
-}
-
-// Deprecated field. Will be deleted at 23.09
-// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-// Deprecated since 22.12.
-// Available ways to disable processing of SCTE-35 markers:
-// 1. pids option to select tracks without SCTE-35 markers
-// 2. hls_scte35 option from stream_config_media for hls output
-// 3. performing appropriate tuning pids in the transponder
-// Example: true
-func (s StreamInputFileImpl) Scte35() *bool {
-	return s.Scte35Value
-}
-
-// Deprecated field. Will be deleted at 23.09
-// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-// Deprecated since 22.12.
-// Available ways to disable processing of SCTE-35 markers:
-// 1. pids option to select tracks without SCTE-35 markers
-// 2. hls_scte35 option from stream_config_media for hls output
-// 3. performing appropriate tuning pids in the transponder
-// Example: true
-func (s *StreamInputFileImpl) SetScte35(v bool) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.Scte35Value = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s StreamInputFileImpl) SourceTimeout() any {
-	return s.SourceTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s *StreamInputFileImpl) SetSourceTimeout(v any) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.SourceTimeoutValue = v
-	return s
-}
-
-// Detailed runtime information about the input.
-func (s StreamInputFileImpl) Stats() InputStats {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the input.
-func (s *StreamInputFileImpl) SetStats(v InputStats) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*InputStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s StreamInputFileImpl) Subtitles() *StreamInputMpegtsSpecificSubtitles {
-	return s.SubtitlesValue
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s *StreamInputFileImpl) SetSubtitles(v StreamInputMpegtsSpecificSubtitles) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.SubtitlesValue = &v
-	return s
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s StreamInputFileImpl) Timeout() *int {
-	return s.TimeoutValue
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s *StreamInputFileImpl) SetTimeout(v int) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
-	return s
-}
-
 // URL to get a stream from file.
 // Format: input_url (input_url)
 // Pattern: ^file://.*$
@@ -40757,66 +41719,18 @@ func (s *StreamInputFileImpl) SetURL(v InputURL) StreamInputFile {
 	return s
 }
 
-// User agent. Can be modified if a protocol allows it.
-func (s StreamInputFileImpl) UserAgent() *string {
-	return s.UserAgentValue
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s *StreamInputFileImpl) SetUserAgent(v string) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.UserAgentValue = &v
-	return s
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s StreamInputFileImpl) Via() *AgentURL {
-	return s.ViaValue
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s *StreamInputFileImpl) SetVia(v AgentURL) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.ViaValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputFileImpl) VideoTimeout() *Seconds {
-	return s.VideoTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputFileImpl) SetVideoTimeout(v Seconds) StreamInputFile {
-	if s == nil {
-		return nil
-	}
-	s.VideoTimeoutValue = &v
-	return s
-}
-
-// NewStreamInputMpegtsSpecific creates a new StreamInputMpegtsSpecific instance
-func NewStreamInputMpegtsSpecific() StreamInputMpegtsSpecific {
-	return &StreamInputMpegtsSpecificImpl{}
+// NewStreamInputM4f creates a new StreamInputM4f instance
+func NewStreamInputM4f() StreamInputM4f {
+	return &StreamInputM4fImpl{}
 }
 
 // The rules for handling the closed captions.
-func (s StreamInputMpegtsSpecificImpl) ClosedCaptions() map[string]string {
+func (s StreamInputM4fImpl) ClosedCaptions() map[string]string {
 	return s.ClosedCaptionsValue
 }
 
 // The rules for handling the closed captions.
-func (s *StreamInputMpegtsSpecificImpl) SetClosedCaptions(v map[string]string) StreamInputMpegtsSpecific {
+func (s *StreamInputM4fImpl) SetClosedCaptions(v map[string]string) StreamInputM4f {
 	if s == nil {
 		return nil
 	}
@@ -40824,617 +41738,68 @@ func (s *StreamInputMpegtsSpecificImpl) SetClosedCaptions(v map[string]string) S
 	return s
 }
 
-// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-func (s StreamInputMpegtsSpecificImpl) Languages() map[string]string {
-	return s.LanguagesValue
+// URL to get a stream from m4f source.
+// Format: input_url (input_url)
+// Pattern: ^(m4f|m4fs)://.*$
+// Examples: m4f://remote.host.com/example, m4fs://remote.host.com/example
+func (s StreamInputM4fImpl) URL() InputURL {
+	return s.URLValue
 }
 
-// An array of MPEG-TS language descriptors in format `[{key: track, value: language}]`
-func (s *StreamInputMpegtsSpecificImpl) SetLanguages(v map[string]string) StreamInputMpegtsSpecific {
+// URL to get a stream from m4f source.
+// Format: input_url (input_url)
+// Pattern: ^(m4f|m4fs)://.*$
+// Examples: m4f://remote.host.com/example, m4fs://remote.host.com/example
+func (s *StreamInputM4fImpl) SetURL(v InputURL) StreamInputM4f {
 	if s == nil {
 		return nil
 	}
-	s.LanguagesValue = v
+	s.URLValue = v
 	return s
 }
 
-// Choose a specific PID to ingest from an MPEG-TS stream.
-// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-// Example: [211]
-func (s StreamInputMpegtsSpecificImpl) Pids() []int {
-	return s.PidsValue
+// NewStreamInputM4s creates a new StreamInputM4s instance
+func NewStreamInputM4s() StreamInputM4s {
+	return &StreamInputM4sImpl{}
 }
 
-// Choose a specific PID to ingest from an MPEG-TS stream.
-// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
-// It is possible to set PID values for PMT, SDT, video, and audio tracks.
-// Example: [211]
-func (s *StreamInputMpegtsSpecificImpl) SetPids(v []int) StreamInputMpegtsSpecific {
+// The rules for handling the closed captions.
+func (s StreamInputM4sImpl) ClosedCaptions() map[string]string {
+	return s.ClosedCaptionsValue
+}
+
+// The rules for handling the closed captions.
+func (s *StreamInputM4sImpl) SetClosedCaptions(v map[string]string) StreamInputM4s {
 	if s == nil {
 		return nil
 	}
-	s.PidsValue = v
+	s.ClosedCaptionsValue = v
 	return s
 }
 
-// Choose a program to ingest from an MPEG-TS stream.
-// Example: [1]
-func (s StreamInputMpegtsSpecificImpl) Programs() []int {
-	return s.ProgramsValue
+// URL to get a stream from m4s source.
+// Format: input_url (input_url)
+// Pattern: ^(m4s|m4ss)://.*$
+// Examples: m4s://remote.host.com/example, m4ss://remote.host.com/example
+func (s StreamInputM4sImpl) URL() InputURL {
+	return s.URLValue
 }
 
-// Choose a program to ingest from an MPEG-TS stream.
-// Example: [1]
-func (s *StreamInputMpegtsSpecificImpl) SetPrograms(v []int) StreamInputMpegtsSpecific {
+// URL to get a stream from m4s source.
+// Format: input_url (input_url)
+// Pattern: ^(m4s|m4ss)://.*$
+// Examples: m4s://remote.host.com/example, m4ss://remote.host.com/example
+func (s *StreamInputM4sImpl) SetURL(v InputURL) StreamInputM4s {
 	if s == nil {
 		return nil
 	}
-	s.ProgramsValue = v
-	return s
-}
-
-// Deprecated field. Will be deleted at 23.09
-// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-// Deprecated since 22.12.
-// Available ways to disable processing of SCTE-35 markers:
-// 1. pids option to select tracks without SCTE-35 markers
-// 2. hls_scte35 option from stream_config_media for hls output
-// 3. performing appropriate tuning pids in the transponder
-// Example: true
-func (s StreamInputMpegtsSpecificImpl) Scte35() *bool {
-	return s.Scte35Value
-}
-
-// Deprecated field. Will be deleted at 23.09
-// This option disables processing of SCTE-35 markers from an MPEG-TS input stream.
-// Deprecated since 22.12.
-// Available ways to disable processing of SCTE-35 markers:
-// 1. pids option to select tracks without SCTE-35 markers
-// 2. hls_scte35 option from stream_config_media for hls output
-// 3. performing appropriate tuning pids in the transponder
-// Example: true
-func (s *StreamInputMpegtsSpecificImpl) SetScte35(v bool) StreamInputMpegtsSpecific {
-	if s == nil {
-		return nil
-	}
-	s.Scte35Value = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s StreamInputMpegtsSpecificImpl) Subtitles() *StreamInputMpegtsSpecificSubtitles {
-	return s.SubtitlesValue
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s *StreamInputMpegtsSpecificImpl) SetSubtitles(v StreamInputMpegtsSpecificSubtitles) StreamInputMpegtsSpecific {
-	if s == nil {
-		return nil
-	}
-	s.SubtitlesValue = &v
+	s.URLValue = v
 	return s
 }
 
 // NewStreamInputPublish creates a new StreamInputPublish instance
 func NewStreamInputPublish() StreamInputPublish {
 	return &StreamInputPublishImpl{}
-}
-
-// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-// The default value is 300 kbit/s.
-// Example: 200
-func (s StreamInputPublishImpl) AbrCorrection() *int {
-	return s.AbrCorrectionValue
-}
-
-// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-// The default value is 300 kbit/s.
-// Example: 200
-func (s *StreamInputPublishImpl) SetAbrCorrection(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrCorrectionValue = &v
-	return s
-}
-
-// The number of cycles of bitrate auto-adjustment.
-// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-// By default, `abr_cycles`=5.
-// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-// Example: 3
-func (s StreamInputPublishImpl) AbrCycles() *int {
-	return s.AbrCyclesValue
-}
-
-// The number of cycles of bitrate auto-adjustment.
-// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-// By default, `abr_cycles`=5.
-// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-// Example: 3
-func (s *StreamInputPublishImpl) SetAbrCycles(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrCyclesValue = &v
-	return s
-}
-
-// Whether adaptive bitrate process is logged.
-// Example: 1
-func (s StreamInputPublishImpl) AbrDebug() *int {
-	return s.AbrDebugValue
-}
-
-// Whether adaptive bitrate process is logged.
-// Example: 1
-func (s *StreamInputPublishImpl) SetAbrDebug(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrDebugValue = &v
-	return s
-}
-
-// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-// Example: 2
-func (s StreamInputPublishImpl) AbrLossLower() *float64 {
-	return s.AbrLossLowerValue
-}
-
-// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-// Example: 2
-func (s *StreamInputPublishImpl) SetAbrLossLower(v float64) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrLossLowerValue = &v
-	return s
-}
-
-// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-// Example: 10
-func (s StreamInputPublishImpl) AbrLossUpper() *float64 {
-	return s.AbrLossUpperValue
-}
-
-// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-// Example: 10
-func (s *StreamInputPublishImpl) SetAbrLossUpper(v float64) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrLossUpperValue = &v
-	return s
-}
-
-// Maximum bitrate for adjustment process, in kbit/s.
-// Flussonic will keep the publication bitrate equal or below of the specified value.
-// Example: 1000
-func (s StreamInputPublishImpl) AbrMaxBitrate() *int {
-	return s.AbrMaxBitrateValue
-}
-
-// Maximum bitrate for adjustment process, in kbit/s.
-// Flussonic will keep the publication bitrate equal or below of the specified value.
-// Example: 1000
-func (s *StreamInputPublishImpl) SetAbrMaxBitrate(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrMaxBitrateValue = &v
-	return s
-}
-
-// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-// Two options are possible:
-// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-// Example: 1
-func (s StreamInputPublishImpl) AbrMode() *int {
-	return s.AbrModeValue
-}
-
-// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-// Two options are possible:
-// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-// Example: 1
-func (s *StreamInputPublishImpl) SetAbrMode(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrModeValue = &v
-	return s
-}
-
-// A step of reducing the bitrate to the minimum.
-// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-func (s StreamInputPublishImpl) AbrStepdown() *float64 {
-	return s.AbrStepdownValue
-}
-
-// A step of reducing the bitrate to the minimum.
-// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-func (s *StreamInputPublishImpl) SetAbrStepdown(v float64) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrStepdownValue = &v
-	return s
-}
-
-// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-func (s StreamInputPublishImpl) AbrStepup() *int {
-	return s.AbrStepupValue
-}
-
-// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-func (s *StreamInputPublishImpl) SetAbrStepup(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AbrStepupValue = &v
-	return s
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s StreamInputPublishImpl) AllowIf() *string {
-	return s.AllowIfValue
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s *StreamInputPublishImpl) SetAllowIf(v string) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AllowIfValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputPublishImpl) AudioTimeout() *Seconds {
-	return s.AudioTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputPublishImpl) SetAudioTimeout(v Seconds) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.AudioTimeoutValue = &v
-	return s
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s StreamInputPublishImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s *StreamInputPublishImpl) SetComment(v string) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s StreamInputPublishImpl) DenyIf() *string {
-	return s.DenyIfValue
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s *StreamInputPublishImpl) SetDenyIf(v string) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.DenyIfValue = &v
-	return s
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s StreamInputPublishImpl) FramesTimeout() *int {
-	return s.FramesTimeoutValue
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s *StreamInputPublishImpl) SetFramesTimeout(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.FramesTimeoutValue = &v
-	return s
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s StreamInputPublishImpl) Headers() map[string]string {
-	return s.HeadersValue
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s *StreamInputPublishImpl) SetHeaders(v map[string]string) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.HeadersValue = v
-	return s
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s StreamInputPublishImpl) MaxRetryTimeout() *Seconds {
-	return s.MaxRetryTimeoutValue
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s *StreamInputPublishImpl) SetMaxRetryTimeout(v Seconds) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.MaxRetryTimeoutValue = &v
-	return s
-}
-
-// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-// Example: 150
-func (s StreamInputPublishImpl) MinBitrate() *int {
-	return s.MinBitrateValue
-}
-
-// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-// Example: 150
-func (s *StreamInputPublishImpl) SetMinBitrate(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.MinBitrateValue = &v
-	return s
-}
-
-// Skip input start if the stream has no clients.
-func (s StreamInputPublishImpl) NoClientsReconnectDelay() *int {
-	return s.NoClientsReconnectDelayValue
-}
-
-// Skip input start if the stream has no clients.
-func (s *StreamInputPublishImpl) SetNoClientsReconnectDelay(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.NoClientsReconnectDelayValue = &v
-	return s
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s StreamInputPublishImpl) OutputAudio() *OutputAudio {
-	return s.OutputAudioValue
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s *StreamInputPublishImpl) SetOutputAudio(v OutputAudio) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.OutputAudioValue = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 24.11
-// Choose one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s StreamInputPublishImpl) PreferCodec() *WebrtcPreferVideoCodec {
-	return s.PreferCodecValue
-}
-
-// Deprecated field. Will be deleted at 24.11
-// Choose one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s *StreamInputPublishImpl) SetPreferCodec(v WebrtcPreferVideoCodec) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.PreferCodecValue = &v
-	return s
-}
-
-// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s StreamInputPublishImpl) PreferVideoCodec() *WebrtcPreferVideoCodec {
-	return s.PreferVideoCodecValue
-}
-
-// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s *StreamInputPublishImpl) SetPreferVideoCodec(v WebrtcPreferVideoCodec) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.PreferVideoCodecValue = &v
-	return s
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s StreamInputPublishImpl) Priority() *int {
-	return s.PriorityValue
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s *StreamInputPublishImpl) SetPriority(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.PriorityValue = &v
-	return s
-}
-
-// This option disables processing of SCTE-35 markers from SRT input stream.
-// Example: true
-func (s StreamInputPublishImpl) Scte35() *bool {
-	return s.Scte35Value
-}
-
-// This option disables processing of SCTE-35 markers from SRT input stream.
-// Example: true
-func (s *StreamInputPublishImpl) SetScte35(v bool) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.Scte35Value = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s StreamInputPublishImpl) SourceTimeout() any {
-	return s.SourceTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s *StreamInputPublishImpl) SetSourceTimeout(v any) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.SourceTimeoutValue = v
-	return s
-}
-
-// Detailed runtime information about the input.
-func (s StreamInputPublishImpl) Stats() InputStats {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the input.
-func (s *StreamInputPublishImpl) SetStats(v InputStats) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*InputStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s StreamInputPublishImpl) Subtitles() *StreamInputSrtPublishSpecificSubtitles {
-	return s.SubtitlesValue
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s *StreamInputPublishImpl) SetSubtitles(v StreamInputSrtPublishSpecificSubtitles) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.SubtitlesValue = &v
-	return s
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s StreamInputPublishImpl) Timeout() *int {
-	return s.TimeoutValue
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s *StreamInputPublishImpl) SetTimeout(v int) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
-	return s
-}
-
-// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-// Example: udp
-func (s StreamInputPublishImpl) Transport() *WebrtcTransport {
-	return s.TransportValue
-}
-
-// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-// Example: udp
-func (s *StreamInputPublishImpl) SetTransport(v WebrtcTransport) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.TransportValue = &v
-	return s
 }
 
 // The publish:// URL used to indicate where this stream started in publish mode.
@@ -41469,265 +41834,9 @@ func (s *StreamInputPublishImpl) SetURL(v InputURL) StreamInputPublish {
 	return s
 }
 
-// User agent. Can be modified if a protocol allows it.
-func (s StreamInputPublishImpl) UserAgent() *string {
-	return s.UserAgentValue
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s *StreamInputPublishImpl) SetUserAgent(v string) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.UserAgentValue = &v
-	return s
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s StreamInputPublishImpl) Via() *AgentURL {
-	return s.ViaValue
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s *StreamInputPublishImpl) SetVia(v AgentURL) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.ViaValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputPublishImpl) VideoTimeout() *Seconds {
-	return s.VideoTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputPublishImpl) SetVideoTimeout(v Seconds) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.VideoTimeoutValue = &v
-	return s
-}
-
-// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-// Example: true
-func (s StreamInputPublishImpl) WebrtcAbr() *bool {
-	return s.WebrtcAbrValue
-}
-
-// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-// Example: true
-func (s *StreamInputPublishImpl) SetWebrtcAbr(v bool) StreamInputPublish {
-	if s == nil {
-		return nil
-	}
-	s.WebrtcAbrValue = &v
-	return s
-}
-
 // NewStreamInputRtsp creates a new StreamInputRtsp instance
 func NewStreamInputRtsp() StreamInputRtsp {
 	return &StreamInputRtspImpl{}
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s StreamInputRtspImpl) AllowIf() *string {
-	return s.AllowIfValue
-}
-
-// Path to a file. The input will be allowed if you put `1` in the file, or denied if `0` (reverse logic to `deny_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `allow_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`. That means that the first input is used when you play the stream.
-// When you put `0` to the `/path/to/file` file, the first input is denied, so the second one is played.
-// If no such file, the input is allowed.
-func (s *StreamInputRtspImpl) SetAllowIf(v string) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.AllowIfValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputRtspImpl) AudioTimeout() *Seconds {
-	return s.AudioTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new audio frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputRtspImpl) SetAudioTimeout(v Seconds) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.AudioTimeoutValue = &v
-	return s
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s StreamInputRtspImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the input.
-// Example: This is a test input
-func (s *StreamInputRtspImpl) SetComment(v string) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s StreamInputRtspImpl) DenyIf() *string {
-	return s.DenyIfValue
-}
-
-// Path to a file. The input will be denied if you put `1` in the file, or allowed if `0` (reverse logic to `allow_if`).
-// This option allows you to manage inputs without API requests.
-// For example, your stream has two inputs and you set `deny_if = /path/to/file` for the first input.
-// The `/path/to/file` file contains only the digit `1`.
-// That means that the first input will not be used when you play the stream, so the second one will.
-// When you put `0` to the `/path/to/file` file, the first input is allowed to be played.
-// If no such file, the input is allowed.
-func (s *StreamInputRtspImpl) SetDenyIf(v string) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.DenyIfValue = &v
-	return s
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s StreamInputRtspImpl) FramesTimeout() *int {
-	return s.FramesTimeoutValue
-}
-
-// Specifies the period of time, in seconds, for which Media Server waits for new frames to come from the data source before it generates the `frames_timed_out` event that informs you that the source might soon be lost.
-// This period of time must be smaller than `source_timeout`.
-// If frames come again from this source, before `source_timeout` has passed, Media Server issues the `frames_restored` event.
-// Example: 3
-func (s *StreamInputRtspImpl) SetFramesTimeout(v int) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.FramesTimeoutValue = &v
-	return s
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s StreamInputRtspImpl) Headers() map[string]string {
-	return s.HeadersValue
-}
-
-// Request headers as key-value pairs.
-// Example: map[Authorization:Basic dXNlcjpwYXNzd29yZA== User-Agent:curl/7.85.0]
-func (s *StreamInputRtspImpl) SetHeaders(v map[string]string) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.HeadersValue = v
-	return s
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s StreamInputRtspImpl) MaxRetryTimeout() *Seconds {
-	return s.MaxRetryTimeoutValue
-}
-
-// The maximum time that Media Server will set for attempts to reconnect to source when source problems occur.
-// The time between attempts is not linear and may increase if source problems are not fixed. This parameter limits this value, but the time itself between attempts may be longer.
-// Format: seconds (seconds)
-// Example: 30
-func (s *StreamInputRtspImpl) SetMaxRetryTimeout(v Seconds) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.MaxRetryTimeoutValue = &v
-	return s
-}
-
-// Skip input start if the stream has no clients.
-func (s StreamInputRtspImpl) NoClientsReconnectDelay() *int {
-	return s.NoClientsReconnectDelayValue
-}
-
-// Skip input start if the stream has no clients.
-func (s *StreamInputRtspImpl) SetNoClientsReconnectDelay(v int) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.NoClientsReconnectDelayValue = &v
-	return s
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s StreamInputRtspImpl) OutputAudio() *OutputAudio {
-	return s.OutputAudioValue
-}
-
-// Enables transcoding of the published audio to another codec.
-// The option is useful when you want to get an AAC audio track from WebRTC publish with OPUS or RTSP camera with PCMU.
-func (s *StreamInputRtspImpl) SetOutputAudio(v OutputAudio) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.OutputAudioValue = &v
-	return s
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s StreamInputRtspImpl) Priority() *int {
-	return s.PriorityValue
-}
-
-// The priority that Media Server takes into account when switching to another source.
-// The source with `priority=1` has the first priority, the source with `priority=2` has the second priority, and so on.
-// By default, the first source in the list has the highest priority and the last source in the list has the lowest priority.
-// If priority is not specified for some sources, or if some sources have equal priorities, then the default order is applied.
-// Example: 1
-func (s *StreamInputRtspImpl) SetPriority(v int) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.PriorityValue = &v
-	return s
 }
 
 // Whether to force UDP to capture a video from RTSP cameras.
@@ -41741,56 +41850,6 @@ func (s *StreamInputRtspImpl) SetRTP(v string) StreamInputRtsp {
 		return nil
 	}
 	s.RTPValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s StreamInputRtspImpl) SourceTimeout() any {
-	return s.SourceTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new frames until it considers the source as lost.
-// Example: 20
-func (s *StreamInputRtspImpl) SetSourceTimeout(v any) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.SourceTimeoutValue = v
-	return s
-}
-
-// Detailed runtime information about the input.
-func (s StreamInputRtspImpl) Stats() InputStats {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the input.
-func (s *StreamInputRtspImpl) SetStats(v InputStats) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*InputStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s StreamInputRtspImpl) Timeout() *int {
-	return s.TimeoutValue
-}
-
-// The time, in seconds, for Media Server to switch to the fallback source if the main source stops sending frames (video or audio).
-// The important thing here is that the source remains active (connected), allowing for a client-publisher to stay on the socket.
-// Example: 10
-func (s *StreamInputRtspImpl) SetTimeout(v int) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
 	return s
 }
 
@@ -41814,359 +41873,21 @@ func (s *StreamInputRtspImpl) SetURL(v InputURL) StreamInputRtsp {
 	return s
 }
 
-// User agent. Can be modified if a protocol allows it.
-func (s StreamInputRtspImpl) UserAgent() *string {
-	return s.UserAgentValue
-}
-
-// User agent. Can be modified if a protocol allows it.
-func (s *StreamInputRtspImpl) SetUserAgent(v string) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.UserAgentValue = &v
-	return s
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s StreamInputRtspImpl) Via() *AgentURL {
-	return s.ViaValue
-}
-
-// Agent ID. Used as a proxy to connect to the input server.
-// Format: agent_url (agent://ID identification for `via` configuration option)
-func (s *StreamInputRtspImpl) SetVia(v AgentURL) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.ViaValue = &v
-	return s
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s StreamInputRtspImpl) VideoTimeout() *Seconds {
-	return s.VideoTimeoutValue
-}
-
-// The period of time, in seconds, for which Media Server will wait for new video frames until it considers the source as lost.
-// Format: seconds (seconds)
-// Example: 20
-func (s *StreamInputRtspImpl) SetVideoTimeout(v Seconds) StreamInputRtsp {
-	if s == nil {
-		return nil
-	}
-	s.VideoTimeoutValue = &v
-	return s
-}
-
 // Whether to wait for the full RTP time synchronization before the processing of frames from the RTSP camera.
+// This option also disables the correction of the time received from the camera; the time from the camera is used as is.
+// Warning: if the camera provides unsynchronized time with the streamer, there will be problems with the archive.
 func (s StreamInputRtspImpl) WaitRtcp() *bool {
 	return s.WaitRtcpValue
 }
 
 // Whether to wait for the full RTP time synchronization before the processing of frames from the RTSP camera.
+// This option also disables the correction of the time received from the camera; the time from the camera is used as is.
+// Warning: if the camera provides unsynchronized time with the streamer, there will be problems with the archive.
 func (s *StreamInputRtspImpl) SetWaitRtcp(v bool) StreamInputRtsp {
 	if s == nil {
 		return nil
 	}
 	s.WaitRtcpValue = &v
-	return s
-}
-
-// NewStreamInputSrtPublishSpecific creates a new StreamInputSrtPublishSpecific instance
-func NewStreamInputSrtPublishSpecific() StreamInputSrtPublishSpecific {
-	return &StreamInputSrtPublishSpecificImpl{}
-}
-
-// This option disables processing of SCTE-35 markers from SRT input stream.
-// Example: true
-func (s StreamInputSrtPublishSpecificImpl) Scte35() *bool {
-	return s.Scte35Value
-}
-
-// This option disables processing of SCTE-35 markers from SRT input stream.
-// Example: true
-func (s *StreamInputSrtPublishSpecificImpl) SetScte35(v bool) StreamInputSrtPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.Scte35Value = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s StreamInputSrtPublishSpecificImpl) Subtitles() *StreamInputSrtPublishSpecificSubtitles {
-	return s.SubtitlesValue
-}
-
-// Deprecated field. Will be deleted at 25.03
-// This configuration is deprecated. Use `dvbocr` configuration field in stream.
-// This parameter allows to manage subtitles in an output stream.
-// Example: drop
-func (s *StreamInputSrtPublishSpecificImpl) SetSubtitles(v StreamInputSrtPublishSpecificSubtitles) StreamInputSrtPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.SubtitlesValue = &v
-	return s
-}
-
-// NewStreamInputWebrtcPublishSpecific creates a new StreamInputWebrtcPublishSpecific instance
-func NewStreamInputWebrtcPublishSpecific() StreamInputWebrtcPublishSpecific {
-	return &StreamInputWebrtcPublishSpecificImpl{}
-}
-
-// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-// The default value is 300 kbit/s.
-// Example: 200
-func (s StreamInputWebrtcPublishSpecificImpl) AbrCorrection() *int {
-	return s.AbrCorrectionValue
-}
-
-// The correction between the target bitrate (Receiver Estimated Maximum Bitrate, calculated in Flussonic) and browser bitrate, in kbit/s.
-// Flussonic sends the target bitrate to the browser from which the publication is carried out so that the browser adjusts the bitrate of the publication by this value.
-// The default value is 300 kbit/s.
-// Example: 200
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrCorrection(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrCorrectionValue = &v
-	return s
-}
-
-// The number of cycles of bitrate auto-adjustment.
-// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-// By default, `abr_cycles`=5.
-// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-// Example: 3
-func (s StreamInputWebrtcPublishSpecificImpl) AbrCycles() *int {
-	return s.AbrCyclesValue
-}
-
-// The number of cycles of bitrate auto-adjustment.
-// After the specified number of auto-adjustment cycles passes, Flussonic considers the bitrate to be optimal, and it is no longer analyzed.
-// By default, `abr_cycles`=5.
-// If `abr_cycles`=0, the adjustment process takes place all the time while the publication lasts.
-// Example: 3
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrCycles(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrCyclesValue = &v
-	return s
-}
-
-// Whether adaptive bitrate process is logged.
-// Example: 1
-func (s StreamInputWebrtcPublishSpecificImpl) AbrDebug() *int {
-	return s.AbrDebugValue
-}
-
-// Whether adaptive bitrate process is logged.
-// Example: 1
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrDebug(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrDebugValue = &v
-	return s
-}
-
-// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-// Example: 2
-func (s StreamInputWebrtcPublishSpecificImpl) AbrLossLower() *float64 {
-	return s.AbrLossLowerValue
-}
-
-// The lower limit of packet loss. When it is reached, Flussonic raises the bitrate.
-// That is, if packet loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup` percent.
-// Example: 2
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrLossLower(v float64) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrLossLowerValue = &v
-	return s
-}
-
-// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-// Example: 10
-func (s StreamInputWebrtcPublishSpecificImpl) AbrLossUpper() *float64 {
-	return s.AbrLossUpperValue
-}
-
-// The upper limit of packet loss. When it is reached, Flussonic reduces the bitrate.
-// That is, if packet loss is greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-// Example: 10
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrLossUpper(v float64) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrLossUpperValue = &v
-	return s
-}
-
-// Maximum bitrate for adjustment process, in kbit/s.
-// Flussonic will keep the publication bitrate equal or below of the specified value.
-// Example: 1000
-func (s StreamInputWebrtcPublishSpecificImpl) AbrMaxBitrate() *int {
-	return s.AbrMaxBitrateValue
-}
-
-// Maximum bitrate for adjustment process, in kbit/s.
-// Flussonic will keep the publication bitrate equal or below of the specified value.
-// Example: 1000
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrMaxBitrate(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrMaxBitrateValue = &v
-	return s
-}
-
-// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-// Two options are possible:
-// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-// Example: 1
-func (s StreamInputWebrtcPublishSpecificImpl) AbrMode() *int {
-	return s.AbrModeValue
-}
-
-// The algorithm for determining the need to change the bitrate of the published stream and for calculating the target bitrate.
-// Two options are possible:
-// * `abr_mode=0` - This mode takes into account the packet losses, target bitrate, browser bitrate and the number of auto-adjustment cycles.
-// * `abr_mode=1` - This mode considers only packet losses and target bitrate.
-// Example: 1
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrMode(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrModeValue = &v
-	return s
-}
-
-// A step of reducing the bitrate to the minimum.
-// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-func (s StreamInputWebrtcPublishSpecificImpl) AbrStepdown() *float64 {
-	return s.AbrStepdownValue
-}
-
-// A step of reducing the bitrate to the minimum.
-// If packet losses are greater than `abr_loss_upper`, Flussonic makes the publisher to reduce the current bitrate in steps with the maximum rate of `abr_stepdown` percent.
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrStepdown(v float64) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrStepdownValue = &v
-	return s
-}
-
-// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-func (s StreamInputWebrtcPublishSpecificImpl) AbrStepup() *int {
-	return s.AbrStepupValue
-}
-
-// Increment step for raising the bitrate to the maximum, in percent. The default step is 30%.
-// If the loss is less than `abr_loss_lower`, Flussonic makes the publisher to step up from the current bitrate to the maximum one with the rate of `abr_stepup percent`.
-func (s *StreamInputWebrtcPublishSpecificImpl) SetAbrStepup(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.AbrStepupValue = &v
-	return s
-}
-
-// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-// Example: 150
-func (s StreamInputWebrtcPublishSpecificImpl) MinBitrate() *int {
-	return s.MinBitrateValue
-}
-
-// The minimum bitrate threshold, in kbit/s. The default value is 100 kbit/s.
-// Example: 150
-func (s *StreamInputWebrtcPublishSpecificImpl) SetMinBitrate(v int) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.MinBitrateValue = &v
-	return s
-}
-
-// Deprecated field. Will be deleted at 24.11
-// Choose one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s StreamInputWebrtcPublishSpecificImpl) PreferCodec() *WebrtcPreferVideoCodec {
-	return s.PreferCodecValue
-}
-
-// Deprecated field. Will be deleted at 24.11
-// Choose one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s *StreamInputWebrtcPublishSpecificImpl) SetPreferCodec(v WebrtcPreferVideoCodec) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.PreferCodecValue = &v
-	return s
-}
-
-// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s StreamInputWebrtcPublishSpecificImpl) PreferVideoCodec() *WebrtcPreferVideoCodec {
-	return s.PreferVideoCodecValue
-}
-
-// Prefer one of the listed video codecs at the start of the publication via WebRTC.
-// Example: av1
-func (s *StreamInputWebrtcPublishSpecificImpl) SetPreferVideoCodec(v WebrtcPreferVideoCodec) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.PreferVideoCodecValue = &v
-	return s
-}
-
-// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-// Example: udp
-func (s StreamInputWebrtcPublishSpecificImpl) Transport() *WebrtcTransport {
-	return s.TransportValue
-}
-
-// Choose the prefered transport of the publication via WebRTC: UDP or TCP.
-// Example: udp
-func (s *StreamInputWebrtcPublishSpecificImpl) SetTransport(v WebrtcTransport) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.TransportValue = &v
-	return s
-}
-
-// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-// Example: true
-func (s StreamInputWebrtcPublishSpecificImpl) WebrtcAbr() *bool {
-	return s.WebrtcAbrValue
-}
-
-// Whether the adaptive bitrate mechanism is used for WebRTC publications.
-// Example: true
-func (s *StreamInputWebrtcPublishSpecificImpl) SetWebrtcAbr(v bool) StreamInputWebrtcPublishSpecific {
-	if s == nil {
-		return nil
-	}
-	s.WebrtcAbrValue = &v
 	return s
 }
 
@@ -42303,222 +42024,9 @@ func (s *StreamPresetImpl) SetTitle(v string) StreamPreset {
 	return s
 }
 
-// NewStreamPushBase creates a new StreamPushBase instance
-func NewStreamPushBase() StreamPushBase {
-	return &StreamPushBaseImpl{}
-}
-
-// Human-readable description of the pusher.
-// Example: This is a test push
-func (s StreamPushBaseImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the pusher.
-// Example: This is a test push
-func (s *StreamPushBaseImpl) SetComment(v string) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Disable pushing the stream.
-// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-func (s StreamPushBaseImpl) Disabled() *bool {
-	return s.DisabledValue
-}
-
-// Disable pushing the stream.
-// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-func (s *StreamPushBaseImpl) SetDisabled(v bool) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	s.DisabledValue = &v
-	return s
-}
-
-// The maximum number of times *Flussonic* retries to push the stream.
-func (s StreamPushBaseImpl) RetryLimit() *int {
-	return s.RetryLimitValue
-}
-
-// The maximum number of times *Flussonic* retries to push the stream.
-func (s *StreamPushBaseImpl) SetRetryLimit(v int) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	s.RetryLimitValue = &v
-	return s
-}
-
-// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-// It is an interval in seconds, 5 seconds by default.
-// You can increase this value to reduce server load.
-// Format: seconds (seconds)
-// Example: 7
-func (s StreamPushBaseImpl) RetryTimeout() *Seconds {
-	return s.RetryTimeoutValue
-}
-
-// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-// It is an interval in seconds, 5 seconds by default.
-// You can increase this value to reduce server load.
-// Format: seconds (seconds)
-// Example: 7
-func (s *StreamPushBaseImpl) SetRetryTimeout(v Seconds) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	s.RetryTimeoutValue = &v
-	return s
-}
-
-// Detailed runtime information about the push.
-func (s StreamPushBaseImpl) Stats() PushCounters {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the push.
-func (s *StreamPushBaseImpl) SetStats(v PushCounters) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*PushCountersImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-// Format: seconds (seconds)
-// Example: 10
-func (s StreamPushBaseImpl) Timeout() *Seconds {
-	return s.TimeoutValue
-}
-
-// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-// Format: seconds (seconds)
-// Example: 10
-func (s *StreamPushBaseImpl) SetTimeout(v Seconds) StreamPushBase {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
-	return s
-}
-
 // NewStreamPushRtmp creates a new StreamPushRtmp instance
 func NewStreamPushRtmp() StreamPushRtmp {
 	return &StreamPushRtmpImpl{}
-}
-
-// Human-readable description of the pusher.
-// Example: This is a test push
-func (s StreamPushRtmpImpl) Comment() *string {
-	return s.CommentValue
-}
-
-// Human-readable description of the pusher.
-// Example: This is a test push
-func (s *StreamPushRtmpImpl) SetComment(v string) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	s.CommentValue = &v
-	return s
-}
-
-// Disable pushing the stream.
-// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-func (s StreamPushRtmpImpl) Disabled() *bool {
-	return s.DisabledValue
-}
-
-// Disable pushing the stream.
-// Temporary disabling, or pausing, an offline stream eliminates the necessity to remove it from the the configuration in order to stop Flussonic trying to push it.
-// In this way, the URL and other settings of a disabled stream remain in Flussonic.
-func (s *StreamPushRtmpImpl) SetDisabled(v bool) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	s.DisabledValue = &v
-	return s
-}
-
-// The maximum number of times *Flussonic* retries to push the stream.
-func (s StreamPushRtmpImpl) RetryLimit() *int {
-	return s.RetryLimitValue
-}
-
-// The maximum number of times *Flussonic* retries to push the stream.
-func (s *StreamPushRtmpImpl) SetRetryLimit(v int) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	s.RetryLimitValue = &v
-	return s
-}
-
-// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-// It is an interval in seconds, 5 seconds by default.
-// You can increase this value to reduce server load.
-// Format: seconds (seconds)
-// Example: 7
-func (s StreamPushRtmpImpl) RetryTimeout() *Seconds {
-	return s.RetryTimeoutValue
-}
-
-// How often *Flussonic* should retry attempts to send the stream, e.g., if it has become offline.
-// It is an interval in seconds, 5 seconds by default.
-// You can increase this value to reduce server load.
-// Format: seconds (seconds)
-// Example: 7
-func (s *StreamPushRtmpImpl) SetRetryTimeout(v Seconds) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	s.RetryTimeoutValue = &v
-	return s
-}
-
-// Detailed runtime information about the push.
-func (s StreamPushRtmpImpl) Stats() PushCounters {
-	return s.StatsValue
-}
-
-// Detailed runtime information about the push.
-func (s *StreamPushRtmpImpl) SetStats(v PushCounters) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*PushCountersImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-// Format: seconds (seconds)
-// Example: 10
-func (s StreamPushRtmpImpl) Timeout() *Seconds {
-	return s.TimeoutValue
-}
-
-// Time interval, in seconds, after which the pusher is stopped if the source stream or publishing is stopped.
-// Format: seconds (seconds)
-// Example: 10
-func (s *StreamPushRtmpImpl) SetTimeout(v Seconds) StreamPushRtmp {
-	if s == nil {
-		return nil
-	}
-	s.TimeoutValue = &v
-	return s
 }
 
 // RTMP URL where to push.
@@ -42642,6 +42150,35 @@ func (s *StreamStatsImpl) SetDvrInfo(v DvrInfo) StreamStats {
 	}
 	if impl, ok := v.(*DvrInfoImpl); ok {
 		s.DvrInfoValue = impl
+	}
+	return s
+}
+
+// Per-input runtime statistics.
+func (s StreamStatsImpl) Inputs() []InputStats {
+	if s.InputsValue == nil {
+		return nil
+	}
+	result := make([]InputStats, len(s.InputsValue))
+	for i, item := range s.InputsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Per-input runtime statistics.
+func (s *StreamStatsImpl) SetInputs(v []InputStats) StreamStats {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*InputStatsImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*InputStatsImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.InputsValue = impl
 	}
 	return s
 }
@@ -42867,6 +42404,24 @@ func (s *StreamerImpl) SetAPIURL(v URL) Streamer {
 		return nil
 	}
 	s.APIURLValue = &v
+	return s
+}
+
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s StreamerImpl) CdnZone() *string {
+	return s.CdnZoneValue
+}
+
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s *StreamerImpl) SetCdnZone(v string) Streamer {
+	if s == nil {
+		return nil
+	}
+	s.CdnZoneValue = &v
 	return s
 }
 
@@ -43118,6 +42673,24 @@ func (s *StreamerConfigImpl) SetAPIURL(v URL) StreamerConfig {
 	return s
 }
 
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s StreamerConfigImpl) CdnZone() *string {
+	return s.CdnZoneValue
+}
+
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s *StreamerConfigImpl) SetCdnZone(v string) StreamerConfig {
+	if s == nil {
+		return nil
+	}
+	s.CdnZoneValue = &v
+	return s
+}
+
 // Maximal number of streams.
 // Example: 5
 func (s StreamerConfigImpl) ChannelLimit() *int {
@@ -43137,7 +42710,7 @@ func (s *StreamerConfigImpl) SetChannelLimit(v int) StreamerConfig {
 // The key for authorization for inter-Flussonic connections.
 // All cluster peers should have the same cluster key.
 // Example: xS6i6Q3DCc5nEvnu
-func (s StreamerConfigImpl) ClusterKey() *string {
+func (s StreamerConfigImpl) ClusterKey() string {
 	return s.ClusterKeyValue
 }
 
@@ -43148,7 +42721,7 @@ func (s *StreamerConfigImpl) SetClusterKey(v string) StreamerConfig {
 	if s == nil {
 		return nil
 	}
-	s.ClusterKeyValue = &v
+	s.ClusterKeyValue = v
 	return s
 }
 
@@ -43202,7 +42775,7 @@ func (s *StreamerConfigImpl) SetDvrs(v []DvrConfig) StreamerConfig {
 // if API URL is not specified.
 // Format: server_name (server_name)
 // Example: peer.example.com
-func (s StreamerConfigImpl) Hostname() *ServerName {
+func (s StreamerConfigImpl) Hostname() ServerName {
 	return s.HostnameValue
 }
 
@@ -43215,7 +42788,7 @@ func (s *StreamerConfigImpl) SetHostname(v ServerName) StreamerConfig {
 	if s == nil {
 		return nil
 	}
-	s.HostnameValue = &v
+	s.HostnameValue = v
 	return s
 }
 
@@ -43272,7 +42845,7 @@ func (s *StreamerConfigImpl) SetPublicPayloadURL(v URL) StreamerConfig {
 }
 
 // Role of node
-func (s StreamerConfigImpl) Role() *CentralNodeRoleRole {
+func (s StreamerConfigImpl) Role() CentralNodeRoleRole {
 	return s.RoleValue
 }
 
@@ -43281,7 +42854,7 @@ func (s *StreamerConfigImpl) SetRole(v CentralNodeRoleRole) StreamerConfig {
 	if s == nil {
 		return nil
 	}
-	s.RoleValue = &v
+	s.RoleValue = v
 	return s
 }
 
@@ -43383,35 +42956,6 @@ func (s *StreamerConfigConfigImpl) SetAuthToken(v AuthToken) StreamerConfigConfi
 	return s
 }
 
-// The configuration of the balancers.
-func (s StreamerConfigConfigImpl) Balancers() []BalancerConfig {
-	if s.BalancersValue == nil {
-		return nil
-	}
-	result := make([]BalancerConfig, len(s.BalancersValue))
-	for i, item := range s.BalancersValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the balancers.
-func (s *StreamerConfigConfigImpl) SetBalancers(v []BalancerConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*BalancerConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*BalancerConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.BalancersValue = impl
-	}
-	return s
-}
-
 // The configuration of the cache.
 func (s StreamerConfigConfigImpl) Caches() []CacheConfig {
 	if s.CachesValue == nil {
@@ -43453,22 +42997,6 @@ func (s *StreamerConfigConfigImpl) SetCameraAlarm(v CameraAlarmConfig) StreamerC
 	}
 	if impl, ok := v.(*CameraAlarmConfigImpl); ok {
 		s.CameraAlarmValue = impl
-	}
-	return s
-}
-
-// The configuration of the chassis.
-func (s StreamerConfigConfigImpl) Chassis() ChassisConfig {
-	return s.ChassisValue
-}
-
-// The configuration of the chassis.
-func (s *StreamerConfigConfigImpl) SetChassis(v ChassisConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*ChassisConfigImpl); ok {
-		s.ChassisValue = impl
 	}
 	return s
 }
@@ -43621,22 +43149,6 @@ func (s *StreamerConfigConfigImpl) SetEventSinks(v []EventSinkConfig) StreamerCo
 	return s
 }
 
-// The configuration of the file processor.
-func (s StreamerConfigConfigImpl) FileProcessor() FileProcessorConfig {
-	return s.FileProcessorValue
-}
-
-// The configuration of the file processor.
-func (s *StreamerConfigConfigImpl) SetFileProcessor(v FileProcessorConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*FileProcessorConfigImpl); ok {
-		s.FileProcessorValue = impl
-	}
-	return s
-}
-
 // Use your own GeoIP database.
 // Format: disk_path (disk_path)
 // Example: /usr/share/GeoIP/GeoLite2-City.mmdb
@@ -43680,22 +43192,6 @@ func (s *StreamerConfigConfigImpl) SetHTTPProxies(v []HTTPProxyConfig) StreamerC
 			}
 		}
 		s.HTTPProxiesValue = impl
-	}
-	return s
-}
-
-// The configuration of the IPTV
-func (s StreamerConfigConfigImpl) Iptv() IptvConfig {
-	return s.IptvValue
-}
-
-// The configuration of the IPTV
-func (s *StreamerConfigConfigImpl) SetIptv(v IptvConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*IptvConfigImpl); ok {
-		s.IptvValue = impl
 	}
 	return s
 }
@@ -43780,35 +43276,7 @@ func (s *StreamerConfigConfigImpl) SetNvidiaMonitor(v bool) StreamerConfigConfig
 	return s
 }
 
-// The configuration of peers in the cluster.
-func (s StreamerConfigConfigImpl) Peers() []PeerConfig {
-	if s.PeersValue == nil {
-		return nil
-	}
-	result := make([]PeerConfig, len(s.PeersValue))
-	for i, item := range s.PeersValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of peers in the cluster.
-func (s *StreamerConfigConfigImpl) SetPeers(v []PeerConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*PeerConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*PeerConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.PeersValue = impl
-	}
-	return s
-}
-
+// Deprecated field. Will be deleted at 26.06
 // Directory to store Pulse statistics.
 // Format: disk_path (disk_path)
 // Example: /var/run/flussonic/pulsedb
@@ -43816,6 +43284,7 @@ func (s StreamerConfigConfigImpl) Pulsedb() *DiskPath {
 	return s.PulsedbValue
 }
 
+// Deprecated field. Will be deleted at 26.06
 // Directory to store Pulse statistics.
 // Format: disk_path (disk_path)
 // Example: /var/run/flussonic/pulsedb
@@ -43892,35 +43361,6 @@ func (s *StreamerConfigConfigImpl) SetSessionLog(v DiskPath) StreamerConfigConfi
 	return s
 }
 
-// The configuration of the video sources.
-func (s StreamerConfigConfigImpl) Sources() []SourceConfig {
-	if s.SourcesValue == nil {
-		return nil
-	}
-	result := make([]SourceConfig, len(s.SourcesValue))
-	for i, item := range s.SourcesValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the video sources.
-func (s *StreamerConfigConfigImpl) SetSources(v []SourceConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*SourceConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*SourceConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.SourcesValue = impl
-	}
-	return s
-}
-
 // Global SRT listening port. It is possible to use a single port for playback and publishing, but it is not compatible with clients.
 // Consider configuring separate ports for playback and publishing for each stream.
 func (s StreamerConfigConfigImpl) Srt() *ListenSpec {
@@ -43937,11 +43377,13 @@ func (s *StreamerConfigConfigImpl) SetSrt(v *ListenSpec) StreamerConfigConfig {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s StreamerConfigConfigImpl) Srt2Play() SrtConfig {
 	return s.Srt2PlayValue
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 play configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s *StreamerConfigConfigImpl) SetSrt2Play(v SrtConfig) StreamerConfigConfig {
 	if s == nil {
@@ -43953,11 +43395,13 @@ func (s *StreamerConfigConfigImpl) SetSrt2Play(v SrtConfig) StreamerConfigConfig
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s StreamerConfigConfigImpl) Srt2Publish() SrtConfig {
 	return s.Srt2PublishValue
 }
 
+// Deprecated field. Will be deleted at 26.09
 // SRT2 publish configuration with single-port mode. Not supported by many clients, better use per-stream mode.
 func (s *StreamerConfigConfigImpl) SetSrt2Publish(v SrtConfig) StreamerConfigConfig {
 	if s == nil {
@@ -44001,61 +43445,19 @@ func (s *StreamerConfigConfigImpl) SetSrtPublish(v SrtConfig) StreamerConfigConf
 	return s
 }
 
-// The configuration of the streams.
-func (s StreamerConfigConfigImpl) Streams() []StreamConfig {
-	if s.StreamsValue == nil {
-		return nil
-	}
-	result := make([]StreamConfig, len(s.StreamsValue))
-	for i, item := range s.StreamsValue {
-		result[i] = item
-	}
-	return result
+// Prefix of streaming api and all streaming requests that will be removed from the path
+// while calculating stream name.
+func (s StreamerConfigConfigImpl) StreamingPrefix() *string {
+	return s.StreamingPrefixValue
 }
 
-// The configuration of the streams.
-func (s *StreamerConfigConfigImpl) SetStreams(v []StreamConfig) StreamerConfigConfig {
+// Prefix of streaming api and all streaming requests that will be removed from the path
+// while calculating stream name.
+func (s *StreamerConfigConfigImpl) SetStreamingPrefix(v string) StreamerConfigConfig {
 	if s == nil {
 		return nil
 	}
-	if v != nil {
-		impl := make([]*StreamConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*StreamConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.StreamsValue = impl
-	}
-	return s
-}
-
-// The configuration of the templates.
-func (s StreamerConfigConfigImpl) Templates() []TemplateConfig {
-	if s.TemplatesValue == nil {
-		return nil
-	}
-	result := make([]TemplateConfig, len(s.TemplatesValue))
-	for i, item := range s.TemplatesValue {
-		result[i] = item
-	}
-	return result
-}
-
-// The configuration of the templates.
-func (s *StreamerConfigConfigImpl) SetTemplates(v []TemplateConfig) StreamerConfigConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*TemplateConfigImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*TemplateConfigImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.TemplatesValue = impl
-	}
+	s.StreamingPrefixValue = &v
 	return s
 }
 
@@ -44245,6 +43647,24 @@ func (s *StreamerLayoutPredictionImpl) SetAPIURL(v URL) StreamerLayoutPrediction
 		return nil
 	}
 	s.APIURLValue = &v
+	return s
+}
+
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s StreamerLayoutPredictionImpl) CdnZone() *string {
+	return s.CdnZoneValue
+}
+
+// CDN zone name. Allows you to manage playback balancing.
+// When the client IP matches a zone’s routes, playback is balanced within that zone’s streamers.
+// If no zone fits, the client is sent to the origin streamer.
+func (s *StreamerLayoutPredictionImpl) SetCdnZone(v string) StreamerLayoutPrediction {
+	if s == nil {
+		return nil
+	}
+	s.CdnZoneValue = &v
 	return s
 }
 
@@ -44807,6 +44227,38 @@ func (s *SystemConfigImpl) SetDatabase(v Database) SystemConfig {
 	return s
 }
 
+// This parameter enables the API v2. If set to false, the Watcher will reject requests to the API v2. This config will be removed in the future release, you need to migrate to [API v3](https://flussonic.com/doc/watcher/api/) .
+// Example: false
+func (s SystemConfigImpl) IsAPIV2Enabled() *bool {
+	return s.IsAPIV2EnabledValue
+}
+
+// This parameter enables the API v2. If set to false, the Watcher will reject requests to the API v2. This config will be removed in the future release, you need to migrate to [API v3](https://flussonic.com/doc/watcher/api/) .
+// Example: false
+func (s *SystemConfigImpl) SetIsAPIV2Enabled(v bool) SystemConfig {
+	if s == nil {
+		return nil
+	}
+	s.IsAPIV2EnabledValue = &v
+	return s
+}
+
+// This parameter enables the NVR menu. If set to true, the watcher will show the NVR menu in the main menu by default. Otherwise it will be shown only if the watcher has at least one NVR registered.
+// Example: false
+func (s SystemConfigImpl) IsNvrEnabled() *bool {
+	return s.IsNvrEnabledValue
+}
+
+// This parameter enables the NVR menu. If set to true, the watcher will show the NVR menu in the main menu by default. Otherwise it will be shown only if the watcher has at least one NVR registered.
+// Example: false
+func (s *SystemConfigImpl) SetIsNvrEnabled(v bool) SystemConfig {
+	if s == nil {
+		return nil
+	}
+	s.IsNvrEnabledValue = &v
+	return s
+}
+
 // Issued license key
 func (s SystemConfigImpl) LicenseKey() *string {
 	return s.LicenseKeyValue
@@ -45055,141 +44507,23 @@ func (s *TSVersionsImpl) SetSdt(v int) TSVersions {
 	return s
 }
 
-// NewTemplateConfig creates a new TemplateConfig instance
-func NewTemplateConfig() TemplateConfig {
-	return &TemplateConfigImpl{}
-}
-
-// Whether a stream is disabled. Disabled streams are inactive and do not run.
-// Displayed only with the API calls.
-// Example: false
-func (s TemplateConfigImpl) Disabled() *bool {
-	return s.DisabledValue
-}
-
-// Whether a stream is disabled. Disabled streams are inactive and do not run.
-// Displayed only with the API calls.
-// Example: false
-func (s *TemplateConfigImpl) SetDisabled(v bool) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	s.DisabledValue = &v
-	return s
-}
-
-// DVR configuraton.
-func (s TemplateConfigImpl) Dvr() StreamDvrSpec {
-	return s.DvrValue
-}
-
-// DVR configuraton.
-func (s *TemplateConfigImpl) SetDvr(v StreamDvrSpec) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamDvrSpecImpl); ok {
-		s.DvrValue = impl
-	}
-	return s
-}
-
-// List of stream inputs.
-// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-func (s TemplateConfigImpl) Inputs() []StreamInput {
-	return s.InputsValue
-}
-
-// List of stream inputs.
-// ***Important:*** A stream without any inputs can receive video frames **only** if backup file is specified.
-func (s *TemplateConfigImpl) SetInputs(v []StreamInput) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	s.InputsValue = v
-	return s
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s TemplateConfigImpl) Labels() map[string]UnixName {
-	return s.LabelsValue
-}
-
-// Stream labels in key value format.
-// Key is a string in unix_name format (alphanumeric characters, underscores, hyphens and periods).
-func (s *TemplateConfigImpl) SetLabels(v map[string]UnixName) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	s.LabelsValue = v
-	return s
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s TemplateConfigImpl) Pushes() []StreamPush {
-	return s.PushesValue
-}
-
-// A list of pushes. When a server initiates the connection and sends a stream
-// to other server(s), it is called a `push`.
-func (s *TemplateConfigImpl) SetPushes(v []StreamPush) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	s.PushesValue = v
-	return s
-}
-
-// Whether a stream is `static` or not.
-// If set to `True` the server will try to keep this stream running even if
-// there are no viewers or errors encountered.
-// Streamer restarts *all* `static` streams even if any internal errors occur
-// and the `static` streams crash.
-// Example: true
-func (s TemplateConfigImpl) Static() *bool {
-	return s.StaticValue
-}
-
-// Whether a stream is `static` or not.
-// If set to `True` the server will try to keep this stream running even if
-// there are no viewers or errors encountered.
-// Streamer restarts *all* `static` streams even if any internal errors occur
-// and the `static` streams crash.
-// Example: true
-func (s *TemplateConfigImpl) SetStatic(v bool) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	s.StaticValue = &v
-	return s
-}
-
-// Video analytics parameters.
-func (s TemplateConfigImpl) Vision() VisionSpec {
-	return s.VisionValue
-}
-
-// Video analytics parameters.
-func (s *TemplateConfigImpl) SetVision(v VisionSpec) TemplateConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*VisionSpecImpl); ok {
-		s.VisionValue = impl
-	}
-	return s
-}
-
-// NewTemplateConfigSpecific creates a new TemplateConfigSpecific instance
-func NewTemplateConfigSpecific() TemplateConfigSpecific {
-	return &TemplateConfigSpecificImpl{}
-}
-
 // NewThumbnailsSpec creates a new ThumbnailsSpec instance
 func NewThumbnailsSpec() ThumbnailsSpec {
 	return &ThumbnailsSpecImpl{}
+}
+
+// Hardware device identifier used for thumbnail generation.
+func (s ThumbnailsSpecImpl) Deviceid() *TcDeviceid {
+	return s.DeviceidValue
+}
+
+// Hardware device identifier used for thumbnail generation.
+func (s *ThumbnailsSpecImpl) SetDeviceid(v *TcDeviceid) ThumbnailsSpec {
+	if s == nil {
+		return nil
+	}
+	s.DeviceidValue = v
+	return s
 }
 
 // Whether to generate thumbnails from the video stream.
@@ -45203,6 +44537,22 @@ func (s *ThumbnailsSpecImpl) SetEnabled(v any) ThumbnailsSpec {
 		return nil
 	}
 	s.EnabledValue = v
+	return s
+}
+
+// Thumbnailer hardware type.
+// Example: cpu
+func (s ThumbnailsSpecImpl) Hw() *TranscoderDevice {
+	return s.HwValue
+}
+
+// Thumbnailer hardware type.
+// Example: cpu
+func (s *ThumbnailsSpecImpl) SetHw(v TranscoderDevice) ThumbnailsSpec {
+	if s == nil {
+		return nil
+	}
+	s.HwValue = &v
 	return s
 }
 
@@ -46499,6 +45849,558 @@ func (s *TrackInfoBaseConfigurableImpl) SetTitle(v string) TrackInfoBaseConfigur
 		return nil
 	}
 	s.TitleValue = &v
+	return s
+}
+
+// NewTrackInfoFull creates a new TrackInfoFull instance
+func NewTrackInfoFull() TrackInfoFull {
+	return &TrackInfoFullImpl{}
+}
+
+// Actual average FPS - the number of frames diplayed per second (calculated for the last 200 frames).
+// The higher FPS is, the smoother the video playback is.
+// Usually, standard values of FPS for films and video are used in different countries (for example, in Russia and Europe it is 25 FPS).
+func (s TrackInfoFullImpl) AvgFPS() *float64 {
+	return s.AvgFPSValue
+}
+
+// Actual average FPS - the number of frames diplayed per second (calculated for the last 200 frames).
+// The higher FPS is, the smoother the video playback is.
+// Usually, standard values of FPS for films and video are used in different countries (for example, in Russia and Europe it is 25 FPS).
+func (s *TrackInfoFullImpl) SetAvgFPS(v float64) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.AvgFPSValue = &v
+	return s
+}
+
+// Average GOP size (expressed in number of frames) of the last 1000-2000 frames.
+// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+// If this value is floating, this means that your transcoder is working in flexible GOP size mode and some players may have problems.
+// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+// Example: 25
+func (s TrackInfoFullImpl) AvgGop() *int {
+	return s.AvgGopValue
+}
+
+// Average GOP size (expressed in number of frames) of the last 1000-2000 frames.
+// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+// If this value is floating, this means that your transcoder is working in flexible GOP size mode and some players may have problems.
+// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+// Example: 25
+func (s *TrackInfoFullImpl) SetAvgGop(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.AvgGopValue = &v
+	return s
+}
+
+// Bandwidth necessary to transfer this track.
+// This is slightly grater than bitrate because transport (e.g. MPEG TS) adds some overhead
+// Format: speed (speed)
+// Example: 2600
+func (s TrackInfoFullImpl) Bandwidth() *Speed {
+	return s.BandwidthValue
+}
+
+// Bandwidth necessary to transfer this track.
+// This is slightly grater than bitrate because transport (e.g. MPEG TS) adds some overhead
+// Format: speed (speed)
+// Example: 2600
+func (s *TrackInfoFullImpl) SetBandwidth(v Speed) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.BandwidthValue = &v
+	return s
+}
+
+// Average number of B-frames in a GOP. B-frames contain links to keyframes and P-frames before and after themselves.
+// B-frames help to compress the video. However, some players impose limitations on this number: usually no more than 2 B-frames are used.
+// This value also defines the GOP structure - the repeated pattern of frames after the keyframe: P, BP, BBP, BBBP, or BBBBP.
+// Example: 3
+func (s TrackInfoFullImpl) Bframes() *int {
+	return s.BframesValue
+}
+
+// Average number of B-frames in a GOP. B-frames contain links to keyframes and P-frames before and after themselves.
+// B-frames help to compress the video. However, some players impose limitations on this number: usually no more than 2 B-frames are used.
+// This value also defines the GOP structure - the repeated pattern of frames after the keyframe: P, BP, BBP, BBBP, or BBBBP.
+// Example: 3
+func (s *TrackInfoFullImpl) SetBframes(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.BframesValue = &v
+	return s
+}
+
+// Bitrate of the track in kbit/s.
+// When using sdtv/hdtv/uhdtv transcoder target, for video tracks
+// this field sets the desired transport bandwidth instead of raw video bitrate.
+// Format: speed (speed)
+// Example: 2543
+func (s TrackInfoFullImpl) Bitrate() *Speed {
+	return s.BitrateValue
+}
+
+// Bitrate of the track in kbit/s.
+// When using sdtv/hdtv/uhdtv transcoder target, for video tracks
+// this field sets the desired transport bandwidth instead of raw video bitrate.
+// Format: speed (speed)
+// Example: 2543
+func (s *TrackInfoFullImpl) SetBitrate(v Speed) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.BitrateValue = &v
+	return s
+}
+
+// The number of audio channels.
+// Example: 2
+func (s TrackInfoFullImpl) Channels() *int {
+	return s.ChannelsValue
+}
+
+// The number of audio channels.
+// Example: 2
+func (s *TrackInfoFullImpl) SetChannels(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.ChannelsValue = &v
+	return s
+}
+
+// Parameters of closed captions.
+func (s TrackInfoFullImpl) ClosedCaptions() []ClosedCaptions {
+	if s.ClosedCaptionsValue == nil {
+		return nil
+	}
+	result := make([]ClosedCaptions, len(s.ClosedCaptionsValue))
+	for i, item := range s.ClosedCaptionsValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Parameters of closed captions.
+func (s *TrackInfoFullImpl) SetClosedCaptions(v []ClosedCaptions) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*ClosedCaptionsImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*ClosedCaptionsImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.ClosedCaptionsValue = impl
+	}
+	return s
+}
+
+// Codec of the track. Different codecs do **not** get the same track.
+// Example: h264
+func (s TrackInfoFullImpl) Codec() *FrameCodec {
+	return s.CodecValue
+}
+
+// Codec of the track. Different codecs do **not** get the same track.
+// Example: h264
+func (s *TrackInfoFullImpl) SetCodec(v FrameCodec) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.CodecValue = &v
+	return s
+}
+
+// Content of the track (audio, video, or text).
+func (s TrackInfoFullImpl) Content() FrameContent {
+	return s.ContentValue
+}
+
+// Content of the track (audio, video, or text).
+func (s *TrackInfoFullImpl) SetContent(v FrameContent) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.ContentValue = v
+	return s
+}
+
+// Frame rate (frames per second) - the speed at which a sequence of images is displayed on a screen.
+// Higher frame rates capture more images per second, which makes for smoother video.
+// The standard frame rate for color television in the Phase Alternating Line (PAL) format is 25 fps.
+// The standard frame rate for color television in the National Television System Committee (NTSC) format is 29,97 fps
+// (a little bit lower than the original frame rate of black and white NTSC television, equal to 30 fps.)
+// If interlaced TV is used, two fields of each frame (with odd-numbered lines and with even-numbered lines) are displayed consequently,
+// but the frame rate is actually not doubled (50 half-frames are still equal to 25 original frames).
+func (s TrackInfoFullImpl) FPS() *float64 {
+	return s.FPSValue
+}
+
+// Frame rate (frames per second) - the speed at which a sequence of images is displayed on a screen.
+// Higher frame rates capture more images per second, which makes for smoother video.
+// The standard frame rate for color television in the Phase Alternating Line (PAL) format is 25 fps.
+// The standard frame rate for color television in the National Television System Committee (NTSC) format is 29,97 fps
+// (a little bit lower than the original frame rate of black and white NTSC television, equal to 30 fps.)
+// If interlaced TV is used, two fields of each frame (with odd-numbered lines and with even-numbered lines) are displayed consequently,
+// but the frame rate is actually not doubled (50 half-frames are still equal to 25 original frames).
+func (s *TrackInfoFullImpl) SetFPS(v float64) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.FPSValue = &v
+	return s
+}
+
+// For video track, it is the time between the beginning of a frame and the beginning of the next frame.
+// This parameter is important for some protocols. Normally, frame duration is a difference between timestamps of two neighbouring frames.
+// However, sometimes (when the connection is broken) video breakups are possible.
+// As result, the delta between two consequent frame timestamps will not be equal to the frame duration.
+// This situation is considered as a frame gap and is handled differently across different protocols.
+// Format: ticks (ticks)
+func (s TrackInfoFullImpl) FrameDuration() *Ticks {
+	return s.FrameDurationValue
+}
+
+// For video track, it is the time between the beginning of a frame and the beginning of the next frame.
+// This parameter is important for some protocols. Normally, frame duration is a difference between timestamps of two neighbouring frames.
+// However, sometimes (when the connection is broken) video breakups are possible.
+// As result, the delta between two consequent frame timestamps will not be equal to the frame duration.
+// This situation is considered as a frame gap and is handled differently across different protocols.
+// Format: ticks (ticks)
+func (s *TrackInfoFullImpl) SetFrameDuration(v Ticks) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.FrameDurationValue = &v
+	return s
+}
+
+// The number of frames in a group of pictures (GOP).
+// The encoder will create all GOPs of an exactly identical size - as specified in this option.
+// A bigger GOP can be good for video compression but it can result in big zap-time (the duration of time between changing a channel and displaying a new channel.)
+func (s TrackInfoFullImpl) GopSize() *int {
+	return s.GopSizeValue
+}
+
+// The number of frames in a group of pictures (GOP).
+// The encoder will create all GOPs of an exactly identical size - as specified in this option.
+// A bigger GOP can be good for video compression but it can result in big zap-time (the duration of time between changing a channel and displaying a new channel.)
+func (s *TrackInfoFullImpl) SetGopSize(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.GopSizeValue = &v
+	return s
+}
+
+// The picture height in pixels on the display where it will be played by a player.
+// If you need to insert a web-player into a web page, use this value for choosing the player size.
+// Format: pixels (pixels)
+func (s TrackInfoFullImpl) Height() *Pixels {
+	return s.HeightValue
+}
+
+// The picture height in pixels on the display where it will be played by a player.
+// If you need to insert a web-player into a web page, use this value for choosing the player size.
+// Format: pixels (pixels)
+func (s *TrackInfoFullImpl) SetHeight(v Pixels) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.HeightValue = &v
+	return s
+}
+
+// Indicates if progressive scanning method is used for all frames of the track
+func (s TrackInfoFullImpl) IsProgressive() *bool {
+	return s.IsProgressiveValue
+}
+
+// Indicates if progressive scanning method is used for all frames of the track
+func (s *TrackInfoFullImpl) SetIsProgressive(v bool) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.IsProgressiveValue = &v
+	return s
+}
+
+// Language value of the track, if applicable.
+// Example: eng
+func (s TrackInfoFullImpl) Language() *string {
+	return s.LanguageValue
+}
+
+// Language value of the track, if applicable.
+// Example: eng
+func (s *TrackInfoFullImpl) SetLanguage(v string) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.LanguageValue = &v
+	return s
+}
+
+// Last GOP size (expressed in number of frames).
+// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+// If this value is floating, this means that your transcoder is working in a flexible GOP size mode and some players may have problems.
+// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+// Example: 28
+func (s TrackInfoFullImpl) LastGop() *int {
+	return s.LastGopValue
+}
+
+// Last GOP size (expressed in number of frames).
+// This parameter is used to monitor the quality of encoding: normally, average GOP size should be equal to the last GOP size.
+// If this value is floating, this means that your transcoder is working in a flexible GOP size mode and some players may have problems.
+// This is not acceptable by most ABR usecases and it will not pass DVB validation protocol.
+// Example: 28
+func (s *TrackInfoFullImpl) SetLastGop(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.LastGopValue = &v
+	return s
+}
+
+// The size of the length field for H264 bitstream without start codes.
+func (s TrackInfoFullImpl) LengthSize() *int {
+	return s.LengthSizeValue
+}
+
+// The size of the length field for H264 bitstream without start codes.
+func (s *TrackInfoFullImpl) SetLengthSize(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.LengthSizeValue = &v
+	return s
+}
+
+// A set of constraints that indicate a degree of required decoder performance.
+// This parameter is used for compatibility with old devices.
+func (s TrackInfoFullImpl) Level() *string {
+	return s.LevelValue
+}
+
+// A set of constraints that indicate a degree of required decoder performance.
+// This parameter is used for compatibility with old devices.
+func (s *TrackInfoFullImpl) SetLevel(v string) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.LevelValue = &v
+	return s
+}
+
+// The number of I-frames to be used for encoding.
+func (s TrackInfoFullImpl) NumRefsFrames() *int {
+	return s.NumRefsFramesValue
+}
+
+// The number of I-frames to be used for encoding.
+func (s *TrackInfoFullImpl) SetNumRefsFrames(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.NumRefsFramesValue = &v
+	return s
+}
+
+// This parameter sets PIDs values for outgoing MPEG-TS streams.
+// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
+// It is possible to set PID values for PMT, SDT, video, and audio tracks.
+// Tracks are numbered starting from one. The code a1=123 sets a PID value for the first audio track.
+// It is possible to set the base index for the tracks of a certain type using the 0 (zero) index.
+// For example, t0=100 sets PID=101 for the first track, 102 for the second, and so on.
+// Numbers can be given in decimal form (by default) or hexadecimal with 16# prefix.
+func (s TrackInfoFullImpl) Pid() *int {
+	return s.PidValue
+}
+
+// This parameter sets PIDs values for outgoing MPEG-TS streams.
+// PID identifies separate data stream inside the multiplexed MPEG-TS stream.
+// It is possible to set PID values for PMT, SDT, video, and audio tracks.
+// Tracks are numbered starting from one. The code a1=123 sets a PID value for the first audio track.
+// It is possible to set the base index for the tracks of a certain type using the 0 (zero) index.
+// For example, t0=100 sets PID=101 for the first track, 102 for the second, and so on.
+// Numbers can be given in decimal form (by default) or hexadecimal with 16# prefix.
+func (s *TrackInfoFullImpl) SetPid(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.PidValue = &v
+	return s
+}
+
+// The color model of the video.
+func (s TrackInfoFullImpl) PixFmt() *FrameVideoPixFmt {
+	return s.PixFmtValue
+}
+
+// The color model of the video.
+func (s *TrackInfoFullImpl) SetPixFmt(v FrameVideoPixFmt) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.PixFmtValue = &v
+	return s
+}
+
+// The picture width in pixels of the original video before transcoding.
+// Format: pixels (pixels)
+func (s TrackInfoFullImpl) PixelHeight() *Pixels {
+	return s.PixelHeightValue
+}
+
+// The picture width in pixels of the original video before transcoding.
+// Format: pixels (pixels)
+func (s *TrackInfoFullImpl) SetPixelHeight(v Pixels) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.PixelHeightValue = &v
+	return s
+}
+
+// The picture width in pixels of the original video before transcoding.
+// Format: pixels (pixels)
+func (s TrackInfoFullImpl) PixelWidth() *Pixels {
+	return s.PixelWidthValue
+}
+
+// The picture width in pixels of the original video before transcoding.
+// Format: pixels (pixels)
+func (s *TrackInfoFullImpl) SetPixelWidth(v Pixels) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.PixelWidthValue = &v
+	return s
+}
+
+// A specific codec-dependent profile of the output video.
+// The profile allows to assume if the track can be played on a particular device.
+func (s TrackInfoFullImpl) Profile() *string {
+	return s.ProfileValue
+}
+
+// A specific codec-dependent profile of the output video.
+// The profile allows to assume if the track can be played on a particular device.
+func (s *TrackInfoFullImpl) SetProfile(v string) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.ProfileValue = &v
+	return s
+}
+
+// Sample rate, in hertz -
+// the number of samples per second taken from a continuous signal to make a discrete or digital signal.
+// Example: 8000
+func (s TrackInfoFullImpl) SampleRate() *int {
+	return s.SampleRateValue
+}
+
+// Sample rate, in hertz -
+// the number of samples per second taken from a continuous signal to make a discrete or digital signal.
+// Example: 8000
+func (s *TrackInfoFullImpl) SetSampleRate(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.SampleRateValue = &v
+	return s
+}
+
+// The second number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+// SAR is used for creating non-anamorphic video from anamorphic video.
+func (s TrackInfoFullImpl) SarHeight() *int {
+	return s.SarHeightValue
+}
+
+// The second number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+// SAR is used for creating non-anamorphic video from anamorphic video.
+func (s *TrackInfoFullImpl) SetSarHeight(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.SarHeightValue = &v
+	return s
+}
+
+// The first number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+// SAR is used for creating non-anamorphic video from anamorphic video.
+func (s TrackInfoFullImpl) SarWidth() *int {
+	return s.SarWidthValue
+}
+
+// The first number in SAR. SAR is the ratio of the width of the display video representation to the width of the pixel representation.
+// SAR is used for creating non-anamorphic video from anamorphic video.
+func (s *TrackInfoFullImpl) SetSarWidth(v int) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.SarWidthValue = &v
+	return s
+}
+
+// Human-readable localized title of the track.
+// Example: Video1
+func (s TrackInfoFullImpl) Title() *string {
+	return s.TitleValue
+}
+
+// Human-readable localized title of the track.
+// Example: Video1
+func (s *TrackInfoFullImpl) SetTitle(v string) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.TitleValue = &v
+	return s
+}
+
+// Track identifier assigned by Flussonic.
+// Example: v1
+func (s TrackInfoFullImpl) TrackID() any {
+	return s.TrackIDValue
+}
+
+// Track identifier assigned by Flussonic.
+// Example: v1
+func (s *TrackInfoFullImpl) SetTrackID(v any) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.TrackIDValue = v
+	return s
+}
+
+// The picture width in pixels on the display where it will be played by a player.
+// If you need to insert a web-player into a web page, use this value for choosing the player size.
+// Format: pixels (pixels)
+func (s TrackInfoFullImpl) Width() *Pixels {
+	return s.WidthValue
+}
+
+// The picture width in pixels on the display where it will be played by a player.
+// If you need to insert a web-player into a web page, use this value for choosing the player size.
+// Format: pixels (pixels)
+func (s *TrackInfoFullImpl) SetWidth(v Pixels) TrackInfoFull {
+	if s == nil {
+		return nil
+	}
+	s.WidthValue = &v
 	return s
 }
 
@@ -47945,6 +47847,20 @@ func (s *TranscoderDeviceStatsImpl) SetType(v TranscoderDevice) TranscoderDevice
 	return s
 }
 
+// The UUID of the transcoder device.
+func (s TranscoderDeviceStatsImpl) UUID() *string {
+	return s.UUIDValue
+}
+
+// The UUID of the transcoder device.
+func (s *TranscoderDeviceStatsImpl) SetUUID(v string) TranscoderDeviceStats {
+	if s == nil {
+		return nil
+	}
+	s.UUIDValue = &v
+	return s
+}
+
 // NewTransponderConfig creates a new TransponderConfig instance
 func NewTransponderConfig() TransponderConfig {
 	return &TransponderConfigImpl{}
@@ -48073,7 +47989,7 @@ func (s *TransponderConfigImpl) SetOthers(v []TransponderOther) TransponderConfi
 	return s
 }
 
-// The length of multiplexer input buffer.
+// The length of the multiplexer input buffer.
 // The higher value makes the multiplexer more robust to non-uniform inputs.
 // The lower value reduces input-to-output latency, but requires more stable bitrate (CBR) on input.
 // Format: milliseconds (milliseconds)
@@ -48082,7 +47998,7 @@ func (s TransponderConfigImpl) Prebuffer() *Milliseconds {
 	return s.PrebufferValue
 }
 
-// The length of multiplexer input buffer.
+// The length of the multiplexer input buffer.
 // The higher value makes the multiplexer more robust to non-uniform inputs.
 // The lower value reduces input-to-output latency, but requires more stable bitrate (CBR) on input.
 // Format: milliseconds (milliseconds)
@@ -48289,13 +48205,21 @@ func (s *TransponderConfigImpl) SetVersions(v TSVersions) TransponderConfig {
 	return s
 }
 
-// The size of the video buffer for the transponder.
-func (s TransponderConfigImpl) VideoBuffer() *int {
+// Target maximum video buffering time.
+// Lower values reduce latency, but require more stable transport and decoder behavior.
+// The minimum safe value depends on bitrate, frame sizes, transport conditions, and decoder behavior.
+// Format: milliseconds (milliseconds)
+// Example: 1000
+func (s TransponderConfigImpl) VideoBuffer() *Milliseconds {
 	return s.VideoBufferValue
 }
 
-// The size of the video buffer for the transponder.
-func (s *TransponderConfigImpl) SetVideoBuffer(v int) TransponderConfig {
+// Target maximum video buffering time.
+// Lower values reduce latency, but require more stable transport and decoder behavior.
+// The minimum safe value depends on bitrate, frame sizes, transport conditions, and decoder behavior.
+// Format: milliseconds (milliseconds)
+// Example: 1000
+func (s *TransponderConfigImpl) SetVideoBuffer(v Milliseconds) TransponderConfig {
 	if s == nil {
 		return nil
 	}
@@ -48993,6 +48917,22 @@ func (s *UserImpl) SetEmail(v Email) User {
 	return s
 }
 
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s UserImpl) ExternalID() *string {
+	return s.ExternalIDValue
+}
+
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s *UserImpl) SetExternalID(v string) User {
+	if s == nil {
+		return nil
+	}
+	s.ExternalIDValue = &v
+	return s
+}
+
 // The user's full name.
 func (s UserImpl) Fullname() *string {
 	return s.FullnameValue
@@ -49405,6 +49345,22 @@ func (s *UserBaseImpl) SetEmail(v Email) UserBase {
 	return s
 }
 
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s UserBaseImpl) ExternalID() *string {
+	return s.ExternalIDValue
+}
+
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s *UserBaseImpl) SetExternalID(v string) UserBase {
+	if s == nil {
+		return nil
+	}
+	s.ExternalIDValue = &v
+	return s
+}
+
 // The user's full name.
 func (s UserBaseImpl) Fullname() *string {
 	return s.FullnameValue
@@ -49581,6 +49537,22 @@ func (s *UserCreateImpl) SetEmail(v Email) UserCreate {
 		return nil
 	}
 	s.EmailValue = &v
+	return s
+}
+
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s UserCreateImpl) ExternalID() *string {
+	return s.ExternalIDValue
+}
+
+// Subscriber identifier in an external system (e.g. billing).
+// Only the administrator or domain owner can edit this field.
+func (s *UserCreateImpl) SetExternalID(v string) UserCreate {
+	if s == nil {
+		return nil
+	}
+	s.ExternalIDValue = &v
 	return s
 }
 
@@ -50117,13 +50089,17 @@ func NewVisionSpec() VisionSpec {
 	return &VisionSpecImpl{}
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s VisionSpecImpl) Alg() *VisionSpecAlg {
 	return s.AlgValue
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s *VisionSpecImpl) SetAlg(v VisionSpecAlg) VisionSpec {
 	if s == nil {
@@ -50133,18 +50109,22 @@ func (s *VisionSpecImpl) SetAlg(v VisionSpecAlg) VisionSpec {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.07
 // This parameter allows you to select specific polygonal area(s) for detection.
 // By default, it is empty, and the recognition system searches over the entire camera field of view.
 // Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 // The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+// Deprecated. Use `detectors` instead.
 func (s VisionSpecImpl) Areas() *string {
 	return s.AreasValue
 }
 
+// Deprecated field. Will be deleted at 26.07
 // This parameter allows you to select specific polygonal area(s) for detection.
 // By default, it is empty, and the recognition system searches over the entire camera field of view.
 // Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 // The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+// Deprecated. Use `detectors` instead.
 func (s *VisionSpecImpl) SetAreas(v string) VisionSpec {
 	if s == nil {
 		return nil
@@ -50191,13 +50171,17 @@ func NewVisionSpecPresets() VisionSpecPresets {
 	return &VisionSpecPresetsImpl{}
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s VisionSpecPresetsImpl) Alg() *VisionSpecPresetsAlg {
 	return s.AlgValue
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s *VisionSpecPresetsImpl) SetAlg(v VisionSpecPresetsAlg) VisionSpecPresets {
 	if s == nil {
@@ -50687,16 +50671,220 @@ func (s *WatcherAgentConfigImpl) SetStats(v WatcherAgentStats) WatcherAgentConfi
 }
 
 // List of streams info that have this agent in their inputs
-func (s WatcherAgentConfigImpl) Streams() []any {
-	return s.StreamsValue
+func (s WatcherAgentConfigImpl) Streams() []WatcherAgentConfigStreamsItem {
+	if s.StreamsValue == nil {
+		return nil
+	}
+	result := make([]WatcherAgentConfigStreamsItem, len(s.StreamsValue))
+	for i, item := range s.StreamsValue {
+		result[i] = item
+	}
+	return result
 }
 
 // List of streams info that have this agent in their inputs
-func (s *WatcherAgentConfigImpl) SetStreams(v []any) WatcherAgentConfig {
+func (s *WatcherAgentConfigImpl) SetStreams(v []WatcherAgentConfigStreamsItem) WatcherAgentConfig {
 	if s == nil {
 		return nil
 	}
-	s.StreamsValue = v
+	if v != nil {
+		impl := make([]*WatcherAgentConfigStreamsItemImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*WatcherAgentConfigStreamsItemImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.StreamsValue = impl
+	}
+	return s
+}
+
+// NewWatcherAgentConfigStreamsItem creates a new WatcherAgentConfigStreamsItem instance
+func NewWatcherAgentConfigStreamsItem() WatcherAgentConfigStreamsItem {
+	return &WatcherAgentConfigStreamsItemImpl{}
+}
+
+// Human-readable description of the stream.
+// Example: This is a test stream
+func (s WatcherAgentConfigStreamsItemImpl) Comment() *string {
+	return s.CommentValue
+}
+
+// Human-readable description of the stream.
+// Example: This is a test stream
+func (s *WatcherAgentConfigStreamsItemImpl) SetComment(v string) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.CommentValue = &v
+	return s
+}
+
+// Globally unique stream name.
+// Note that the name could not be changed after the stream is created.
+// Format: media_name (media_name)
+// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
+func (s WatcherAgentConfigStreamsItemImpl) Name() *MediaName {
+	return s.NameValue
+}
+
+// Globally unique stream name.
+// Note that the name could not be changed after the stream is created.
+// Format: media_name (media_name)
+// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
+func (s *WatcherAgentConfigStreamsItemImpl) SetName(v MediaName) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.NameValue = &v
+	return s
+}
+
+// Where the stream is initialized: config, user play/publication, or remote
+// cluster server.
+// Example: config
+func (s WatcherAgentConfigStreamsItemImpl) NamedBy() *NamedBy {
+	return s.NamedByValue
+}
+
+// Where the stream is initialized: config, user play/publication, or remote
+// cluster server.
+// Example: config
+func (s *WatcherAgentConfigStreamsItemImpl) SetNamedBy(v NamedBy) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.NamedByValue = &v
+	return s
+}
+
+// NMOS configuration.
+func (s WatcherAgentConfigStreamsItemImpl) Nmos() NmosConfig {
+	return s.NmosValue
+}
+
+// NMOS configuration.
+func (s *WatcherAgentConfigStreamsItemImpl) SetNmos(v NmosConfig) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*NmosConfigImpl); ok {
+		s.NmosValue = impl
+	}
+	return s
+}
+
+// Organization information.
+func (s WatcherAgentConfigStreamsItemImpl) Organization() OrganizationBase {
+	return s.OrganizationValue
+}
+
+// Organization information.
+func (s *WatcherAgentConfigStreamsItemImpl) SetOrganization(v OrganizationBase) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	if impl, ok := v.(*OrganizationBaseImpl); ok {
+		s.OrganizationValue = impl
+	}
+	return s
+}
+
+// Position of the stream in order of streams in the config file, if declared.
+// Format: sort_index (sort_index)
+// Example: 2
+func (s WatcherAgentConfigStreamsItemImpl) Position() *SortIndex {
+	return s.PositionValue
+}
+
+// Position of the stream in order of streams in the config file, if declared.
+// Format: sort_index (sort_index)
+// Example: 2
+func (s *WatcherAgentConfigStreamsItemImpl) SetPosition(v SortIndex) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.PositionValue = &v
+	return s
+}
+
+// How often to re-check secondary inputs. If this option is not set than check is never performed.
+// Format: seconds (seconds)
+// Example: 120
+func (s WatcherAgentConfigStreamsItemImpl) RecheckSecondaryInputsInterval() *Seconds {
+	return s.RecheckSecondaryInputsIntervalValue
+}
+
+// How often to re-check secondary inputs. If this option is not set than check is never performed.
+// Format: seconds (seconds)
+// Example: 120
+func (s *WatcherAgentConfigStreamsItemImpl) SetRecheckSecondaryInputsInterval(v Seconds) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.RecheckSecondaryInputsIntervalValue = &v
+	return s
+}
+
+// Deprecated field. Will be deleted at 24.06
+// Stream name was resolved via `srt_port_resolve` call.
+// See [endpoint](https://flussonic.com/doc/api/config-external/#tag/srt/operation/srt_port_resolve)
+// and [listener](https://flussonic.com/doc/api/reference/#tag/config/operation/config_save%7Cbody%7Clisteners%7Csrt)
+// for feature description.
+// This parameter now lives in `stats` object.
+// Example: false
+func (s WatcherAgentConfigStreamsItemImpl) SrtPortResolve() *bool {
+	return s.SrtPortResolveValue
+}
+
+// Deprecated field. Will be deleted at 24.06
+// Stream name was resolved via `srt_port_resolve` call.
+// See [endpoint](https://flussonic.com/doc/api/config-external/#tag/srt/operation/srt_port_resolve)
+// and [listener](https://flussonic.com/doc/api/reference/#tag/config/operation/config_save%7Cbody%7Clisteners%7Csrt)
+// for feature description.
+// This parameter now lives in `stats` object.
+// Example: false
+func (s *WatcherAgentConfigStreamsItemImpl) SetSrtPortResolve(v bool) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.SrtPortResolveValue = &v
+	return s
+}
+
+// Template of the stream.
+// Format: media_name (media_name)
+// Example: sports-hd
+func (s WatcherAgentConfigStreamsItemImpl) Template() *MediaName {
+	return s.TemplateValue
+}
+
+// Template of the stream.
+// Format: media_name (media_name)
+// Example: sports-hd
+func (s *WatcherAgentConfigStreamsItemImpl) SetTemplate(v MediaName) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.TemplateValue = &v
+	return s
+}
+
+// Human-readable title of the stream. Provided for SDT MPEG-TS table or
+// SDP RTSP title parameter.
+// Example: Hockey channel
+func (s WatcherAgentConfigStreamsItemImpl) Title() *string {
+	return s.TitleValue
+}
+
+// Human-readable title of the stream. Provided for SDT MPEG-TS table or
+// SDP RTSP title parameter.
+// Example: Hockey channel
+func (s *WatcherAgentConfigStreamsItemImpl) SetTitle(v string) WatcherAgentConfigStreamsItem {
+	if s == nil {
+		return nil
+	}
+	s.TitleValue = &v
 	return s
 }
 
@@ -51321,433 +51509,6 @@ func (s *WatcherStatusChecksErrorsDetailsItemImpl) SetError(v string) WatcherSta
 		return nil
 	}
 	s.ErrorValue = &v
-	return s
-}
-
-// NewWatcherStreamConfig creates a new WatcherStreamConfig instance
-func NewWatcherStreamConfig() WatcherStreamConfig {
-	return &WatcherStreamConfigImpl{}
-}
-
-// Audio settings for the stream.
-func (s WatcherStreamConfigImpl) Audio() WatcherStreamConfigAudio {
-	return s.AudioValue
-}
-
-// Audio settings for the stream.
-func (s *WatcherStreamConfigImpl) SetAudio(v WatcherStreamConfigAudio) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*WatcherStreamConfigAudioImpl); ok {
-		s.AudioValue = impl
-	}
-	return s
-}
-
-// A publishable stream.
-// Example: false
-func (s WatcherStreamConfigImpl) CanPublish() *bool {
-	return s.CanPublishValue
-}
-
-// A publishable stream.
-// Example: false
-func (s *WatcherStreamConfigImpl) SetCanPublish(v bool) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.CanPublishValue = &v
-	return s
-}
-
-// Camera coordinates on a map or a floor plan.
-func (s WatcherStreamConfigImpl) Coordinates() MapSpec {
-	return s.CoordinatesValue
-}
-
-// Camera coordinates on a map or a floor plan.
-func (s *WatcherStreamConfigImpl) SetCoordinates(v MapSpec) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*MapSpecImpl); ok {
-		s.CoordinatesValue = impl
-	}
-	return s
-}
-
-// The date and time when the steam was created.
-// Format: utc_ms (Unix timestamp in milliseconds)
-// Example: 1.672531199e+12
-func (s WatcherStreamConfigImpl) CreatedAt() *UtcMs {
-	return s.CreatedAtValue
-}
-
-// The date and time when the steam was created.
-// Format: utc_ms (Unix timestamp in milliseconds)
-// Example: 1.672531199e+12
-func (s *WatcherStreamConfigImpl) SetCreatedAt(v UtcMs) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.CreatedAtValue = &v
-	return s
-}
-
-// Domain the stream belongs to.
-func (s WatcherStreamConfigImpl) Domain() DomainBase {
-	return s.DomainValue
-}
-
-// Domain the stream belongs to.
-func (s *WatcherStreamConfigImpl) SetDomain(v DomainBase) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*DomainBaseImpl); ok {
-		s.DomainValue = impl
-	}
-	return s
-}
-
-// Duration of the firmware update. If this field is present, the update process is ongoing.
-// Format: milliseconds (milliseconds)
-func (s WatcherStreamConfigImpl) FirmwareUpdateDuration() *Milliseconds {
-	return s.FirmwareUpdateDurationValue
-}
-
-// Duration of the firmware update. If this field is present, the update process is ongoing.
-// Format: milliseconds (milliseconds)
-func (s *WatcherStreamConfigImpl) SetFirmwareUpdateDuration(v Milliseconds) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.FirmwareUpdateDurationValue = &v
-	return s
-}
-
-// Folder identificator.
-func (s WatcherStreamConfigImpl) FolderID() *int {
-	return s.FolderIDValue
-}
-
-// Folder identificator.
-func (s *WatcherStreamConfigImpl) SetFolderID(v int) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.FolderIDValue = &v
-	return s
-}
-
-// Information about the latest changes made to the camera configuration.
-func (s WatcherStreamConfigImpl) LastChange() AuditLogRecord {
-	return s.LastChangeValue
-}
-
-// Information about the latest changes made to the camera configuration.
-func (s *WatcherStreamConfigImpl) SetLastChange(v AuditLogRecord) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*AuditLogRecordImpl); ok {
-		s.LastChangeValue = impl
-	}
-	return s
-}
-
-// The time when the last episode occurred.
-// Format: utc_ms (Unix timestamp in milliseconds)
-// Examples: 1.637094994e+12
-func (s WatcherStreamConfigImpl) LastEpisodeAt() *UtcMs {
-	return s.LastEpisodeAtValue
-}
-
-// The time when the last episode occurred.
-// Format: utc_ms (Unix timestamp in milliseconds)
-// Examples: 1.637094994e+12
-func (s *WatcherStreamConfigImpl) SetLastEpisodeAt(v UtcMs) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.LastEpisodeAtValue = &v
-	return s
-}
-
-// Layouts information
-func (s WatcherStreamConfigImpl) Layout() CentralStreamLayout {
-	return s.LayoutValue
-}
-
-// Layouts information
-func (s *WatcherStreamConfigImpl) SetLayout(v CentralStreamLayout) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*CentralStreamLayoutImpl); ok {
-		s.LayoutValue = impl
-	}
-	return s
-}
-
-// Rules of layout.
-func (s WatcherStreamConfigImpl) LayoutRules() StreamZoneConfig {
-	return s.LayoutRulesValue
-}
-
-// Rules of layout.
-func (s *WatcherStreamConfigImpl) SetLayoutRules(v StreamZoneConfig) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamZoneConfigImpl); ok {
-		s.LayoutRulesValue = impl
-	}
-	return s
-}
-
-// Deprecated field. Will be deleted at 24.12
-// Camera coordinates on a map or a floor plan. Deprecated. Use coordinates instead.
-func (s WatcherStreamConfigImpl) MapCoordinates() MapSpec {
-	return s.MapCoordinatesValue
-}
-
-// Deprecated field. Will be deleted at 24.12
-// Camera coordinates on a map or a floor plan. Deprecated. Use coordinates instead.
-func (s *WatcherStreamConfigImpl) SetMapCoordinates(v MapSpec) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*MapSpecImpl); ok {
-		s.MapCoordinatesValue = impl
-	}
-	return s
-}
-
-// User's active notification subscriptions for this camera.
-// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-func (s WatcherStreamConfigImpl) Notifications() []WatcherStreamConfigNotificationsItem {
-	if s.NotificationsValue == nil {
-		return nil
-	}
-	result := make([]WatcherStreamConfigNotificationsItem, len(s.NotificationsValue))
-	for i, item := range s.NotificationsValue {
-		result[i] = item
-	}
-	return result
-}
-
-// User's active notification subscriptions for this camera.
-// Each subscription represents a specific event type the user is subscribed to receive notifications about.
-func (s *WatcherStreamConfigImpl) SetNotifications(v []WatcherStreamConfigNotificationsItem) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*WatcherStreamConfigNotificationsItemImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*WatcherStreamConfigNotificationsItemImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.NotificationsValue = impl
-	}
-	return s
-}
-
-// Onvif configuration
-func (s WatcherStreamConfigImpl) Onvif() StreamOnvifConfig {
-	return s.OnvifValue
-}
-
-// Onvif configuration
-func (s *WatcherStreamConfigImpl) SetOnvif(v StreamOnvifConfig) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamOnvifConfigImpl); ok {
-		s.OnvifValue = impl
-	}
-	return s
-}
-
-// Organization the stream belongs to.
-func (s WatcherStreamConfigImpl) Organization() OrganizationStream {
-	return s.OrganizationValue
-}
-
-// Organization the stream belongs to.
-func (s *WatcherStreamConfigImpl) SetOrganization(v OrganizationStream) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*OrganizationStreamImpl); ok {
-		s.OrganizationValue = impl
-	}
-	return s
-}
-
-// Deprecated field. Will be deleted at 25.11
-// ID of the organization the stream belongs to.
-// Only organization owner or domain administrator could change it.
-// Example: 9
-func (s WatcherStreamConfigImpl) OrganizationID() *int {
-	return s.OrganizationIDValue
-}
-
-// Deprecated field. Will be deleted at 25.11
-// ID of the organization the stream belongs to.
-// Only organization owner or domain administrator could change it.
-// Example: 9
-func (s *WatcherStreamConfigImpl) SetOrganizationID(v int) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.OrganizationIDValue = &v
-	return s
-}
-
-// Contains path to stream as a list.
-// Each item of the list can be interpreted as a node in a folders tree.
-func (s WatcherStreamConfigImpl) Path() []StreamPathItem {
-	if s.PathValue == nil {
-		return nil
-	}
-	result := make([]StreamPathItem, len(s.PathValue))
-	for i, item := range s.PathValue {
-		result[i] = item
-	}
-	return result
-}
-
-// Contains path to stream as a list.
-// Each item of the list can be interpreted as a node in a folders tree.
-func (s *WatcherStreamConfigImpl) SetPath(v []StreamPathItem) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if v != nil {
-		impl := make([]*StreamPathItemImpl, len(v))
-		for i, item := range v {
-			if itemImpl, ok := item.(*StreamPathItemImpl); ok {
-				impl[i] = itemImpl
-			}
-		}
-		s.PathValue = impl
-	}
-	return s
-}
-
-// Camera adress on a map.
-func (s WatcherStreamConfigImpl) PostalAddress() *string {
-	return s.PostalAddressValue
-}
-
-// Camera adress on a map.
-func (s *WatcherStreamConfigImpl) SetPostalAddress(v string) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.PostalAddressValue = &v
-	return s
-}
-
-// Preset settings.
-func (s WatcherStreamConfigImpl) Preset() StreamPreset {
-	return s.PresetValue
-}
-
-// Preset settings.
-func (s *WatcherStreamConfigImpl) SetPreset(v StreamPreset) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamPresetImpl); ok {
-		s.PresetValue = impl
-	}
-	return s
-}
-
-// Deprecated field. Will be deleted at 26.01
-// Preset identificator.
-func (s WatcherStreamConfigImpl) PresetID() *int {
-	return s.PresetIDValue
-}
-
-// Deprecated field. Will be deleted at 26.01
-// Preset identificator.
-func (s *WatcherStreamConfigImpl) SetPresetID(v int) WatcherStreamConfig {
-	if s == nil {
-		return nil
-	}
-	s.PresetIDValue = &v
-	return s
-}
-
-// NewWatcherStreamConfigAudio creates a new WatcherStreamConfigAudio instance
-func NewWatcherStreamConfigAudio() WatcherStreamConfigAudio {
-	return &WatcherStreamConfigAudioImpl{}
-}
-
-// A flag showing if the audio is captured (false) or not (true) from the stream.
-// Example: false
-func (s WatcherStreamConfigAudioImpl) Disabled() *bool {
-	return s.DisabledValue
-}
-
-// A flag showing if the audio is captured (false) or not (true) from the stream.
-// Example: false
-func (s *WatcherStreamConfigAudioImpl) SetDisabled(v bool) WatcherStreamConfigAudio {
-	if s == nil {
-		return nil
-	}
-	s.DisabledValue = &v
-	return s
-}
-
-// Audio codec (the AAC codec is used by default).
-func (s WatcherStreamConfigAudioImpl) TranscodeAudioCodec() *FrameAudioCodec {
-	return s.TranscodeAudioCodecValue
-}
-
-// Audio codec (the AAC codec is used by default).
-func (s *WatcherStreamConfigAudioImpl) SetTranscodeAudioCodec(v FrameAudioCodec) WatcherStreamConfigAudio {
-	if s == nil {
-		return nil
-	}
-	s.TranscodeAudioCodecValue = &v
-	return s
-}
-
-// NewWatcherStreamConfigNotificationsItem creates a new WatcherStreamConfigNotificationsItem instance
-func NewWatcherStreamConfigNotificationsItem() WatcherStreamConfigNotificationsItem {
-	return &WatcherStreamConfigNotificationsItemImpl{}
-}
-
-func (s WatcherStreamConfigNotificationsItemImpl) EventTypes() EventTypes {
-	return s.EventTypesValue
-}
-
-func (s *WatcherStreamConfigNotificationsItemImpl) SetEventTypes(v EventTypes) WatcherStreamConfigNotificationsItem {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*EventTypesImpl); ok {
-		s.EventTypesValue = impl
-	}
-	return s
-}
-
-func (s WatcherStreamConfigNotificationsItemImpl) NotificationType() *NotificationType {
-	return s.NotificationTypeValue
-}
-
-func (s *WatcherStreamConfigNotificationsItemImpl) SetNotificationType(v NotificationType) WatcherStreamConfigNotificationsItem {
-	if s == nil {
-		return nil
-	}
-	s.NotificationTypeValue = &v
 	return s
 }
 

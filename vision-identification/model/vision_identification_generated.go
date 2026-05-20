@@ -115,9 +115,9 @@ type Error interface {
 	// a unique identifier for this particular occurrence of the problem
 	SetID(string) Error
 	// a meta object containing non-standard meta-information about the error.
-	Meta() map[string]string
+	Meta() map[string]any
 	// a meta object containing non-standard meta-information about the error.
-	SetMeta(map[string]string) Error
+	SetMeta(map[string]any) Error
 	// an object containing references to the source of the error
 	Source() ErrorSource
 	// an object containing references to the source of the error
@@ -399,12 +399,12 @@ type EpisodeIdentificationRequestImpl struct {
 }
 
 type ErrorImpl struct {
-	CodeValue   *string           `json:"code,omitempty" validate:"omitempty"`
-	IDValue     *string           `json:"id,omitempty" validate:"omitempty"`
-	MetaValue   map[string]string `json:"meta,omitempty" validate:"omitempty,dive"`
-	SourceValue *ErrorSourceImpl  `json:"source,omitempty" validate:"omitempty"`
-	StatusValue *string           `json:"status,omitempty" validate:"omitempty"`
-	TitleValue  *string           `json:"title,omitempty" validate:"omitempty"`
+	CodeValue   *string          `json:"code,omitempty" validate:"omitempty"`
+	IDValue     *string          `json:"id,omitempty" validate:"omitempty"`
+	MetaValue   map[string]any   `json:"meta,omitempty" validate:"omitempty,dive"`
+	SourceValue *ErrorSourceImpl `json:"source,omitempty" validate:"omitempty"`
+	StatusValue *string          `json:"status,omitempty" validate:"omitempty"`
+	TitleValue  *string          `json:"title,omitempty" validate:"omitempty"`
 }
 
 type ErrorResponseImpl struct {
@@ -449,19 +449,19 @@ type VisionFaceFingerprintImpl struct {
 // Person
 // Required: person_id, updated_at, originator
 type VisionPersonImpl struct {
-	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	ExternalIDValue   *string                      `json:"external_id,omitempty" validate:"omitempty"`
-	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
 	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty,dive"`
+	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
 	PersonIDValue     SnowflakeID                  `json:"person_id" validate:"required"`
-	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 // Person matching information
 // Required: person, match_score
 type VisionPersonMatchImpl struct {
-	PersonValue     *VisionPersonImpl `json:"person" validate:"required"`
 	MatchScoreValue float64           `json:"match_score" validate:"required"`
+	PersonValue     *VisionPersonImpl `json:"person" validate:"required"`
 }
 
 // Person matching information
@@ -470,19 +470,19 @@ type VisionPersonMatchesImpl struct {
 }
 
 type VisionPersonsListImpl struct {
-	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int                `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
-	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
 	PersonsValue        []*VisionPersonImpl `json:"persons" validate:"required,dive"`
+	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
+	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type VisionServerInfoImpl struct {
 	BuildValue         *int           `json:"build,omitempty" validate:"omitempty"`
-	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	SchemaVersionValue *string        `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue *ServerVersion `json:"server_version,omitempty" validate:"omitempty"`
-	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 // NewCollectionResponse creates a new CollectionResponse instance
@@ -676,12 +676,12 @@ func (s *ErrorImpl) SetID(v string) Error {
 }
 
 // a meta object containing non-standard meta-information about the error.
-func (s ErrorImpl) Meta() map[string]string {
+func (s ErrorImpl) Meta() map[string]any {
 	return s.MetaValue
 }
 
 // a meta object containing non-standard meta-information about the error.
-func (s *ErrorImpl) SetMeta(v map[string]string) Error {
+func (s *ErrorImpl) SetMeta(v map[string]any) Error {
 	if s == nil {
 		return nil
 	}

@@ -38,6 +38,8 @@ type Utc int
 type UtcMs int
 
 // The algorithm used for video analytics.
+//
+// Deprecated. Use `detectors` instead.
 type VisionSpecAlg string
 
 const (
@@ -45,6 +47,46 @@ const (
 	VisionSpecAlgFaces VisionSpecAlg = "faces"
 	// The algorithm for license plate recognition is used.
 	VisionSpecAlgPlates VisionSpecAlg = "plates"
+)
+
+// Vehicle color
+type VisionVehicleColorColor string
+
+const (
+	// Beige color
+	VisionVehicleColorColorBeige VisionVehicleColorColor = "beige"
+	// White color
+	VisionVehicleColorColorWhite VisionVehicleColorColor = "white"
+	// Silver color
+	VisionVehicleColorColorSilver VisionVehicleColorColor = "silver"
+	// Blue color
+	VisionVehicleColorColorBlue VisionVehicleColorColor = "blue"
+	// Black color
+	VisionVehicleColorColorBlack VisionVehicleColorColor = "black"
+	// Burgundy color
+	VisionVehicleColorColorBurgundy VisionVehicleColorColor = "burgundy"
+	// Grey color
+	VisionVehicleColorColorGrey VisionVehicleColorColor = "grey"
+	// Brown color
+	VisionVehicleColorColorBrown VisionVehicleColorColor = "brown"
+	// Red color
+	VisionVehicleColorColorRed VisionVehicleColorColor = "red"
+	// Gold color
+	VisionVehicleColorColorGold VisionVehicleColorColor = "gold"
+	// Green color
+	VisionVehicleColorColorGreen VisionVehicleColorColor = "green"
+	// Cyan color
+	VisionVehicleColorColorCyan VisionVehicleColorColor = "cyan"
+	// Purple color
+	VisionVehicleColorColorPurple VisionVehicleColorColor = "purple"
+	// Violet color
+	VisionVehicleColorColorViolet VisionVehicleColorColor = "violet"
+	// Orange color
+	VisionVehicleColorColorOrange VisionVehicleColorColor = "orange"
+	// Yellow color
+	VisionVehicleColorColorYellow VisionVehicleColorColor = "yellow"
+	// Pink color
+	VisionVehicleColorColorPink VisionVehicleColorColor = "pink"
 )
 
 type EpisodeCloseReason string
@@ -497,6 +539,10 @@ type Episode interface {
 	// Format: utc_ms (Unix timestamp in milliseconds)
 	// Examples: 1.637098611e+12
 	SetUpdatedAt(UtcMs) Episode
+	// Displays list of the most likely vehicle color options.
+	VehicleColor() []VisionVehicleColor
+	// Displays list of the most likely vehicle color options.
+	SetVehicleColor([]VisionVehicleColor) Episode
 	// Emergency type of the vehicle.
 	VehicleEmergencySubtype() *VisionVehicleEmergencySubtype
 	// Emergency type of the vehicle.
@@ -505,6 +551,10 @@ type Episode interface {
 	VehicleFacingSide() *VisionVehicleFacingSide
 	// Shows from which side the vehicle was detected.
 	SetVehicleFacingSide(VisionVehicleFacingSide) Episode
+	// Displays list of the most likely vehicle brand and model options.
+	VehicleModel() []VisionVehicleModel
+	// Displays list of the most likely vehicle brand and model options.
+	SetVehicleModel([]VisionVehicleModel) Episode
 	// The purpose of the vehicle, e.g. emergency or regular.
 	VehiclePurpose() *VisionVehiclePurpose
 	// The purpose of the vehicle, e.g. emergency or regular.
@@ -1101,6 +1151,7 @@ type OpenmetricsLabels interface {
 	SetServerID(UUID) OpenmetricsLabels
 }
 
+// Required: name
 type StreamConfig interface {
 	// Globally unique stream name.
 	// Note that the name could not be changed after the stream is created.
@@ -1120,49 +1171,6 @@ type StreamConfig interface {
 	Vision() VisionSpec
 	// Video analytics parameters.
 	SetVision(VisionSpec) StreamConfig
-}
-
-type StreamConfigAdditional interface {
-	// Stream's metrics and other statistical information.
-	Stats() StreamStats
-	// Stream's metrics and other statistical information.
-	SetStats(StreamStats) StreamConfigAdditional
-}
-
-type StreamConfigBase interface {
-}
-
-type StreamConfigDeprecated interface {
-}
-
-type StreamConfigInput interface {
-}
-
-type StreamConfigMedia interface {
-}
-
-type StreamConfigOnpremises interface {
-	// Video analytics parameters.
-	Vision() VisionSpec
-	// Video analytics parameters.
-	SetVision(VisionSpec) StreamConfigOnpremises
-}
-
-type StreamConfigSingleMedia interface {
-}
-
-// Required: name
-type StreamConfigSpecific interface {
-	// Globally unique stream name.
-	// Note that the name could not be changed after the stream is created.
-	// Format: media_name (media_name)
-	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-	Name() MediaName
-	// Globally unique stream name.
-	// Note that the name could not be changed after the stream is created.
-	// Format: media_name (media_name)
-	// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-	SetName(MediaName) StreamConfigSpecific
 }
 
 type StreamStats interface {
@@ -2389,6 +2397,10 @@ type VisionEpisodeVehicle interface {
 	// Format: utc_ms (Unix timestamp in milliseconds)
 	// Examples: 1.637098611e+12
 	SetUpdatedAt(UtcMs) VisionEpisodeVehicle
+	// Displays list of the most likely vehicle color options.
+	VehicleColor() []VisionVehicleColor
+	// Displays list of the most likely vehicle color options.
+	SetVehicleColor([]VisionVehicleColor) VisionEpisodeVehicle
 	// Emergency type of the vehicle.
 	VehicleEmergencySubtype() *VisionVehicleEmergencySubtype
 	// Emergency type of the vehicle.
@@ -2397,6 +2409,10 @@ type VisionEpisodeVehicle interface {
 	VehicleFacingSide() *VisionVehicleFacingSide
 	// Shows from which side the vehicle was detected.
 	SetVehicleFacingSide(VisionVehicleFacingSide) VisionEpisodeVehicle
+	// Displays list of the most likely vehicle brand and model options.
+	VehicleModel() []VisionVehicleModel
+	// Displays list of the most likely vehicle brand and model options.
+	SetVehicleModel([]VisionVehicleModel) VisionEpisodeVehicle
 	// The purpose of the vehicle, e.g. emergency or regular.
 	VehiclePurpose() *VisionVehiclePurpose
 	// The purpose of the vehicle, e.g. emergency or regular.
@@ -3138,21 +3154,29 @@ type VisionServerInfo interface {
 }
 
 type VisionSpec interface {
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	Alg() *VisionSpecAlg
+	// Deprecated field. Will be deleted at 26.07
 	// The algorithm used for video analytics.
+	// Deprecated. Use `detectors` instead.
 	// Example: faces
 	SetAlg(VisionSpecAlg) VisionSpec
+	// Deprecated field. Will be deleted at 26.07
 	// This parameter allows you to select specific polygonal area(s) for detection.
 	// By default, it is empty, and the recognition system searches over the entire camera field of view.
 	// Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 	// The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+	// Deprecated. Use `detectors` instead.
 	Areas() *string
+	// Deprecated field. Will be deleted at 26.07
 	// This parameter allows you to select specific polygonal area(s) for detection.
 	// By default, it is empty, and the recognition system searches over the entire camera field of view.
 	// Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 	// The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+	// Deprecated. Use `detectors` instead.
 	SetAreas(string) VisionSpec
 	// Configuration of videoanalytics modules.
 	// This configuration supersedes `alg` and `areas` parameters.
@@ -3190,6 +3214,34 @@ type VisionVehicleAttributes interface {
 	Purpose() *VisionVehiclePurpose
 	// The purpose of the vehicle, e.g. emergency or regular.
 	SetPurpose(VisionVehiclePurpose) VisionVehicleAttributes
+}
+
+// Single vehicle color prediction, including the color and confidence level.
+// Required: color, confidence
+type VisionVehicleColor interface {
+	// Vehicle color
+	Color() VisionVehicleColorColor
+	// Vehicle color
+	SetColor(VisionVehicleColorColor) VisionVehicleColor
+	// Confidence level for the vehicle color.
+	Confidence() float64
+	// Confidence level for the vehicle color.
+	SetConfidence(float64) VisionVehicleColor
+}
+
+// Single vehicle model prediction, including the model name and confidence level.
+// Required: name, confidence
+type VisionVehicleModel interface {
+	// Confidence level for the vehicle model name.
+	Confidence() float64
+	// Confidence level for the vehicle model name.
+	SetConfidence(float64) VisionVehicleModel
+	// Model name of the vehicle.
+	// Example: Hyundai Palisade
+	Name() string
+	// Model name of the vehicle.
+	// Example: Hyundai Palisade
+	SetName(string) VisionVehicleModel
 }
 
 type VisionWorkerStats interface {
@@ -3245,58 +3297,60 @@ type CollectionResponseImpl struct {
 type ConfigVisionImpl struct {
 	APIKeyValue         *string                      `json:"api_key,omitempty" validate:"omitempty"`
 	ConfigExternalValue *VisionConfigExternalImpl    `json:"config_external,omitempty" validate:"omitempty"`
+	DevicesValue        []*VisionInferenceDeviceImpl `json:"devices,omitempty" validate:"omitempty,dive"`
 	ListenersValue      *ListenersImpl               `json:"listeners,omitempty" validate:"omitempty"`
 	LoglevelValue       *VisionLoglevel              `json:"loglevel,omitempty" validate:"omitempty"`
 	StatsValue          *ConfigVisionStatsImpl       `json:"stats,omitempty" validate:"omitempty"`
-	DevicesValue        []*VisionInferenceDeviceImpl `json:"devices,omitempty" validate:"omitempty,dive"`
 }
 
 // Server runtime stats
 type ConfigVisionStatsImpl struct {
 	AvailableModulesValue *VisionContextSearchModuleImpl `json:"available_modules,omitempty" validate:"omitempty"`
 	BuildValue            *int                           `json:"build,omitempty" validate:"omitempty"`
-	NowValue              *UtcMs                         `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	DevicesValue          []*VisionDeviceInfoImpl        `json:"devices,omitempty" validate:"omitempty,dive"`
+	NowValue              *UtcMs                         `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	SchemaVersionValue    *string                        `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue    *ServerVersion                 `json:"server_version,omitempty" validate:"omitempty"`
-	StartedAtValue        *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
-	DevicesValue          []*VisionDeviceInfoImpl        `json:"devices,omitempty" validate:"omitempty,dive"`
+	StartedAtValue        *Utc                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 type CounterRecordsListImpl struct {
-	TimingValue         any                        `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int                       `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string                    `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string                    `json:"prev,omitempty" validate:"omitempty"`
 	RecordsValue        []*VisionCounterRecordImpl `json:"records,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                        `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type EpisodeImpl struct {
+	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	DetectionsValue                  any                              `json:"detections,omitempty" validate:"omitempty,dive"`
-	PayloadValue                     any                              `json:"payload,omitempty" validate:"omitempty"`
-	MatchScoreValue                  *float64                         `json:"match_score,omitempty" validate:"omitempty"`
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	VehiclePurposeValue              *VisionVehiclePurpose            `json:"vehicle_purpose,omitempty" validate:"omitempty"`
+	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	FingerprintValue                 *VisionFaceFingerprintImpl       `json:"fingerprint,omitempty" validate:"omitempty"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
 	LicensePlateMissingValue         *bool                            `json:"license_plate_missing,omitempty" validate:"omitempty"`
 	LicensePlateTextValue            *string                          `json:"license_plate_text,omitempty" validate:"omitempty"`
-	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	VehicleFacingSideValue           *VisionVehicleFacingSide         `json:"vehicle_facing_side,omitempty" validate:"omitempty"`
-	VehicleEmergencySubtypeValue     *VisionVehicleEmergencySubtype   `json:"vehicle_emergency_subtype,omitempty" validate:"omitempty"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	MatchScoreValue                  *float64                         `json:"match_score,omitempty" validate:"omitempty"`
 	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty,dive"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
+	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PayloadValue                     any                              `json:"payload,omitempty" validate:"omitempty"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
+	VehicleColorValue                []*VisionVehicleColorImpl        `json:"vehicle_color,omitempty" validate:"omitempty,dive"`
+	VehicleEmergencySubtypeValue     *VisionVehicleEmergencySubtype   `json:"vehicle_emergency_subtype,omitempty" validate:"omitempty"`
+	VehicleFacingSideValue           *VisionVehicleFacingSide         `json:"vehicle_facing_side,omitempty" validate:"omitempty"`
+	VehicleModelValue                []*VisionVehicleModelImpl        `json:"vehicle_model,omitempty" validate:"omitempty,dive"`
+	VehiclePurposeValue              *VisionVehiclePurpose            `json:"vehicle_purpose,omitempty" validate:"omitempty"`
 }
 
 type EpisodeAppearanceTimestampsImpl struct {
-	InferenceTimestampValue *UtcMs `json:"inference_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	InferenceTimestampValue *UtcMs `json:"inference_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 // # Definition
@@ -3328,55 +3382,55 @@ type EpisodeAppearanceTimestampsImpl struct {
 // Required: episode_id, media, opened_at, updated_at
 type EpisodeBaseImpl struct {
 	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	MediaValue                       MediaName                        `json:"media" validate:"required"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
+	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type EpisodeCustomImpl struct {
-	PayloadValue                     any                              `json:"payload,omitempty" validate:"omitempty"`
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty,min=1,max=20"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PayloadValue                     any                              `json:"payload,omitempty" validate:"omitempty"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type EpisodeGenericImpl struct {
 	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type EpisodesListImpl struct {
-	TimingValue         any            `json:"timing,omitempty" validate:"omitempty"`
+	EpisodesValue       []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
 	EstimatedCountValue *int           `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string        `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string        `json:"prev,omitempty" validate:"omitempty"`
-	EpisodesValue       []*EpisodeImpl `json:"episodes,omitempty" validate:"omitempty,dive"`
+	TimingValue         any            `json:"timing,omitempty" validate:"omitempty"`
 }
 
 // Required: port
@@ -3398,8 +3452,8 @@ type ListenHTTPConfigParamsImpl struct {
 type ListenHTTPSConfigImpl struct {
 	AddressValue      *string      `json:"address,omitempty" validate:"omitempty"`
 	APIValue          *bool        `json:"api,omitempty" validate:"omitempty"`
-	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty,dive,oneof=tlsv1 tlsv1.1 tlsv1.2 tlsv1.3"`
 	PortValue         NetworkPort  `json:"port" validate:"required"`
+	SslProtocolsValue []TlsVersion `json:"ssl_protocols,omitempty" validate:"omitempty,dive,oneof=tlsv1 tlsv1.1 tlsv1.2 tlsv1.3"`
 }
 
 type ListenSslConfigImpl struct {
@@ -3415,38 +3469,11 @@ type OpenmetricsLabelsImpl struct {
 	ServerIDValue *UUID `json:"server_id,omitempty" validate:"omitempty" openmetrics_label:"server_id"`
 }
 
+// Required: name
 type StreamConfigImpl struct {
+	NameValue   MediaName        `json:"name" validate:"required" openmetrics_label:"name"`
 	StatsValue  *StreamStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 	VisionValue *VisionSpecImpl  `json:"vision,omitempty" validate:"omitempty"`
-	NameValue   MediaName        `json:"name" validate:"required" openmetrics_label:"name"`
-}
-
-type StreamConfigAdditionalImpl struct {
-	StatsValue *StreamStatsImpl `json:"stats,omitempty" validate:"omitempty"`
-}
-
-type StreamConfigBaseImpl struct {
-}
-
-type StreamConfigDeprecatedImpl struct {
-}
-
-type StreamConfigInputImpl struct {
-}
-
-type StreamConfigMediaImpl struct {
-}
-
-type StreamConfigOnpremisesImpl struct {
-	VisionValue *VisionSpecImpl `json:"vision,omitempty" validate:"omitempty"`
-}
-
-type StreamConfigSingleMediaImpl struct {
-}
-
-// Required: name
-type StreamConfigSpecificImpl struct {
-	NameValue MediaName `json:"name" validate:"required" openmetrics_label:"name"`
 }
 
 type StreamStatsImpl struct {
@@ -3454,18 +3481,18 @@ type StreamStatsImpl struct {
 }
 
 type StreamsListImpl struct {
-	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 	EstimatedCountValue *int                `json:"estimated_count,omitempty" validate:"omitempty"`
 	NextValue           *string             `json:"next,omitempty" validate:"omitempty"`
 	PrevValue           *string             `json:"prev,omitempty" validate:"omitempty"`
 	ServerIDValue       *UUID               `json:"server_id,omitempty" validate:"omitempty" openmetrics_label:"server_id"`
 	StreamsValue        []*StreamConfigImpl `json:"streams,omitempty" validate:"omitempty,dive"`
+	TimingValue         any                 `json:"timing,omitempty" validate:"omitempty"`
 }
 
 type VisionAlertsImpl struct {
-	LowQualityAtValue          *UtcMs `json:"low_quality_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	NotEnoughDetectionsAtValue *UtcMs `json:"not_enough_detections_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	SmallSizeAtValue           *UtcMs `json:"small_size_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	LowQualityAtValue          *UtcMs `json:"low_quality_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	NotEnoughDetectionsAtValue *UtcMs `json:"not_enough_detections_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	SmallSizeAtValue           *UtcMs `json:"small_size_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 type VisionAppearanceImpl struct {
@@ -3495,29 +3522,29 @@ type VisionContextSearchModuleImpl struct {
 
 type VisionCounterRecordImpl struct {
 	CounterTypeValue *string                       `json:"counter_type,omitempty" validate:"omitempty"`
+	DurationValue    Milliseconds                  `json:"duration" validate:"required"`
 	HumansValue      *VisionCounterRegionStatsImpl `json:"humans,omitempty" validate:"omitempty"`
+	MediaValue       MediaName                     `json:"media" validate:"required"`
+	OpenedAtValue    UtcMs                         `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
 	RegionIDValue    *string                       `json:"region_id,omitempty" validate:"omitempty"`
 	VehiclesValue    *VisionCounterRegionStatsImpl `json:"vehicles,omitempty" validate:"omitempty"`
-	MediaValue       MediaName                     `json:"media" validate:"required"`
-	DurationValue    Milliseconds                  `json:"duration" validate:"required"`
-	OpenedAtValue    UtcMs                         `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 // Required: media, opened_at, duration
 type VisionCounterRecordBaseImpl struct {
-	MediaValue    MediaName    `json:"media" validate:"required"`
 	DurationValue Milliseconds `json:"duration" validate:"required"`
-	OpenedAtValue UtcMs        `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
+	MediaValue    MediaName    `json:"media" validate:"required"`
+	OpenedAtValue UtcMs        `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type VisionCounterRecordRegionImpl struct {
 	CounterTypeValue *string                       `json:"counter_type,omitempty" validate:"omitempty"`
+	DurationValue    Milliseconds                  `json:"duration" validate:"required"`
 	HumansValue      *VisionCounterRegionStatsImpl `json:"humans,omitempty" validate:"omitempty"`
+	MediaValue       MediaName                     `json:"media" validate:"required"`
+	OpenedAtValue    UtcMs                         `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
 	RegionIDValue    *string                       `json:"region_id,omitempty" validate:"omitempty"`
 	VehiclesValue    *VisionCounterRegionStatsImpl `json:"vehicles,omitempty" validate:"omitempty"`
-	MediaValue       MediaName                     `json:"media" validate:"required"`
-	DurationValue    Milliseconds                  `json:"duration" validate:"required"`
-	OpenedAtValue    UtcMs                         `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 // Statistics calculated within some timeframe, a minute for instance.
@@ -3531,51 +3558,51 @@ type VisionCounterRegionStatsImpl struct {
 type VisionDetectedFaceImpl struct {
 	AppearanceValue       *VisionAppearanceImpl      `json:"appearance,omitempty" validate:"omitempty"`
 	ConfidenceValue       *float64                   `json:"confidence,omitempty" validate:"omitempty"`
+	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1000000000000,max=10000000000000"`
 	FingerprintValue      *VisionFaceFingerprintImpl `json:"fingerprint,omitempty" validate:"omitempty"`
+	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
 	ThumbnailValue        *VisionImageAttributesImpl `json:"thumbnail,omitempty" validate:"omitempty"`
 	ThumbnailQualityValue *float64                   `json:"thumbnail_quality,omitempty" validate:"omitempty"`
-	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
-	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 type VisionDetectedLicensePlateImpl struct {
 	AppearanceValue       *VisionAppearanceImpl      `json:"appearance,omitempty" validate:"omitempty"`
 	ConfidenceValue       *float64                   `json:"confidence,omitempty" validate:"omitempty"`
+	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1000000000000,max=10000000000000"`
 	FacingSideValue       *VisionVehicleFacingSide   `json:"facing_side,omitempty" validate:"omitempty"`
+	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
 	PlateTextValue        *string                    `json:"plate_text,omitempty" validate:"omitempty"`
 	ThumbnailValue        *VisionImageAttributesImpl `json:"thumbnail,omitempty" validate:"omitempty"`
 	ThumbnailQualityValue *float64                   `json:"thumbnail_quality,omitempty" validate:"omitempty"`
-	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
-	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 // Required: detected_at, object_class
 type VisionDetectedObjectBaseImpl struct {
 	AppearanceValue       *VisionAppearanceImpl      `json:"appearance,omitempty" validate:"omitempty"`
 	ConfidenceValue       *float64                   `json:"confidence,omitempty" validate:"omitempty"`
+	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1000000000000,max=10000000000000"`
+	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
 	ThumbnailValue        *VisionImageAttributesImpl `json:"thumbnail,omitempty" validate:"omitempty"`
 	ThumbnailQualityValue *float64                   `json:"thumbnail_quality,omitempty" validate:"omitempty"`
-	ObjectClassValue      VisionObjectClass          `json:"object_class" validate:"required"`
-	DetectedAtValue       UtcMs                      `json:"detected_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 type VisionDetectedVehicleImpl struct {
 	AppearanceValue          *VisionAppearanceImpl      `json:"appearance,omitempty" validate:"omitempty"`
 	ConfidenceValue          *float64                   `json:"confidence,omitempty" validate:"omitempty"`
+	DetectedAtValue          UtcMs                      `json:"detected_at" validate:"required,min=1000000000000,max=10000000000000"`
 	LicensePlateMissingValue *bool                      `json:"license_plate_missing,omitempty" validate:"omitempty"`
+	ObjectClassValue         VisionObjectClass          `json:"object_class" validate:"required"`
 	PurposeValue             *VisionVehiclePurpose      `json:"purpose,omitempty" validate:"omitempty"`
 	ThumbnailValue           *VisionImageAttributesImpl `json:"thumbnail,omitempty" validate:"omitempty"`
 	ThumbnailQualityValue    *float64                   `json:"thumbnail_quality,omitempty" validate:"omitempty"`
-	ObjectClassValue         VisionObjectClass          `json:"object_class" validate:"required"`
-	DetectedAtValue          UtcMs                      `json:"detected_at" validate:"required,min=1e+12,max=1e+13"`
 }
 
 // Required: detector_type, region_id
 type VisionDetectorConfigImpl struct {
 	DetectorTypeValue      *VisionDetectorConfigDetectorTypeImpl      `json:"detector_type" validate:"required"`
 	RegionCoordinatesValue *VisionDetectorConfigRegionCoordinatesImpl `json:"region_coordinates,omitempty" validate:"omitempty"`
-	StatsValue             *VisionDetectorStatsImpl                   `json:"stats,omitempty" validate:"omitempty"`
 	RegionIDValue          string                                     `json:"region_id" validate:"required"`
+	StatsValue             *VisionDetectorStatsImpl                   `json:"stats,omitempty" validate:"omitempty"`
 }
 
 type VisionDetectorConfigDetectorTypeImpl struct {
@@ -3586,14 +3613,14 @@ type VisionDetectorConfigRegionCoordinatesImpl struct {
 
 type VisionDetectorStatsImpl struct {
 	AlertsValue          *VisionAlertsImpl `json:"alerts,omitempty" validate:"omitempty"`
-	LastDetectionAtValue *UtcMs            `json:"last_detection_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	LastDetectionAtValue *UtcMs            `json:"last_detection_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 type VisionDeviceInfoImpl struct {
 	DeviceIDValue    *int                   `json:"device_id,omitempty" validate:"omitempty"`
 	DeviceTitleValue *string                `json:"device_title,omitempty" validate:"omitempty"`
-	StatsValue       *VisionDeviceStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 	HwValue          VisionHardwareType     `json:"hw" validate:"required"`
+	StatsValue       *VisionDeviceStatsImpl `json:"stats,omitempty" validate:"omitempty"`
 }
 
 type VisionDeviceStatsImpl struct {
@@ -3603,90 +3630,92 @@ type VisionDeviceStatsImpl struct {
 }
 
 type VisionEpisodeContextSearchImpl struct {
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
 	MatchScoreValue                  *float64                         `json:"match_score,omitempty" validate:"omitempty"`
-	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type VisionEpisodeFaceImpl struct {
-	FingerprintValue                 *VisionFaceFingerprintImpl       `json:"fingerprint,omitempty" validate:"omitempty"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
 	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	DetectionsValue                  []*VisionDetectedFaceImpl        `json:"detections,omitempty" validate:"omitempty,dive"`
-	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty,dive"`
+	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
+	FingerprintValue                 *VisionFaceFingerprintImpl       `json:"fingerprint,omitempty" validate:"omitempty"`
+	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
+	MatchedPersonsValue              []*VisionPersonMatchImpl         `json:"matched_persons,omitempty" validate:"omitempty,dive"`
+	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type VisionEpisodeHumanImpl struct {
-	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	DetectionsValue                  []*VisionDetectedObjectBaseImpl  `json:"detections,omitempty" validate:"omitempty,dive"`
+	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
 	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
+	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
+	MediaValue                       MediaName                        `json:"media" validate:"required"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type VisionEpisodeQrCodeImpl struct {
-	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
-	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	PayloadValue                     *string                          `json:"payload,omitempty" validate:"omitempty"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PayloadValue                     *string                          `json:"payload,omitempty" validate:"omitempty"`
+	PreviewValue                     *Base64                          `json:"preview,omitempty" validate:"omitempty,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 type VisionEpisodeVehicleImpl struct {
-	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	VehiclePurposeValue              *VisionVehiclePurpose            `json:"vehicle_purpose,omitempty" validate:"omitempty"`
+	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
+	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	DetectionsValue                  []any                            `json:"detections,omitempty" validate:"omitempty,dive"`
 	EpisodeAppearanceTimestampsValue *EpisodeAppearanceTimestampsImpl `json:"episode_appearance_timestamps,omitempty" validate:"omitempty"`
-	VehicleFacingSideValue           *VisionVehicleFacingSide         `json:"vehicle_facing_side,omitempty" validate:"omitempty"`
+	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
 	EpisodeTypeValue                 *string                          `json:"episode_type,omitempty" validate:"omitempty"`
 	FramePreviewValue                *Base64                          `json:"frame_preview,omitempty" validate:"omitempty,base64"`
 	LicensePlateMissingValue         *bool                            `json:"license_plate_missing,omitempty" validate:"omitempty"`
-	ClosedAtValue                    *UtcMs                           `json:"closed_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
-	VehicleEmergencySubtypeValue     *VisionVehicleEmergencySubtype   `json:"vehicle_emergency_subtype,omitempty" validate:"omitempty"`
 	LicensePlateTextValue            *string                          `json:"license_plate_text,omitempty" validate:"omitempty"`
-	CloseReasonValue                 *EpisodeCloseReason              `json:"close_reason,omitempty" validate:"omitempty"`
-	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
 	MediaValue                       MediaName                        `json:"media" validate:"required"`
-	DetectionsValue                  []any                            `json:"detections,omitempty" validate:"omitempty,dive"`
-	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
-	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1e+12,max=1e+13"`
-	EpisodeIDValue                   SnowflakeID                      `json:"episode_id" validate:"required"`
+	OpenedAtValue                    UtcMs                            `json:"opened_at" validate:"required,min=1000000000000,max=10000000000000"`
+	PreviewValue                     Base64                           `json:"preview" validate:"required,base64"`
+	PreviewTimestampValue            *UtcMs                           `json:"preview_timestamp,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	StartedAtValue                   *UtcMs                           `json:"started_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
+	UpdatedAtValue                   UtcMs                            `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
+	VehicleColorValue                []*VisionVehicleColorImpl        `json:"vehicle_color,omitempty" validate:"omitempty,dive"`
+	VehicleEmergencySubtypeValue     *VisionVehicleEmergencySubtype   `json:"vehicle_emergency_subtype,omitempty" validate:"omitempty"`
+	VehicleFacingSideValue           *VisionVehicleFacingSide         `json:"vehicle_facing_side,omitempty" validate:"omitempty"`
+	VehicleModelValue                []*VisionVehicleModelImpl        `json:"vehicle_model,omitempty" validate:"omitempty,dive"`
+	VehiclePurposeValue              *VisionVehiclePurpose            `json:"vehicle_purpose,omitempty" validate:"omitempty"`
 }
 
 type VisionFaceAttributesImpl struct {
@@ -3702,9 +3731,9 @@ type VisionFaceFingerprintImpl struct {
 
 // Required: data
 type VisionImageAttributesImpl struct {
+	DataValue     Base64               `json:"data" validate:"required,base64"`
 	MimeTypeValue *VisionImageMimetype `json:"mime_type,omitempty" validate:"omitempty"`
 	Sha256Value   *Hexbinary           `json:"sha256,omitempty" validate:"omitempty,min=64,max=64"`
-	DataValue     Base64               `json:"data" validate:"required,base64"`
 }
 
 // Required: hw
@@ -3823,19 +3852,19 @@ type VisionMetricsInferenceImpl struct {
 // Person
 // Required: person_id, updated_at, originator
 type VisionPersonImpl struct {
-	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	DeletedAtValue    *UtcMs                       `json:"deleted_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	ExternalIDValue   *string                      `json:"external_id,omitempty" validate:"omitempty"`
-	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
 	FingerprintsValue []*VisionFaceFingerprintImpl `json:"fingerprints,omitempty" validate:"omitempty,dive"`
+	OriginatorValue   VisionPersonOriginator       `json:"originator" validate:"required,oneof=api identification_service"`
 	PersonIDValue     SnowflakeID                  `json:"person_id" validate:"required"`
-	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1e+12,max=1e+13"`
+	UpdatedAtValue    UtcMs                        `json:"updated_at" validate:"required,min=1000000000000,max=10000000000000"`
 }
 
 // Person matching information
 // Required: person, match_score
 type VisionPersonMatchImpl struct {
-	PersonValue     *VisionPersonImpl `json:"person" validate:"required"`
 	MatchScoreValue float64           `json:"match_score" validate:"required"`
+	PersonValue     *VisionPersonImpl `json:"person" validate:"required"`
 }
 
 // 2D point
@@ -3855,21 +3884,21 @@ type VisionServerDevicesImpl struct {
 
 type VisionServerInfoImpl struct {
 	BuildValue         *int           `json:"build,omitempty" validate:"omitempty"`
-	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	NowValue           *UtcMs         `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	SchemaVersionValue *string        `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue *ServerVersion `json:"server_version,omitempty" validate:"omitempty"`
-	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
+	StartedAtValue     *Utc           `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 type VisionSpecImpl struct {
 	AlgValue       *VisionSpecAlg              `json:"alg,omitempty" validate:"omitempty,oneof=faces plates"`
 	AreasValue     *string                     `json:"areas,omitempty" validate:"omitempty"`
-	StatsValue     *VisionStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 	DetectorsValue []*VisionDetectorConfigImpl `json:"detectors,omitempty" validate:"omitempty,dive"`
+	StatsValue     *VisionStatsImpl            `json:"stats,omitempty" validate:"omitempty"`
 }
 
 type VisionStatsImpl struct {
-	LastDetectionAtValue *UtcMs `json:"last_detection_at,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	LastDetectionAtValue *UtcMs `json:"last_detection_at,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 }
 
 type VisionVehicleAttributesImpl struct {
@@ -3877,13 +3906,27 @@ type VisionVehicleAttributesImpl struct {
 	PurposeValue             *VisionVehiclePurpose `json:"purpose,omitempty" validate:"omitempty"`
 }
 
+// Single vehicle color prediction, including the color and confidence level.
+// Required: color, confidence
+type VisionVehicleColorImpl struct {
+	ColorValue      VisionVehicleColorColor `json:"color" validate:"required,oneof=beige white silver blue black burgundy grey brown red gold green cyan purple violet orange yellow pink"`
+	ConfidenceValue float64                 `json:"confidence" validate:"required"`
+}
+
+// Single vehicle model prediction, including the model name and confidence level.
+// Required: name, confidence
+type VisionVehicleModelImpl struct {
+	ConfidenceValue float64 `json:"confidence" validate:"required"`
+	NameValue       string  `json:"name" validate:"required"`
+}
+
 type VisionWorkerStatsImpl struct {
 	BuildValue         *int                    `json:"build,omitempty" validate:"omitempty"`
-	NowValue           *UtcMs                  `json:"now,omitempty" validate:"omitempty,min=1e+12,max=1e+13"`
+	DevicesValue       []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty,dive"`
+	NowValue           *UtcMs                  `json:"now,omitempty" validate:"omitempty,min=1000000000000,max=10000000000000"`
 	SchemaVersionValue *string                 `json:"schema_version,omitempty" validate:"omitempty"`
 	ServerVersionValue *ServerVersion          `json:"server_version,omitempty" validate:"omitempty"`
-	StartedAtValue     *Utc                    `json:"started_at,omitempty" validate:"omitempty,min=1e+09,max=1e+10"`
-	DevicesValue       []*VisionDeviceInfoImpl `json:"devices,omitempty" validate:"omitempty,dive"`
+	StartedAtValue     *Utc                    `json:"started_at,omitempty" validate:"omitempty,min=1000000000,max=10000000000"`
 }
 
 // NewCollectionResponse creates a new CollectionResponse instance
@@ -4700,6 +4743,35 @@ func (s *EpisodeImpl) SetUpdatedAt(v UtcMs) Episode {
 	return s
 }
 
+// Displays list of the most likely vehicle color options.
+func (s EpisodeImpl) VehicleColor() []VisionVehicleColor {
+	if s.VehicleColorValue == nil {
+		return nil
+	}
+	result := make([]VisionVehicleColor, len(s.VehicleColorValue))
+	for i, item := range s.VehicleColorValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Displays list of the most likely vehicle color options.
+func (s *EpisodeImpl) SetVehicleColor(v []VisionVehicleColor) Episode {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*VisionVehicleColorImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*VisionVehicleColorImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.VehicleColorValue = impl
+	}
+	return s
+}
+
 // Emergency type of the vehicle.
 func (s EpisodeImpl) VehicleEmergencySubtype() *VisionVehicleEmergencySubtype {
 	return s.VehicleEmergencySubtypeValue
@@ -4725,6 +4797,35 @@ func (s *EpisodeImpl) SetVehicleFacingSide(v VisionVehicleFacingSide) Episode {
 		return nil
 	}
 	s.VehicleFacingSideValue = &v
+	return s
+}
+
+// Displays list of the most likely vehicle brand and model options.
+func (s EpisodeImpl) VehicleModel() []VisionVehicleModel {
+	if s.VehicleModelValue == nil {
+		return nil
+	}
+	result := make([]VisionVehicleModel, len(s.VehicleModelValue))
+	for i, item := range s.VehicleModelValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Displays list of the most likely vehicle brand and model options.
+func (s *EpisodeImpl) SetVehicleModel(v []VisionVehicleModel) Episode {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*VisionVehicleModelImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*VisionVehicleModelImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.VehicleModelValue = impl
+	}
 	return s
 }
 
@@ -5996,98 +6097,6 @@ func (s *StreamConfigImpl) SetVision(v VisionSpec) StreamConfig {
 	if impl, ok := v.(*VisionSpecImpl); ok {
 		s.VisionValue = impl
 	}
-	return s
-}
-
-// NewStreamConfigAdditional creates a new StreamConfigAdditional instance
-func NewStreamConfigAdditional() StreamConfigAdditional {
-	return &StreamConfigAdditionalImpl{}
-}
-
-// Stream's metrics and other statistical information.
-func (s StreamConfigAdditionalImpl) Stats() StreamStats {
-	return s.StatsValue
-}
-
-// Stream's metrics and other statistical information.
-func (s *StreamConfigAdditionalImpl) SetStats(v StreamStats) StreamConfigAdditional {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*StreamStatsImpl); ok {
-		s.StatsValue = impl
-	}
-	return s
-}
-
-// NewStreamConfigBase creates a new StreamConfigBase instance
-func NewStreamConfigBase() StreamConfigBase {
-	return &StreamConfigBaseImpl{}
-}
-
-// NewStreamConfigDeprecated creates a new StreamConfigDeprecated instance
-func NewStreamConfigDeprecated() StreamConfigDeprecated {
-	return &StreamConfigDeprecatedImpl{}
-}
-
-// NewStreamConfigInput creates a new StreamConfigInput instance
-func NewStreamConfigInput() StreamConfigInput {
-	return &StreamConfigInputImpl{}
-}
-
-// NewStreamConfigMedia creates a new StreamConfigMedia instance
-func NewStreamConfigMedia() StreamConfigMedia {
-	return &StreamConfigMediaImpl{}
-}
-
-// NewStreamConfigOnpremises creates a new StreamConfigOnpremises instance
-func NewStreamConfigOnpremises() StreamConfigOnpremises {
-	return &StreamConfigOnpremisesImpl{}
-}
-
-// Video analytics parameters.
-func (s StreamConfigOnpremisesImpl) Vision() VisionSpec {
-	return s.VisionValue
-}
-
-// Video analytics parameters.
-func (s *StreamConfigOnpremisesImpl) SetVision(v VisionSpec) StreamConfigOnpremises {
-	if s == nil {
-		return nil
-	}
-	if impl, ok := v.(*VisionSpecImpl); ok {
-		s.VisionValue = impl
-	}
-	return s
-}
-
-// NewStreamConfigSingleMedia creates a new StreamConfigSingleMedia instance
-func NewStreamConfigSingleMedia() StreamConfigSingleMedia {
-	return &StreamConfigSingleMediaImpl{}
-}
-
-// NewStreamConfigSpecific creates a new StreamConfigSpecific instance
-func NewStreamConfigSpecific() StreamConfigSpecific {
-	return &StreamConfigSpecificImpl{}
-}
-
-// Globally unique stream name.
-// Note that the name could not be changed after the stream is created.
-// Format: media_name (media_name)
-// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-func (s StreamConfigSpecificImpl) Name() MediaName {
-	return s.NameValue
-}
-
-// Globally unique stream name.
-// Note that the name could not be changed after the stream is created.
-// Format: media_name (media_name)
-// Examples: Decklink-Stream, Dektec-Stream, hockey1, mylive/bunny, test_stream
-func (s *StreamConfigSpecificImpl) SetName(v MediaName) StreamConfigSpecific {
-	if s == nil {
-		return nil
-	}
-	s.NameValue = v
 	return s
 }
 
@@ -8969,6 +8978,35 @@ func (s *VisionEpisodeVehicleImpl) SetUpdatedAt(v UtcMs) VisionEpisodeVehicle {
 	return s
 }
 
+// Displays list of the most likely vehicle color options.
+func (s VisionEpisodeVehicleImpl) VehicleColor() []VisionVehicleColor {
+	if s.VehicleColorValue == nil {
+		return nil
+	}
+	result := make([]VisionVehicleColor, len(s.VehicleColorValue))
+	for i, item := range s.VehicleColorValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Displays list of the most likely vehicle color options.
+func (s *VisionEpisodeVehicleImpl) SetVehicleColor(v []VisionVehicleColor) VisionEpisodeVehicle {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*VisionVehicleColorImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*VisionVehicleColorImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.VehicleColorValue = impl
+	}
+	return s
+}
+
 // Emergency type of the vehicle.
 func (s VisionEpisodeVehicleImpl) VehicleEmergencySubtype() *VisionVehicleEmergencySubtype {
 	return s.VehicleEmergencySubtypeValue
@@ -8994,6 +9032,35 @@ func (s *VisionEpisodeVehicleImpl) SetVehicleFacingSide(v VisionVehicleFacingSid
 		return nil
 	}
 	s.VehicleFacingSideValue = &v
+	return s
+}
+
+// Displays list of the most likely vehicle brand and model options.
+func (s VisionEpisodeVehicleImpl) VehicleModel() []VisionVehicleModel {
+	if s.VehicleModelValue == nil {
+		return nil
+	}
+	result := make([]VisionVehicleModel, len(s.VehicleModelValue))
+	for i, item := range s.VehicleModelValue {
+		result[i] = item
+	}
+	return result
+}
+
+// Displays list of the most likely vehicle brand and model options.
+func (s *VisionEpisodeVehicleImpl) SetVehicleModel(v []VisionVehicleModel) VisionEpisodeVehicle {
+	if s == nil {
+		return nil
+	}
+	if v != nil {
+		impl := make([]*VisionVehicleModelImpl, len(v))
+		for i, item := range v {
+			if itemImpl, ok := item.(*VisionVehicleModelImpl); ok {
+				impl[i] = itemImpl
+			}
+		}
+		s.VehicleModelValue = impl
+	}
 	return s
 }
 
@@ -10978,13 +11045,17 @@ func NewVisionSpec() VisionSpec {
 	return &VisionSpecImpl{}
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s VisionSpecImpl) Alg() *VisionSpecAlg {
 	return s.AlgValue
 }
 
+// Deprecated field. Will be deleted at 26.07
 // The algorithm used for video analytics.
+// Deprecated. Use `detectors` instead.
 // Example: faces
 func (s *VisionSpecImpl) SetAlg(v VisionSpecAlg) VisionSpec {
 	if s == nil {
@@ -10994,18 +11065,22 @@ func (s *VisionSpecImpl) SetAlg(v VisionSpecAlg) VisionSpec {
 	return s
 }
 
+// Deprecated field. Will be deleted at 26.07
 // This parameter allows you to select specific polygonal area(s) for detection.
 // By default, it is empty, and the recognition system searches over the entire camera field of view.
 // Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 // The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+// Deprecated. Use `detectors` instead.
 func (s VisionSpecImpl) Areas() *string {
 	return s.AreasValue
 }
 
+// Deprecated field. Will be deleted at 26.07
 // This parameter allows you to select specific polygonal area(s) for detection.
 // By default, it is empty, and the recognition system searches over the entire camera field of view.
 // Each area is specified as a sequence of comma-separated coordinates of vertices of the polygon: `x0,y0,x1,y1,x2,y2,...`.
 // The vertices are specified in a counter-clockwise direction. Multiple areas are separated by `:`.
+// Deprecated. Use `detectors` instead.
 func (s *VisionSpecImpl) SetAreas(v string) VisionSpec {
 	if s == nil {
 		return nil
@@ -11118,6 +11193,74 @@ func (s *VisionVehicleAttributesImpl) SetPurpose(v VisionVehiclePurpose) VisionV
 		return nil
 	}
 	s.PurposeValue = &v
+	return s
+}
+
+// NewVisionVehicleColor creates a new VisionVehicleColor instance
+func NewVisionVehicleColor() VisionVehicleColor {
+	return &VisionVehicleColorImpl{}
+}
+
+// Vehicle color
+func (s VisionVehicleColorImpl) Color() VisionVehicleColorColor {
+	return s.ColorValue
+}
+
+// Vehicle color
+func (s *VisionVehicleColorImpl) SetColor(v VisionVehicleColorColor) VisionVehicleColor {
+	if s == nil {
+		return nil
+	}
+	s.ColorValue = v
+	return s
+}
+
+// Confidence level for the vehicle color.
+func (s VisionVehicleColorImpl) Confidence() float64 {
+	return s.ConfidenceValue
+}
+
+// Confidence level for the vehicle color.
+func (s *VisionVehicleColorImpl) SetConfidence(v float64) VisionVehicleColor {
+	if s == nil {
+		return nil
+	}
+	s.ConfidenceValue = v
+	return s
+}
+
+// NewVisionVehicleModel creates a new VisionVehicleModel instance
+func NewVisionVehicleModel() VisionVehicleModel {
+	return &VisionVehicleModelImpl{}
+}
+
+// Confidence level for the vehicle model name.
+func (s VisionVehicleModelImpl) Confidence() float64 {
+	return s.ConfidenceValue
+}
+
+// Confidence level for the vehicle model name.
+func (s *VisionVehicleModelImpl) SetConfidence(v float64) VisionVehicleModel {
+	if s == nil {
+		return nil
+	}
+	s.ConfidenceValue = v
+	return s
+}
+
+// Model name of the vehicle.
+// Example: Hyundai Palisade
+func (s VisionVehicleModelImpl) Name() string {
+	return s.NameValue
+}
+
+// Model name of the vehicle.
+// Example: Hyundai Palisade
+func (s *VisionVehicleModelImpl) SetName(v string) VisionVehicleModel {
+	if s == nil {
+		return nil
+	}
+	s.NameValue = v
 	return s
 }
 

@@ -15,6 +15,48 @@ import (
 	model "github.com/flussonic/go-flussonic/watcher-client/model"
 )
 
+func TestClient_AccessLogList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/access_log"
+
+	// Expected JSON response
+	expectedJSON := `{"access_log":[{"action":{"type":"create"},"created_at":1000000000,"domain":{"title":"example"},"object":{"id":"example","representation":"example","type":"Stream"},"organization":{"title":"example"},"user":{"login":"example","request_data":{"ip":"example","user_agent":"example"}}}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.AccessLogListQuery{}
+	_, err := client.AccessLogList(ctx, query)
+	if err != nil {
+		t.Fatalf("AccessLogList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.AccessLogList(ctx, query)
+	if err != nil {
+		t.Fatalf("AccessLogList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("AccessLogList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_AgentActivationTokenCreate(t *testing.T) {
 	ctx := context.Background()
 
@@ -92,6 +134,90 @@ func TestClient_AgentActivationTokenGet(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("AgentActivationTokenGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_Autologin(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/autologin"
+
+	// Expected JSON response
+	expectedJSON := `{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","refresh_token":"3637e790-5530-11ed-bdc3-0242ac120002"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.AutologinRequestImpl{}
+	_, err := client.Autologin(ctx, body)
+	if err != nil {
+		t.Fatalf("Autologin failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.Autologin(ctx, body)
+	if err != nil {
+		t.Fatalf("Autologin failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("Autologin returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_AutologinGenerate(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/autologin/generate"
+
+	// Expected JSON response
+	expectedJSON := `{"autologin_token":"42:3600:1738108800:a1b2:c3d4e5f6..."}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.AutologinGenerateRequestImpl{}
+	_, err := client.AutologinGenerate(ctx, body)
+	if err != nil {
+		t.Fatalf("AutologinGenerate failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.AutologinGenerate(ctx, body)
+	if err != nil {
+		t.Fatalf("AutologinGenerate failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("AutologinGenerate returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -291,6 +417,48 @@ func TestClient_CameraReboot(t *testing.T) {
 	}
 }
 
+func TestClient_CameraUsagesList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/usage/cameras"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","usage":[{"account_id":12345,"billing_plan_id":"billing-plan-456","external_account_id":"12345","from":"2025-01-01","license_id":"12345","plan_id":"episodes-30d-123","stream_name":"ag-123456","to":"2025-01-30"}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.CameraUsagesListQuery{}
+	_, err := client.CameraUsagesList(ctx, query)
+	if err != nil {
+		t.Fatalf("CameraUsagesList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.CameraUsagesList(ctx, query)
+	if err != nil {
+		t.Fatalf("CameraUsagesList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("CameraUsagesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_DeleteOrganizationPreset(t *testing.T) {
 	ctx := context.Background()
 
@@ -471,6 +639,48 @@ func TestClient_DeviceTokenSave(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_DiscoveryDevicesList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/discovery/devices"
+
+	// Expected JSON response
+	expectedJSON := `{"devices":[{"dns":["example"],"firmware":"example","gateway":"example","hostname":"example","ip":"example","mac":"example","manufacturer":"example","model":"example","netmask":"example","onvif_url":"http://192.168.1.100:8080/onvif/device_service","serial_number":"example","system_time":1662386000,"system_time_at":1662386000}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.DiscoveryDevicesListQuery{}
+	_, err := client.DiscoveryDevicesList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("DiscoveryDevicesList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.DiscoveryDevicesList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("DiscoveryDevicesList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("DiscoveryDevicesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_EpisodeAddToFavorites(t *testing.T) {
 	ctx := context.Background()
 
@@ -590,6 +800,48 @@ func TestClient_EpisodeGet(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("EpisodeGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_EpisodeUpdate(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/watcher/client-api/v3/episodes/test-episode_id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.EpisodeUpdateImpl{}
+	_, err := client.EpisodeUpdate(ctx, "test-episode_id", nil, body)
+	if err != nil {
+		t.Fatalf("EpisodeUpdate failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.EpisodeUpdate(ctx, "test-episode_id", nil, body)
+	if err != nil {
+		t.Fatalf("EpisodeUpdate failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("EpisodeUpdate returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -1342,7 +1594,7 @@ func TestClient_MosaicCreate(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/mosaics"
 
 	// Expected JSON response
-	expectedJSON := `{"id":7,"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
+	expectedJSON := `{"id":7,"organization":{"id":9,"user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}},"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1411,7 +1663,7 @@ func TestClient_MosaicGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/mosaics/test-mosaic_id"
 
 	// Expected JSON response
-	expectedJSON := `{"id":7,"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
+	expectedJSON := `{"id":7,"organization":{"id":9,"user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}},"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1452,7 +1704,7 @@ func TestClient_MosaicSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/mosaics/test-mosaic_id"
 
 	// Expected JSON response
-	expectedJSON := `{"id":7,"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
+	expectedJSON := `{"id":7,"organization":{"id":9,"user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}},"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1494,7 +1746,7 @@ func TestClient_MosaicsList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/mosaics"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"mosaics":[{"id":7,"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"mosaics":[{"id":7,"organization":{"id":9,"user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}},"organization_id":9,"streams":[{"name":"ag-12345","playback_token":"onetime_token","streaming_endpoint":"https://ms.example.com","title":"Hockey channel"}],"title":"example","type":"2x2"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1556,6 +1808,90 @@ func TestClient_NotificationSend(t *testing.T) {
 	}
 }
 
+func TestClient_NvrActivationTokenCreate(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/nvr-activation-token"
+
+	// Expected JSON response
+	expectedJSON := `{"token":"a1b2c3d4e5f6","valid_till":1672531199}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.NvrActivationTokenRequestImpl{}
+	_, err := client.NvrActivationTokenCreate(ctx, "test-organization_id", body)
+	if err != nil {
+		t.Fatalf("NvrActivationTokenCreate failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.NvrActivationTokenCreate(ctx, "test-organization_id", body)
+	if err != nil {
+		t.Fatalf("NvrActivationTokenCreate failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("NvrActivationTokenCreate returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_NvrConfigGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/nvrs/config"
+
+	// Expected JSON response
+	expectedJSON := `{"config_version":1637094994,"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"comment":"This is a test stream","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"name":"example","static":true,"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.NvrConfigGetQuery{}
+	_, err := client.NvrConfigGet(ctx, query)
+	if err != nil {
+		t.Fatalf("NvrConfigGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.NvrConfigGet(ctx, query)
+	if err != nil {
+		t.Fatalf("NvrConfigGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("NvrConfigGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_OrganizationCreate(t *testing.T) {
 	ctx := context.Background()
 
@@ -1564,7 +1900,7 @@ func TestClient_OrganizationCreate(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations"
 
 	// Expected JSON response
-	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}`
+	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1634,7 +1970,7 @@ func TestClient_OrganizationGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id"
 
 	// Expected JSON response
-	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}`
+	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1737,6 +2073,408 @@ func TestClient_OrganizationInviteCreate(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_OrganizationNvrCreate(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs"
+
+	// Expected JSON response
+	expectedJSON := `{"api_key":"api-key","id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.NvrImpl{}
+	_, err := client.OrganizationNvrCreate(ctx, "test-organization_id", body)
+	if err != nil {
+		t.Fatalf("OrganizationNvrCreate failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrCreate(ctx, "test-organization_id", body)
+	if err != nil {
+		t.Fatalf("OrganizationNvrCreate failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrCreate returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.OrganizationNvrDelete(ctx, "test-organization_id", "test-nvr_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrDelete failed: %v", err)
+	}
+}
+
+func TestClient_OrganizationNvrEpisodeGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/episodes/test-episode_id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.OrganizationNvrEpisodeGet(ctx, "test-organization_id", "test-nvr_id", "test-episode_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrEpisodeGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrEpisodeGet(ctx, "test-organization_id", "test-nvr_id", "test-episode_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrEpisodeGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrEpisodeGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrEpisodesList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/episodes"
+
+	// Expected JSON response
+	expectedJSON := `{"episodes":[{}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.OrganizationNvrEpisodesListQuery{}
+	_, err := client.OrganizationNvrEpisodesList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrEpisodesList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrEpisodesList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrEpisodesList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrEpisodesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id"
+
+	// Expected JSON response
+	expectedJSON := `{"api_key":"api-key","id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.OrganizationNvrGet(ctx, "test-organization_id", "test-nvr_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrGet(ctx, "test-organization_id", "test-nvr_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrSave(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id"
+
+	// Expected JSON response
+	expectedJSON := `{"api_key":"api-key","id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.NvrImpl{}
+	_, err := client.OrganizationNvrSave(ctx, "test-organization_id", "test-nvr_id", body)
+	if err != nil {
+		t.Fatalf("OrganizationNvrSave failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrSave(ctx, "test-organization_id", "test-nvr_id", body)
+	if err != nil {
+		t.Fatalf("OrganizationNvrSave failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrStreamGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/streams/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.OrganizationNvrStreamGet(ctx, "test-organization_id", "test-nvr_id", "test-name")
+	if err != nil {
+		t.Fatalf("OrganizationNvrStreamGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrStreamGet(ctx, "test-organization_id", "test-nvr_id", "test-name")
+	if err != nil {
+		t.Fatalf("OrganizationNvrStreamGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrStreamGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrStreamsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/streams"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.OrganizationNvrStreamsListQuery{}
+	_, err := client.OrganizationNvrStreamsList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrStreamsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrStreamsList(ctx, "test-organization_id", "test-nvr_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrStreamsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrStreamsList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrSync(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs/test-nvr_id/sync"
+
+	// Expected JSON response
+	expectedJSON := `{"added":5,"removed":2}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.OrganizationNvrSync(ctx, "test-organization_id", "test-nvr_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrSync failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrSync(ctx, "test-organization_id", "test-nvr_id")
+	if err != nil {
+		t.Fatalf("OrganizationNvrSync failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrSync returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_OrganizationNvrsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/nvrs"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","nvrs":[{"api_key":"api-key","id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.OrganizationNvrsListQuery{}
+	_, err := client.OrganizationNvrsList(ctx, "test-organization_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.OrganizationNvrsList(ctx, "test-organization_id", query)
+	if err != nil {
+		t.Fatalf("OrganizationNvrsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("OrganizationNvrsList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_OrganizationPresetSave(t *testing.T) {
 	ctx := context.Background()
 
@@ -1745,7 +2483,7 @@ func TestClient_OrganizationPresetSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/presets"
 
 	// Expected JSON response
-	expectedJSON := `{"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1787,7 +2525,7 @@ func TestClient_OrganizationSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id"
 
 	// Expected JSON response
-	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}`
+	expectedJSON := `{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1857,7 +2595,7 @@ func TestClient_OrganizationUserGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}}`
+	expectedJSON := `{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1898,7 +2636,7 @@ func TestClient_OrganizationUserSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}}`
+	expectedJSON := `{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1940,7 +2678,7 @@ func TestClient_OrganizationUsersList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations/test-organization_id/users"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users":[{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users":[{"email":"user@example.com","id":7,"name":"Example LLC","permissions":{"folders":[{"dvr_depth_limit":3600}],"organization":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1982,7 +2720,7 @@ func TestClient_OrganizationsList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/organizations"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","organizations":[{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","organizations":[{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2197,6 +2935,34 @@ func TestClient_PersonsList(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_PresetDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/watcher/client-api/v3/presets/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.PresetDelete(ctx, "test-id")
+	if err != nil {
+		t.Fatalf("PresetDelete failed: %v", err)
+	}
+}
+
 func TestClient_PresetGet(t *testing.T) {
 	ctx := context.Background()
 
@@ -2205,7 +2971,7 @@ func TestClient_PresetGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/presets/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}`
+	expectedJSON := `{"billing_external_id":"example","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2238,6 +3004,90 @@ func TestClient_PresetGet(t *testing.T) {
 	verifyMarshalUnmarshal(t, result, expectedJSON)
 }
 
+func TestClient_PresetSave(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/watcher/client-api/v3/presets/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{"billing_external_id":"example","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.PresetImpl{}
+	_, err := client.PresetSave(ctx, "test-id", body)
+	if err != nil {
+		t.Fatalf("PresetSave failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.PresetSave(ctx, "test-id", body)
+	if err != nil {
+		t.Fatalf("PresetSave failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("PresetSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_PresetsCreate(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "POST"
+	expectedPath := "/watcher/client-api/v3/presets"
+
+	// Expected JSON response
+	expectedJSON := `{"billing_external_id":"example","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.PresetImpl{}
+	_, err := client.PresetsCreate(ctx, body)
+	if err != nil {
+		t.Fatalf("PresetsCreate failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.PresetsCreate(ctx, body)
+	if err != nil {
+		t.Fatalf("PresetsCreate failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("PresetsCreate returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_PresetsList(t *testing.T) {
 	ctx := context.Background()
 
@@ -2246,7 +3096,7 @@ func TestClient_PresetsList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/presets"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","presets":[{"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces"}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","presets":[{"billing_external_id":"example","dvr":{"redundancy_factor":1,"storage_limit":400000000000},"id":7,"is_adjustable":true,"stats":{"organizations_count":12,"streams_count":12},"title":"Example preset name","vision":{"alg":"faces","detector_type":"faces"}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2288,7 +3138,7 @@ func TestClient_ProfileGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/profile"
 
 	// Expected JSON response
-	expectedJSON := `{"apikey":"example","created_at":1672531199000,"email":"user@example.com","fullname":"example","is_readonly":true,"locale":"en","name":"example","note":"example","password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"apikey":"example","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","is_readonly":true,"locale":"en","name":"example","note":"example","password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2329,7 +3179,7 @@ func TestClient_ProfileSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/profile"
 
 	// Expected JSON response
-	expectedJSON := `{"apikey":"example","created_at":1672531199000,"email":"user@example.com","fullname":"example","is_readonly":true,"locale":"en","name":"example","note":"example","password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"apikey":"example","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","is_readonly":true,"locale":"en","name":"example","note":"example","password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2457,7 +3307,7 @@ func TestClient_StreamGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
+	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2680,7 +3530,7 @@ func TestClient_StreamSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
+	expectedJSON := `{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2708,6 +3558,49 @@ func TestClient_StreamSave(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("StreamSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_StreamsDiscoverCamera(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/watcher/client-api/v3/streams/discover"
+
+	// Expected JSON response
+	expectedJSON := `{"devices":[{"endpoint":"http://192.168.1.100:80/onvif/device_service","error":"example","ip":"192.168.1.100","manufacturer":"Hikvision","model":"DS-2CD2143G2-I","streams":[{"bitrate":2048,"codec":"H264","fps":25,"height":1080,"jpeg_url":"http://192.168.1.100:80/snapshot.jpg","profile":"Profile_1","profile_name":"Main Stream","stream_url":"rtsp://192.168.1.100:554/stream/main","width":1920}]}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.StreamsDiscoverCameraQuery{}
+	body := &model.OnvifDiscoverCameraRequestImpl{}
+	_, err := client.StreamsDiscoverCamera(ctx, query, body)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverCamera failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.StreamsDiscoverCamera(ctx, query, body)
+	if err != nil {
+		t.Fatalf("StreamsDiscoverCamera failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("StreamsDiscoverCamera returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -2763,7 +3656,7 @@ func TestClient_StreamsList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"audio":{"transcode_audio_codec":"aac"},"comment":"This is a test stream","coordinates":{"latitude":55.7512,"longitude":37.6184},"created_at":1672531199000,"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"last_episode_at":1000000000000,"map_coordinates":{"latitude":55.7512,"longitude":37.6184},"name":"example","notifications":[{"event_types":{"episode_face":true,"episode_generic":true,"stream_dead":true},"notification_type":"push"}],"nvr_settings":{"audio":{"transcode_audio_codec":"aac"},"dvr":{"redundancy_factor":1,"storage_limit":400000000000},"inputs":[{"url":"fake://fake"}],"static":true,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}},"organization":{"id":9,"title":"Organization 1"},"organization_id":9,"path":[{"title":"example"}],"postal_address":"example","preset":{"is_adjustable":true,"title":"Example preset name"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"playback_token":"onetime_token","publish_endpoint":"example","status":"running","streaming_endpoint":"example","ts_delay":1284},"title":"Hockey channel","vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","region_title":"Zone 1","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000}}]}}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2834,7 +3727,7 @@ func TestClient_UiSettingsGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/ui_settings"
 
 	// Expected JSON response
-	expectedJSON := `{"brand":"example","colors":{"background":"#fff","primary":"example","secondary":"example"},"company_info":{"address":"example","business_hours":"example","phone":"example"},"default_locale":"en","favicons":{"128":"icons/favicon-128.png","16":"icons/favicon-16.png","32":"icons/favicon-32.png","48":"icons/favicon-48.png","64":"icons/favicon-64.png"},"fonts":{"light":"fira-sans-300.woff2","medium":"fira-sans-500.woff2","regular":"fira-sans-400.woff2"},"locales":["en","ru"],"map":{"api_key":"example","center":{"latitude":55.7512,"longitude":37.6184},"provider":"example"},"product":"example","title":"example"}`
+	expectedJSON := `{"brand":"example","colors":{"background":"#fff","primary":"example","secondary":"example"},"company_info":{"address":"example","business_hours":"example","phone":"example"},"default_locale":"en","favicons":{"128":"icons/favicon-128.png","16":"icons/favicon-16.png","32":"icons/favicon-32.png","48":"icons/favicon-48.png","64":"icons/favicon-64.png"},"fonts":{"light":"fira-sans-300.woff2","medium":"fira-sans-500.woff2","regular":"fira-sans-400.woff2"},"locales":["en","ru"],"map":{"api_key":"example","center":{"latitude":55.7512,"longitude":37.6184},"provider":"example"},"product":"example","server_info":{"operator_id":"123","version":"26.02"},"title":"example"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2985,7 +3878,7 @@ func TestClient_UserCreate(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/users"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -3054,7 +3947,7 @@ func TestClient_UserGet(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -3081,6 +3974,48 @@ func TestClient_UserGet(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("UserGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_UserNvrsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/watcher/client-api/v3/nvrs"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","nvrs":[{"api_key":"api-key","id":1,"note":"Note","organization":{"id":7,"title":"Example LLC"},"stats":{"healthcheck_status":{"status":"ok","status_changed_at":1000000000000}},"sync":{"episodes":true},"title":"NVR Title"}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &watcherclient.UserNvrsListQuery{}
+	_, err := client.UserNvrsList(ctx, query)
+	if err != nil {
+		t.Fatalf("UserNvrsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.UserNvrsList(ctx, query)
+	if err != nil {
+		t.Fatalf("UserNvrsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("UserNvrsList returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -3137,7 +4072,7 @@ func TestClient_UserOrganizationsList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/users/test-user_id/organization"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","organizations":[{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","organizations":[{"created_at":1672531199000,"id":7,"is_default":true,"limits":{"streams":50,"users":50},"owner":{"id":2,"name":"admin"},"stats":{"mosaics":2,"streams":12,"users":12},"title":"Example LLC","user_permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}}}],"prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -3179,7 +4114,7 @@ func TestClient_UserSave(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/users/test-user_id"
 
 	// Expected JSON response
-	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
+	expectedJSON := `{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -3456,7 +4391,7 @@ func TestClient_UsersList(t *testing.T) {
 	expectedPath := "/watcher/client-api/v3/users"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users_list":[{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true},"title":"Cameras"}],"password":"example","phone":"+78007778413"}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","users_list":[{"access_level":"generic","created_at":1672531199000,"email":"user@example.com","external_id":"example","fullname":"example","id":1,"locale":"en","name":"example","note":"example","organizations":[{"id":1,"owner":{"id":2,"name":"admin"},"permissions":{"can_edit_persons_lists":true,"can_edit_streams":true,"can_edit_users":true,"can_view_persons_lists":true,"can_view_stats":true,"can_view_streams":true,"is_member":true,"nvrs":{"can_edit":true,"can_view":true}},"title":"Cameras"}],"password":"example","phone":"+78007778413"}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{

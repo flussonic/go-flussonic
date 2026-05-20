@@ -322,6 +322,27 @@ func TestAgent(t *testing.T) {
 		assert.NotNil(t, result.ConnectionsEstablished())
 		assert.Equal(t, 42, *result.ConnectionsEstablished())
 	})
+
+	t.Run("StreamsValue", func(t *testing.T) {
+		obj := model.NewAgent()
+		item1 := model.NewWatcherAgentConfigStreamsItem()
+		item2 := model.NewWatcherAgentConfigStreamsItem()
+		item1.SetComment("item1")
+		item2.SetComment("item2")
+		item1.SetName(model.MediaName("test"))
+		item2.SetName(model.MediaName("test"))
+		value := []model.WatcherAgentConfigStreamsItem{item1, item2}
+		obj.SetStreams(value)
+		result := obj.Streams()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Comment())
+			assert.Equal(t, "item1", *result[0].Comment())
+			assert.NotNil(t, result[0].Name())
+			assert.Equal(t, model.MediaName("test"), *result[0].Name())
+		}
+	})
 }
 
 func TestAgentsList(t *testing.T) {
@@ -567,71 +588,6 @@ func TestAuthSpec(t *testing.T) {
 	})
 }
 
-func TestBalancerConfig(t *testing.T) {
-	t.Run("ModeValue", func(t *testing.T) {
-		obj := model.NewBalancerConfig()
-		value := model.BalancerConfigMode("test")
-		obj.SetMode(value)
-		assert.NotNil(t, obj.Mode())
-		assert.Equal(t, value, *obj.Mode())
-	})
-
-	t.Run("NameValue", func(t *testing.T) {
-		obj := model.NewBalancerConfig()
-		value := model.MediaName("test")
-		obj.SetName(value)
-		assert.NotNil(t, obj.Name())
-		assert.Equal(t, value, *obj.Name())
-	})
-
-	t.Run("ServersValue", func(t *testing.T) {
-		obj := model.NewBalancerConfig()
-		item1 := model.NewBalancerServerConfig()
-		item2 := model.NewBalancerServerConfig()
-		item1.SetCountriesDefault(true)
-		item2.SetCountriesDefault(true)
-		item1.SetMaxBitrate(model.Speed(42))
-		item2.SetMaxBitrate(model.Speed(42))
-		value := []model.BalancerServerConfig{item1, item2}
-		obj.SetServers(value)
-		result := obj.Servers()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].CountriesDefault())
-			assert.Equal(t, true, *result[0].CountriesDefault())
-			assert.NotNil(t, result[0].MaxBitrate())
-			assert.Equal(t, model.Speed(42), *result[0].MaxBitrate())
-		}
-	})
-}
-
-func TestBalancerServerConfig(t *testing.T) {
-	t.Run("CountriesDefaultValue", func(t *testing.T) {
-		obj := model.NewBalancerServerConfig()
-		value := true
-		obj.SetCountriesDefault(value)
-		assert.NotNil(t, obj.CountriesDefault())
-		assert.Equal(t, value, *obj.CountriesDefault())
-	})
-
-	t.Run("MaxBitrateValue", func(t *testing.T) {
-		obj := model.NewBalancerServerConfig()
-		value := model.Speed(42)
-		obj.SetMaxBitrate(value)
-		assert.NotNil(t, obj.MaxBitrate())
-		assert.Equal(t, value, *obj.MaxBitrate())
-	})
-
-	t.Run("NameValue", func(t *testing.T) {
-		obj := model.NewBalancerServerConfig()
-		value := model.ServerName("test")
-		obj.SetName(value)
-		assert.NotNil(t, obj.Name())
-		assert.Equal(t, value, *obj.Name())
-	})
-}
-
 func TestCacheConfig(t *testing.T) {
 	t.Run("ExpirationValue", func(t *testing.T) {
 		obj := model.NewCacheConfig()
@@ -745,7 +701,117 @@ func TestCameraInfo(t *testing.T) {
 	})
 }
 
-func TestCameraTagWb(t *testing.T) {
+func TestCameraUsage(t *testing.T) {
+	t.Run("AccountIDValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := 42
+		obj.SetAccountID(value)
+		assert.NotNil(t, obj.AccountID())
+		assert.Equal(t, value, *obj.AccountID())
+	})
+
+	t.Run("BillingPlanIDValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := "test"
+		obj.SetBillingPlanID(value)
+		assert.NotNil(t, obj.BillingPlanID())
+		assert.Equal(t, value, *obj.BillingPlanID())
+	})
+
+	t.Run("ExternalAccountIDValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := "test"
+		obj.SetExternalAccountID(value)
+		assert.NotNil(t, obj.ExternalAccountID())
+		assert.Equal(t, value, *obj.ExternalAccountID())
+	})
+
+	t.Run("FromValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := model.Date("test")
+		obj.SetFrom(value)
+		assert.NotNil(t, obj.From())
+		assert.Equal(t, value, *obj.From())
+	})
+
+	t.Run("LicenseIDValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := "test"
+		obj.SetLicenseID(value)
+		assert.NotNil(t, obj.LicenseID())
+		assert.Equal(t, value, *obj.LicenseID())
+	})
+
+	t.Run("PlanIDValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := "test"
+		obj.SetPlanID(value)
+		assert.NotNil(t, obj.PlanID())
+		assert.Equal(t, value, *obj.PlanID())
+	})
+
+	t.Run("StreamNameValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := "test"
+		obj.SetStreamName(value)
+		assert.NotNil(t, obj.StreamName())
+		assert.Equal(t, value, *obj.StreamName())
+	})
+
+	t.Run("ToValue", func(t *testing.T) {
+		obj := model.NewCameraUsage()
+		value := model.Date("test")
+		obj.SetTo(value)
+		assert.NotNil(t, obj.To())
+		assert.Equal(t, value, *obj.To())
+	})
+}
+
+func TestCameraUsagesList(t *testing.T) {
+	t.Run("EstimatedCountValue", func(t *testing.T) {
+		obj := model.NewCameraUsagesList()
+		value := 42
+		obj.SetEstimatedCount(value)
+		assert.NotNil(t, obj.EstimatedCount())
+		assert.Equal(t, value, *obj.EstimatedCount())
+	})
+
+	t.Run("NextValue", func(t *testing.T) {
+		obj := model.NewCameraUsagesList()
+		value := "test"
+		obj.SetNext(value)
+		assert.NotNil(t, obj.Next())
+		assert.Equal(t, value, *obj.Next())
+	})
+
+	t.Run("PrevValue", func(t *testing.T) {
+		obj := model.NewCameraUsagesList()
+		value := "test"
+		obj.SetPrev(value)
+		assert.NotNil(t, obj.Prev())
+		assert.Equal(t, value, *obj.Prev())
+	})
+
+	t.Run("UsageValue", func(t *testing.T) {
+		obj := model.NewCameraUsagesList()
+		item1 := model.NewCameraUsage()
+		item2 := model.NewCameraUsage()
+		item1.SetAccountID(1)
+		item2.SetAccountID(2)
+		item1.SetBillingPlanID("item1")
+		item2.SetBillingPlanID("item2")
+		value := []model.CameraUsage{item1, item2}
+		obj.SetUsage(value)
+		result := obj.Usage()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].AccountID())
+			assert.Equal(t, 1, *result[0].AccountID())
+			assert.NotNil(t, result[0].BillingPlanID())
+			assert.Equal(t, "item1", *result[0].BillingPlanID())
+		}
+	})
 }
 
 func TestCentralDiskPredictions(t *testing.T) {
@@ -755,6 +821,143 @@ func TestCentralDiskPredictions(t *testing.T) {
 		obj.SetEstimatedDiskUsage(value)
 		assert.NotNil(t, obj.EstimatedDiskUsage())
 		assert.Equal(t, value, *obj.EstimatedDiskUsage())
+	})
+}
+
+func TestCentralHealthcheckStatusChecksErrorsDetailsItem(t *testing.T) {
+	t.Run("ErrorValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecksErrorsDetailsItem()
+		value := "test"
+		obj.SetError(value)
+		assert.NotNil(t, obj.Error())
+		assert.Equal(t, value, *obj.Error())
+	})
+
+	t.Run("RuleValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecksErrorsDetailsItem()
+		value := "test"
+		obj.SetRule(value)
+		assert.NotNil(t, obj.Rule())
+		assert.Equal(t, value, *obj.Rule())
+	})
+}
+
+func TestCentralHealthcheckStatusChecks(t *testing.T) {
+	t.Run("ConfigExternalOkValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetConfigExternalOk(value)
+		assert.NotNil(t, obj.ConfigExternalOk())
+		assert.Equal(t, value, *obj.ConfigExternalOk())
+	})
+
+	t.Run("ConfigOkValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetConfigOk(value)
+		assert.NotNil(t, obj.ConfigOk())
+		assert.Equal(t, value, *obj.ConfigOk())
+	})
+
+	t.Run("ErrorsDetailsValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		item1 := model.NewCentralHealthcheckStatusChecksErrorsDetailsItem()
+		item2 := model.NewCentralHealthcheckStatusChecksErrorsDetailsItem()
+		item1.SetError("item1")
+		item2.SetError("item2")
+		item1.SetRule("item1")
+		item2.SetRule("item2")
+		value := []model.CentralHealthcheckStatusChecksErrorsDetailsItem{item1, item2}
+		obj.SetErrorsDetails(value)
+		result := obj.ErrorsDetails()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Error())
+			assert.Equal(t, "item1", *result[0].Error())
+			assert.NotNil(t, result[0].Rule())
+			assert.Equal(t, "item1", *result[0].Rule())
+		}
+	})
+
+	t.Run("ReachableValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetReachable(value)
+		assert.NotNil(t, obj.Reachable())
+		assert.Equal(t, value, *obj.Reachable())
+	})
+
+	t.Run("RproxyOkValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetRproxyOk(value)
+		assert.NotNil(t, obj.RproxyOk())
+		assert.Equal(t, value, *obj.RproxyOk())
+	})
+
+	t.Run("RunningValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetRunning(value)
+		assert.NotNil(t, obj.Running())
+		assert.Equal(t, value, *obj.Running())
+	})
+
+	t.Run("StableValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetStable(value)
+		assert.NotNil(t, obj.Stable())
+		assert.Equal(t, value, *obj.Stable())
+	})
+
+	t.Run("TimeSynchronizedValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetTimeSynchronized(value)
+		assert.NotNil(t, obj.TimeSynchronized())
+		assert.Equal(t, value, *obj.TimeSynchronized())
+	})
+
+	t.Run("ValidClusterKeyValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatusChecks()
+		value := true
+		obj.SetValidClusterKey(value)
+		assert.NotNil(t, obj.ValidClusterKey())
+		assert.Equal(t, value, *obj.ValidClusterKey())
+	})
+}
+
+func TestCentralHealthcheckStatus(t *testing.T) {
+	t.Run("ChecksValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatus()
+		value := model.NewCentralHealthcheckStatusChecks()
+		value.SetConfigExternalOk(true)
+		value.SetConfigOk(true)
+		obj.SetChecks(value)
+		result := obj.Checks()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.ConfigExternalOk())
+		assert.Equal(t, true, *result.ConfigExternalOk())
+		assert.NotNil(t, result.ConfigOk())
+		assert.Equal(t, true, *result.ConfigOk())
+	})
+
+	t.Run("StatusValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatus()
+		value := model.CentralHealthcheckStatusStatus("test")
+		obj.SetStatus(value)
+		assert.NotNil(t, obj.Status())
+		assert.Equal(t, value, *obj.Status())
+	})
+
+	t.Run("StatusChangedAtValue", func(t *testing.T) {
+		obj := model.NewCentralHealthcheckStatus()
+		tNow := time.Now().UnixMilli()
+		obj.SetStatusChangedAt(model.UtcMs(float64(tNow)))
+		assert.NotNil(t, obj.StatusChangedAt())
+		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.StatusChangedAt())
 	})
 }
 
@@ -781,6 +984,22 @@ func TestCentralNodeLayoutDecision(t *testing.T) {
 		obj.SetRole(value)
 		assert.NotNil(t, obj.Role())
 		assert.Equal(t, value, *obj.Role())
+	})
+
+	t.Run("TranscoderDeviceIDValue", func(t *testing.T) {
+		obj := model.NewCentralNodeLayoutDecision()
+		value := 42
+		obj.SetTranscoderDeviceID(value)
+		assert.NotNil(t, obj.TranscoderDeviceID())
+		assert.Equal(t, value, *obj.TranscoderDeviceID())
+	})
+
+	t.Run("TranscoderDeviceTypeValue", func(t *testing.T) {
+		obj := model.NewCentralNodeLayoutDecision()
+		value := model.TranscoderDevice("test")
+		obj.SetTranscoderDeviceType(value)
+		assert.NotNil(t, obj.TranscoderDeviceType())
+		assert.Equal(t, value, *obj.TranscoderDeviceType())
 	})
 }
 
@@ -809,6 +1028,14 @@ func TestCentralStreamLayoutBase(t *testing.T) {
 		obj.SetIngest(value)
 		assert.NotNil(t, obj.Ingest())
 		assert.Equal(t, value, *obj.Ingest())
+	})
+
+	t.Run("IterationIDValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayoutBase()
+		value := model.UUID("test")
+		obj.SetIterationID(value)
+		assert.NotNil(t, obj.IterationID())
+		assert.Equal(t, value, *obj.IterationID())
 	})
 
 	t.Run("OriginatorValue", func(t *testing.T) {
@@ -876,6 +1103,14 @@ func TestCentralStreamLayout(t *testing.T) {
 		}
 	})
 
+	t.Run("IterationIDValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayout()
+		value := model.UUID("test")
+		obj.SetIterationID(value)
+		assert.NotNil(t, obj.IterationID())
+		assert.Equal(t, value, *obj.IterationID())
+	})
+
 	t.Run("NodeLayoutDecisionsValue", func(t *testing.T) {
 		obj := model.NewCentralStreamLayout()
 		item1 := model.NewCentralNodeLayoutDecision()
@@ -903,6 +1138,22 @@ func TestCentralStreamLayout(t *testing.T) {
 		obj.SetOriginator(value)
 		assert.NotNil(t, obj.Originator())
 		assert.Equal(t, value, *obj.Originator())
+	})
+
+	t.Run("TranscoderDeviceIDValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayout()
+		value := 42
+		obj.SetTranscoderDeviceID(value)
+		assert.NotNil(t, obj.TranscoderDeviceID())
+		assert.Equal(t, value, *obj.TranscoderDeviceID())
+	})
+
+	t.Run("TranscoderDeviceTypeValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayout()
+		value := model.TranscoderDevice("test")
+		obj.SetTranscoderDeviceType(value)
+		assert.NotNil(t, obj.TranscoderDeviceType())
+		assert.Equal(t, value, *obj.TranscoderDeviceType())
 	})
 }
 
@@ -962,12 +1213,19 @@ func TestCentralStreamLayoutListItem(t *testing.T) {
 		}
 	})
 
+	t.Run("IterationIDValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayoutListItem()
+		value := model.UUID("test")
+		obj.SetIterationID(value)
+		assert.NotNil(t, obj.IterationID())
+		assert.Equal(t, value, *obj.IterationID())
+	})
+
 	t.Run("NameValue", func(t *testing.T) {
 		obj := model.NewCentralStreamLayoutListItem()
 		value := "test"
 		obj.SetName(value)
-		assert.NotNil(t, obj.Name())
-		assert.Equal(t, value, *obj.Name())
+		assert.Equal(t, value, obj.Name())
 	})
 
 	t.Run("NodeLayoutDecisionsValue", func(t *testing.T) {
@@ -997,6 +1255,22 @@ func TestCentralStreamLayoutListItem(t *testing.T) {
 		obj.SetOriginator(value)
 		assert.NotNil(t, obj.Originator())
 		assert.Equal(t, value, *obj.Originator())
+	})
+
+	t.Run("TranscoderDeviceIDValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayoutListItem()
+		value := 42
+		obj.SetTranscoderDeviceID(value)
+		assert.NotNil(t, obj.TranscoderDeviceID())
+		assert.Equal(t, value, *obj.TranscoderDeviceID())
+	})
+
+	t.Run("TranscoderDeviceTypeValue", func(t *testing.T) {
+		obj := model.NewCentralStreamLayoutListItem()
+		value := model.TranscoderDevice("test")
+		obj.SetTranscoderDeviceType(value)
+		assert.NotNil(t, obj.TranscoderDeviceType())
+		assert.Equal(t, value, *obj.TranscoderDeviceType())
 	})
 }
 
@@ -1218,192 +1492,6 @@ func TestCertificateInfo(t *testing.T) {
 		obj.SetPublicKey(value)
 		assert.NotNil(t, obj.PublicKey())
 		assert.Equal(t, value, *obj.PublicKey())
-	})
-}
-
-func TestChassisConfig(t *testing.T) {
-	t.Run("AutoRebootValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := true
-		obj.SetAutoReboot(value)
-		assert.NotNil(t, obj.AutoReboot())
-		assert.Equal(t, value, *obj.AutoReboot())
-	})
-
-	t.Run("DefaultGatewayInterfaceValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := "test"
-		obj.SetDefaultGatewayInterface(value)
-		assert.NotNil(t, obj.DefaultGatewayInterface())
-		assert.Equal(t, value, *obj.DefaultGatewayInterface())
-	})
-
-	t.Run("DhcpdIfaceValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.InterfaceName("test")
-		obj.SetDhcpdIface(value)
-		assert.NotNil(t, obj.DhcpdIface())
-		assert.Equal(t, value, *obj.DhcpdIface())
-	})
-
-	t.Run("FirmwareBootDirValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.DiskPath("test")
-		obj.SetFirmwareBootDir(value)
-		assert.NotNil(t, obj.FirmwareBootDir())
-		assert.Equal(t, value, *obj.FirmwareBootDir())
-	})
-
-	t.Run("FirmwareHostValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.URL("test")
-		obj.SetFirmwareHost(value)
-		assert.NotNil(t, obj.FirmwareHost())
-		assert.Equal(t, value, *obj.FirmwareHost())
-	})
-
-	t.Run("FirmwareVersionValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := "test"
-		obj.SetFirmwareVersion(value)
-		assert.NotNil(t, obj.FirmwareVersion())
-		assert.Equal(t, value, *obj.FirmwareVersion())
-	})
-
-	t.Run("HostnameValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.ServerName("test")
-		obj.SetHostname(value)
-		assert.NotNil(t, obj.Hostname())
-		assert.Equal(t, value, *obj.Hostname())
-	})
-
-	t.Run("LcdValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := true
-		obj.SetLcd(value)
-		assert.NotNil(t, obj.Lcd())
-		assert.Equal(t, value, *obj.Lcd())
-	})
-
-	t.Run("NtpdIfaceValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.InterfaceName("test")
-		obj.SetNtpdIface(value)
-		assert.NotNil(t, obj.NtpdIface())
-		assert.Equal(t, value, *obj.NtpdIface())
-	})
-
-	t.Run("ProductNameValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.ChassisProduct("test")
-		obj.SetProductName(value)
-		assert.NotNil(t, obj.ProductName())
-		assert.Equal(t, value, *obj.ProductName())
-	})
-
-	t.Run("RestartCoderTimeoutValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := 42
-		obj.SetRestartCoderTimeout(value)
-		assert.NotNil(t, obj.RestartCoderTimeout())
-		assert.Equal(t, value, *obj.RestartCoderTimeout())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.NewChassisStats()
-		value.SetHardwareID("test")
-		value.SetHostname("test")
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.HardwareID())
-		assert.Equal(t, "test", *result.HardwareID())
-		assert.NotNil(t, result.Hostname())
-		assert.Equal(t, "test", *result.Hostname())
-	})
-
-	t.Run("TftpRootValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := model.DiskPath("test")
-		obj.SetTftpRoot(value)
-		assert.NotNil(t, obj.TftpRoot())
-		assert.Equal(t, value, *obj.TftpRoot())
-	})
-
-	t.Run("UpdateChannelValue", func(t *testing.T) {
-		obj := model.NewChassisConfig()
-		value := "test"
-		obj.SetUpdateChannel(value)
-		assert.NotNil(t, obj.UpdateChannel())
-		assert.Equal(t, value, *obj.UpdateChannel())
-	})
-}
-
-func TestChassisStats(t *testing.T) {
-	t.Run("HardwareIDValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetHardwareID(value)
-		assert.NotNil(t, obj.HardwareID())
-		assert.Equal(t, value, *obj.HardwareID())
-	})
-
-	t.Run("HostnameValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetHostname(value)
-		assert.NotNil(t, obj.Hostname())
-		assert.Equal(t, value, *obj.Hostname())
-	})
-
-	t.Run("ModelValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetModel(value)
-		assert.NotNil(t, obj.Model())
-		assert.Equal(t, value, *obj.Model())
-	})
-
-	t.Run("NextVersionValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetNextVersion(value)
-		assert.NotNil(t, obj.NextVersion())
-		assert.Equal(t, value, *obj.NextVersion())
-	})
-
-	t.Run("NtpClockSynchronizedValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := true
-		obj.SetNtpClockSynchronized(value)
-		assert.NotNil(t, obj.NtpClockSynchronized())
-		assert.Equal(t, value, *obj.NtpClockSynchronized())
-	})
-
-	t.Run("SerialNumberValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetSerialNumber(value)
-		assert.NotNil(t, obj.SerialNumber())
-		assert.Equal(t, value, *obj.SerialNumber())
-	})
-
-	t.Run("SystemTimeValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		tNow := time.Now().UnixMilli()
-		obj.SetSystemTime(model.UtcMs(float64(tNow)))
-		assert.NotNil(t, obj.SystemTime())
-		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.SystemTime())
-	})
-
-	t.Run("VersionValue", func(t *testing.T) {
-		obj := model.NewChassisStats()
-		value := "test"
-		obj.SetVersion(value)
-		assert.NotNil(t, obj.Version())
-		assert.Equal(t, value, *obj.Version())
 	})
 }
 
@@ -1707,6 +1795,20 @@ func TestClusterHealthStreamerStats(t *testing.T) {
 		assert.Equal(t, model.ClusterHealthStatus("test"), *result.Status())
 	})
 
+	t.Run("ConfigExternalStatusValue", func(t *testing.T) {
+		obj := model.NewClusterHealthStreamerStats()
+		value := model.NewConfigExternalErrorStatus()
+		value.SetCode(42)
+		value.SetDetail("test")
+		obj.SetConfigExternalStatus(value)
+		result := obj.ConfigExternalStatus()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Code())
+		assert.Equal(t, 42, *result.Code())
+		assert.NotNil(t, result.Detail())
+		assert.Equal(t, "test", *result.Detail())
+	})
+
 	t.Run("CpuValue", func(t *testing.T) {
 		obj := model.NewClusterHealthStreamerStats()
 		value := model.NewClusterHealthStreamerStatsCpu()
@@ -1719,6 +1821,21 @@ func TestClusterHealthStreamerStats(t *testing.T) {
 		assert.Equal(t, model.ClusterHealthStatus("test"), *result.Status())
 		assert.NotNil(t, result.Usage())
 		assert.Equal(t, model.Percent(42), *result.Usage())
+	})
+
+	t.Run("HealthcheckStatusValue", func(t *testing.T) {
+		obj := model.NewClusterHealthStreamerStats()
+		value := model.NewCentralHealthcheckStatus()
+		value.SetStatus(model.CentralHealthcheckStatusStatus("test"))
+		tNow1 := time.Now().UnixMilli()
+		value.SetStatusChangedAt(model.UtcMs(float64(tNow1)))
+		obj.SetHealthcheckStatus(value)
+		result := obj.HealthcheckStatus()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Status())
+		assert.Equal(t, model.CentralHealthcheckStatusStatus("test"), *result.Status())
+		assert.NotNil(t, result.StatusChangedAt())
+		assert.Equal(t, model.UtcMs(float64(tNow1)), *result.StatusChangedAt())
 	})
 
 	t.Run("HostnameValue", func(t *testing.T) {
@@ -1747,6 +1864,14 @@ func TestClusterHealthStreamerStats(t *testing.T) {
 		value := model.NewClusterHealthStreamerStatsNetwork()
 		obj.SetNetwork(value)
 		result := obj.Network()
+		assert.NotNil(t, result)
+	})
+
+	t.Run("PredictionsValue", func(t *testing.T) {
+		obj := model.NewClusterHealthStreamerStats()
+		value := model.NewClusterHealthStreamerStatsPredictions()
+		obj.SetPredictions(value)
+		result := obj.Predictions()
 		assert.NotNil(t, result)
 	})
 
@@ -1876,6 +2001,19 @@ func TestClusterHealthStreamerStatsNetworkOutKbit(t *testing.T) {
 		obj.SetUsage(value)
 		assert.NotNil(t, obj.Usage())
 		assert.Equal(t, value, *obj.Usage())
+	})
+}
+
+func TestClusterHealthStreamerStatsPredictions(t *testing.T) {
+	t.Run("DiskValue", func(t *testing.T) {
+		obj := model.NewClusterHealthStreamerStatsPredictions()
+		value := model.NewCentralDiskPredictions()
+		value.SetEstimatedDiskUsage(model.Percent(42))
+		obj.SetDisk(value)
+		result := obj.Disk()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.EstimatedDiskUsage())
+		assert.Equal(t, model.Percent(42), *result.EstimatedDiskUsage())
 	})
 }
 
@@ -2135,12 +2273,42 @@ func TestDecklinkConfig(t *testing.T) {
 }
 
 func TestDomainBase(t *testing.T) {
+	t.Run("DomainCodeValue", func(t *testing.T) {
+		obj := model.NewDomainBase()
+		value := "test"
+		obj.SetDomainCode(value)
+		assert.NotNil(t, obj.DomainCode())
+		assert.Equal(t, value, *obj.DomainCode())
+	})
+
 	t.Run("IDValue", func(t *testing.T) {
 		obj := model.NewDomainBase()
 		value := 42
 		obj.SetID(value)
 		assert.NotNil(t, obj.ID())
 		assert.Equal(t, value, *obj.ID())
+	})
+
+	t.Run("OwnerIDValue", func(t *testing.T) {
+		obj := model.NewDomainBase()
+		value := 42
+		obj.SetOwnerID(value)
+		assert.NotNil(t, obj.OwnerID())
+		assert.Equal(t, value, *obj.OwnerID())
+	})
+
+	t.Run("SettingsValue", func(t *testing.T) {
+		obj := model.NewDomainBase()
+		value := model.NewDomainSettings()
+		value.SetDefaultLocale("test")
+		value.SetDefaultOrganizationID(42)
+		obj.SetSettings(value)
+		result := obj.Settings()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.DefaultLocale())
+		assert.Equal(t, "test", *result.DefaultLocale())
+		assert.NotNil(t, result.DefaultOrganizationID())
+		assert.Equal(t, 42, *result.DefaultOrganizationID())
 	})
 
 	t.Run("TitleValue", func(t *testing.T) {
@@ -2179,6 +2347,40 @@ func TestDomainConfig(t *testing.T) {
 		assert.Equal(t, "test", *result.APIKey())
 		assert.NotNil(t, result.Host())
 		assert.Equal(t, "test", *result.Host())
+	})
+}
+
+func TestDomainSettings(t *testing.T) {
+	t.Run("DefaultLocaleValue", func(t *testing.T) {
+		obj := model.NewDomainSettings()
+		value := "test"
+		obj.SetDefaultLocale(value)
+		assert.NotNil(t, obj.DefaultLocale())
+		assert.Equal(t, value, *obj.DefaultLocale())
+	})
+
+	t.Run("DefaultOrganizationIDValue", func(t *testing.T) {
+		obj := model.NewDomainSettings()
+		value := 42
+		obj.SetDefaultOrganizationID(value)
+		assert.NotNil(t, obj.DefaultOrganizationID())
+		assert.Equal(t, value, *obj.DefaultOrganizationID())
+	})
+
+	t.Run("DemoAccessEnabledValue", func(t *testing.T) {
+		obj := model.NewDomainSettings()
+		value := true
+		obj.SetDemoAccessEnabled(value)
+		assert.NotNil(t, obj.DemoAccessEnabled())
+		assert.Equal(t, value, *obj.DemoAccessEnabled())
+	})
+
+	t.Run("LicenseIDValue", func(t *testing.T) {
+		obj := model.NewDomainSettings()
+		value := 42
+		obj.SetLicenseID(value)
+		assert.NotNil(t, obj.LicenseID())
+		assert.Equal(t, value, *obj.LicenseID())
 	})
 }
 
@@ -4234,7 +4436,7 @@ func TestDvrConfig(t *testing.T) {
 
 	t.Run("StatsValue", func(t *testing.T) {
 		obj := model.NewDvrConfig()
-		value := model.NewDvrStorageConfigStats()
+		value := model.NewDvrConfigStats()
 		value.SetBlobsCount(42)
 		value.SetBlobsCountDb(42)
 		obj.SetStats(value)
@@ -4252,6 +4454,70 @@ func TestDvrConfig(t *testing.T) {
 		obj.SetStorageLimit(value)
 		assert.NotNil(t, obj.StorageLimit())
 		assert.Equal(t, value, *obj.StorageLimit())
+	})
+}
+
+func TestDvrConfigStats(t *testing.T) {
+	t.Run("BlobsCountValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := 42
+		obj.SetBlobsCount(value)
+		assert.NotNil(t, obj.BlobsCount())
+		assert.Equal(t, value, *obj.BlobsCount())
+	})
+
+	t.Run("BlobsCountDbValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := 42
+		obj.SetBlobsCountDb(value)
+		assert.NotNil(t, obj.BlobsCountDb())
+		assert.Equal(t, value, *obj.BlobsCountDb())
+	})
+
+	t.Run("ErrorsValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := model.NewDvrStorageErrors()
+		value.SetCollapsedWriteCount(42)
+		value.SetDeleteErrors(42)
+		obj.SetErrors(value)
+		result := obj.Errors()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.CollapsedWriteCount())
+		assert.Equal(t, 42, *result.CollapsedWriteCount())
+		assert.NotNil(t, result.DeleteErrors())
+		assert.Equal(t, 42, *result.DeleteErrors())
+	})
+
+	t.Run("SizeValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := model.Bytes(42)
+		obj.SetSize(value)
+		assert.NotNil(t, obj.Size())
+		assert.Equal(t, value, *obj.Size())
+	})
+
+	t.Run("UsageValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := model.Percent(42)
+		obj.SetUsage(value)
+		assert.NotNil(t, obj.Usage())
+		assert.Equal(t, value, *obj.Usage())
+	})
+
+	t.Run("UsedValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := model.Bytes(42)
+		obj.SetUsed(value)
+		assert.NotNil(t, obj.Used())
+		assert.Equal(t, value, *obj.Used())
+	})
+
+	t.Run("UsedIndexValue", func(t *testing.T) {
+		obj := model.NewDvrConfigStats()
+		value := model.Bytes(42)
+		obj.SetUsedIndex(value)
+		assert.NotNil(t, obj.UsedIndex())
+		assert.Equal(t, value, *obj.UsedIndex())
 	})
 }
 
@@ -4349,144 +4615,6 @@ func TestDvrRange(t *testing.T) {
 		obj.SetOpenedAt(model.UtcMs(float64(tNow)))
 		assert.NotNil(t, obj.OpenedAt())
 		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.OpenedAt())
-	})
-}
-
-func TestDvrStorageConfig(t *testing.T) {
-	t.Run("ActiveValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := 42
-		obj.SetActive(value)
-		assert.NotNil(t, obj.Active())
-		assert.Equal(t, value, *obj.Active())
-	})
-
-	t.Run("DisksValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		item1 := model.NewRaidDiskConfig()
-		item2 := model.NewRaidDiskConfig()
-		item1.SetMode(model.RaidDiskMode("test"))
-		item2.SetMode(model.RaidDiskMode("test"))
-		item1.SetPath(model.DiskPath("test"))
-		item2.SetPath(model.DiskPath("test"))
-		value := []model.RaidDiskConfig{item1, item2}
-		obj.SetDisks(value)
-		result := obj.Disks()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].Mode())
-			assert.Equal(t, model.RaidDiskMode("test"), *result[0].Mode())
-			assert.Equal(t, model.DiskPath("test"), result[0].Path())
-		}
-	})
-
-	t.Run("IndexValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := model.DiskPath("test")
-		obj.SetIndex(value)
-		assert.NotNil(t, obj.Index())
-		assert.Equal(t, value, *obj.Index())
-	})
-
-	t.Run("NameValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := model.DvrName("test")
-		obj.SetName(value)
-		assert.Equal(t, value, obj.Name())
-	})
-
-	t.Run("RaidValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := model.DvrRaidLevel(42)
-		obj.SetRaid(value)
-		assert.NotNil(t, obj.Raid())
-		assert.Equal(t, value, *obj.Raid())
-	})
-
-	t.Run("RootValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := model.DvrURL("test")
-		obj.SetRoot(value)
-		assert.Equal(t, value, obj.Root())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfig()
-		value := model.NewDvrStorageConfigStats()
-		value.SetBlobsCount(42)
-		value.SetBlobsCountDb(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.BlobsCount())
-		assert.Equal(t, 42, *result.BlobsCount())
-		assert.NotNil(t, result.BlobsCountDb())
-		assert.Equal(t, 42, *result.BlobsCountDb())
-	})
-}
-
-func TestDvrStorageConfigStats(t *testing.T) {
-	t.Run("BlobsCountValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := 42
-		obj.SetBlobsCount(value)
-		assert.NotNil(t, obj.BlobsCount())
-		assert.Equal(t, value, *obj.BlobsCount())
-	})
-
-	t.Run("BlobsCountDbValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := 42
-		obj.SetBlobsCountDb(value)
-		assert.NotNil(t, obj.BlobsCountDb())
-		assert.Equal(t, value, *obj.BlobsCountDb())
-	})
-
-	t.Run("ErrorsValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := model.NewDvrStorageErrors()
-		value.SetCollapsedWriteCount(42)
-		value.SetDeleteErrors(42)
-		obj.SetErrors(value)
-		result := obj.Errors()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.CollapsedWriteCount())
-		assert.Equal(t, 42, *result.CollapsedWriteCount())
-		assert.NotNil(t, result.DeleteErrors())
-		assert.Equal(t, 42, *result.DeleteErrors())
-	})
-
-	t.Run("SizeValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := model.Bytes(42)
-		obj.SetSize(value)
-		assert.NotNil(t, obj.Size())
-		assert.Equal(t, value, *obj.Size())
-	})
-
-	t.Run("UsageValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := model.Percent(42)
-		obj.SetUsage(value)
-		assert.NotNil(t, obj.Usage())
-		assert.Equal(t, value, *obj.Usage())
-	})
-
-	t.Run("UsedValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := model.Bytes(42)
-		obj.SetUsed(value)
-		assert.NotNil(t, obj.Used())
-		assert.Equal(t, value, *obj.Used())
-	})
-
-	t.Run("UsedIndexValue", func(t *testing.T) {
-		obj := model.NewDvrStorageConfigStats()
-		value := model.Bytes(42)
-		obj.SetUsedIndex(value)
-		assert.NotNil(t, obj.UsedIndex())
-		assert.Equal(t, value, *obj.UsedIndex())
 	})
 }
 
@@ -4942,16 +5070,6 @@ func TestEventsList(t *testing.T) {
 		obj.SetPrev(value)
 		assert.NotNil(t, obj.Prev())
 		assert.Equal(t, value, *obj.Prev())
-	})
-}
-
-func TestFileProcessorConfig(t *testing.T) {
-	t.Run("PathValue", func(t *testing.T) {
-		obj := model.NewFileProcessorConfig()
-		value := model.DiskPath("test")
-		obj.SetPath(value)
-		assert.NotNil(t, obj.Path())
-		assert.Equal(t, value, *obj.Path())
 	})
 }
 
@@ -5548,6 +5666,14 @@ func TestInputCounters(t *testing.T) {
 		assert.Equal(t, value, *obj.ErrorsLostPackets())
 	})
 
+	t.Run("ErrorsTSJumpRestartsValue", func(t *testing.T) {
+		obj := model.NewInputCounters()
+		value := 42
+		obj.SetErrorsTSJumpRestarts(value)
+		assert.NotNil(t, obj.ErrorsTSJumpRestarts())
+		assert.Equal(t, value, *obj.ErrorsTSJumpRestarts())
+	})
+
 	t.Run("ErrorsTSPatValue", func(t *testing.T) {
 		obj := model.NewInputCounters()
 		value := 42
@@ -5749,6 +5875,20 @@ func TestInputCounters(t *testing.T) {
 		assert.Equal(t, 42, *result.ErrorDroppedPackets())
 		assert.NotNil(t, result.ErrorLostPackets())
 		assert.Equal(t, 42, *result.ErrorLostPackets())
+	})
+
+	t.Run("UDPMpegtsValue", func(t *testing.T) {
+		obj := model.NewInputCounters()
+		value := model.NewInputUDPMpegtsCounters()
+		value.SetBytes(model.Bytes(42))
+		value.SetNotAlignedPackets(42)
+		obj.SetUDPMpegts(value)
+		result := obj.UDPMpegts()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Bytes())
+		assert.Equal(t, model.Bytes(42), *result.Bytes())
+		assert.NotNil(t, result.NotAlignedPackets())
+		assert.Equal(t, 42, *result.NotAlignedPackets())
 	})
 
 	t.Run("ValidSecondaryInputsValue", func(t *testing.T) {
@@ -6137,6 +6277,14 @@ func TestInputRTPCounters(t *testing.T) {
 		obj.SetErrorsLostPackets(value)
 		assert.NotNil(t, obj.ErrorsLostPackets())
 		assert.Equal(t, value, *obj.ErrorsLostPackets())
+	})
+
+	t.Run("ErrorsSrClockDeviationValue", func(t *testing.T) {
+		obj := model.NewInputRTPCounters()
+		value := 42
+		obj.SetErrorsSrClockDeviation(value)
+		assert.NotNil(t, obj.ErrorsSrClockDeviation())
+		assert.Equal(t, value, *obj.ErrorsSrClockDeviation())
 	})
 
 	t.Run("FramesValue", func(t *testing.T) {
@@ -6692,6 +6840,14 @@ func TestInputStats(t *testing.T) {
 		assert.Equal(t, value, *obj.ErrorsLostPackets())
 	})
 
+	t.Run("ErrorsTSJumpRestartsValue", func(t *testing.T) {
+		obj := model.NewInputStats()
+		value := 42
+		obj.SetErrorsTSJumpRestarts(value)
+		assert.NotNil(t, obj.ErrorsTSJumpRestarts())
+		assert.Equal(t, value, *obj.ErrorsTSJumpRestarts())
+	})
+
 	t.Run("ErrorsTSPatValue", func(t *testing.T) {
 		obj := model.NewInputStats()
 		value := 42
@@ -6962,6 +7118,20 @@ func TestInputStats(t *testing.T) {
 		assert.Equal(t, value, *obj.TSDelay())
 	})
 
+	t.Run("UDPMpegtsValue", func(t *testing.T) {
+		obj := model.NewInputStats()
+		value := model.NewInputUDPMpegtsCounters()
+		value.SetBytes(model.Bytes(42))
+		value.SetNotAlignedPackets(42)
+		obj.SetUDPMpegts(value)
+		result := obj.UDPMpegts()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Bytes())
+		assert.Equal(t, model.Bytes(42), *result.Bytes())
+		assert.NotNil(t, result.NotAlignedPackets())
+		assert.Equal(t, 42, *result.NotAlignedPackets())
+	})
+
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewInputStats()
 		value := model.URL("test")
@@ -7003,13 +7173,37 @@ func TestInputStatsStopEventsItem(t *testing.T) {
 	})
 }
 
-func TestIptvConfig(t *testing.T) {
-	t.Run("DatabaseValue", func(t *testing.T) {
-		obj := model.NewIptvConfig()
-		value := "test"
-		obj.SetDatabase(value)
-		assert.NotNil(t, obj.Database())
-		assert.Equal(t, value, *obj.Database())
+func TestInputUDPMpegtsCounters(t *testing.T) {
+	t.Run("BytesValue", func(t *testing.T) {
+		obj := model.NewInputUDPMpegtsCounters()
+		value := model.Bytes(42)
+		obj.SetBytes(value)
+		assert.NotNil(t, obj.Bytes())
+		assert.Equal(t, value, *obj.Bytes())
+	})
+
+	t.Run("NotAlignedPacketsValue", func(t *testing.T) {
+		obj := model.NewInputUDPMpegtsCounters()
+		value := 42
+		obj.SetNotAlignedPackets(value)
+		assert.NotNil(t, obj.NotAlignedPackets())
+		assert.Equal(t, value, *obj.NotAlignedPackets())
+	})
+
+	t.Run("PacketsValue", func(t *testing.T) {
+		obj := model.NewInputUDPMpegtsCounters()
+		value := 42
+		obj.SetPackets(value)
+		assert.NotNil(t, obj.Packets())
+		assert.Equal(t, value, *obj.Packets())
+	})
+
+	t.Run("RTPPacketsValue", func(t *testing.T) {
+		obj := model.NewInputUDPMpegtsCounters()
+		value := 42
+		obj.SetRTPPackets(value)
+		assert.NotNil(t, obj.RTPPackets())
+		assert.Equal(t, value, *obj.RTPPackets())
 	})
 }
 
@@ -7485,6 +7679,30 @@ func TestMultiplexerStats(t *testing.T) {
 		assert.Equal(t, value, *obj.Bitrate())
 	})
 
+	t.Run("EcmgNetworkErrorsValue", func(t *testing.T) {
+		obj := model.NewMultiplexerStats()
+		value := 42
+		obj.SetEcmgNetworkErrors(value)
+		assert.NotNil(t, obj.EcmgNetworkErrors())
+		assert.Equal(t, value, *obj.EcmgNetworkErrors())
+	})
+
+	t.Run("EmmCountValue", func(t *testing.T) {
+		obj := model.NewMultiplexerStats()
+		value := 42
+		obj.SetEmmCount(value)
+		assert.NotNil(t, obj.EmmCount())
+		assert.Equal(t, value, *obj.EmmCount())
+	})
+
+	t.Run("EmmgNetworkErrorsValue", func(t *testing.T) {
+		obj := model.NewMultiplexerStats()
+		value := 42
+		obj.SetEmmgNetworkErrors(value)
+		assert.NotNil(t, obj.EmmgNetworkErrors())
+		assert.Equal(t, value, *obj.EmmgNetworkErrors())
+	})
+
 	t.Run("EncodedValue", func(t *testing.T) {
 		obj := model.NewMultiplexerStats()
 		value := model.Bytes(42)
@@ -7599,6 +7817,22 @@ func TestMultiplexerStats(t *testing.T) {
 		}
 	})
 
+	t.Run("RotatedKeysCountValue", func(t *testing.T) {
+		obj := model.NewMultiplexerStats()
+		value := 42
+		obj.SetRotatedKeysCount(value)
+		assert.NotNil(t, obj.RotatedKeysCount())
+		assert.Equal(t, value, *obj.RotatedKeysCount())
+	})
+
+	t.Run("ScrambledBytesValue", func(t *testing.T) {
+		obj := model.NewMultiplexerStats()
+		value := model.Bytes(42)
+		obj.SetScrambledBytes(value)
+		assert.NotNil(t, obj.ScrambledBytes())
+		assert.Equal(t, value, *obj.ScrambledBytes())
+	})
+
 	t.Run("StuffingValue", func(t *testing.T) {
 		obj := model.NewMultiplexerStats()
 		value := 42
@@ -7656,6 +7890,408 @@ func TestMultiplexerStats(t *testing.T) {
 	})
 }
 
+func TestNmosConfig(t *testing.T) {
+	t.Run("BindToDeviceValue", func(t *testing.T) {
+		obj := model.NewNmosConfig()
+		value := "test"
+		obj.SetBindToDevice(value)
+		assert.NotNil(t, obj.BindToDevice())
+		assert.Equal(t, value, *obj.BindToDevice())
+	})
+
+	t.Run("EnabledValue", func(t *testing.T) {
+		obj := model.NewNmosConfig()
+		value := true
+		obj.SetEnabled(value)
+		assert.NotNil(t, obj.Enabled())
+		assert.Equal(t, value, *obj.Enabled())
+	})
+}
+
+func TestNvrBase(t *testing.T) {
+	t.Run("NoteValue", func(t *testing.T) {
+		obj := model.NewNvrBase()
+		value := "test"
+		obj.SetNote(value)
+		assert.NotNil(t, obj.Note())
+		assert.Equal(t, value, *obj.Note())
+	})
+
+	t.Run("StatsValue", func(t *testing.T) {
+		obj := model.NewNvrBase()
+		value := model.NewNvrStats()
+		obj.SetStats(value)
+		result := obj.Stats()
+		assert.NotNil(t, result)
+	})
+
+	t.Run("TitleValue", func(t *testing.T) {
+		obj := model.NewNvrBase()
+		value := "test"
+		obj.SetTitle(value)
+		assert.NotNil(t, obj.Title())
+		assert.Equal(t, value, *obj.Title())
+	})
+}
+
+func TestNvrHealthcheckStatusChecks(t *testing.T) {
+	t.Run("ReachableValue", func(t *testing.T) {
+		obj := model.NewNvrHealthcheckStatusChecks()
+		value := true
+		obj.SetReachable(value)
+		assert.NotNil(t, obj.Reachable())
+		assert.Equal(t, value, *obj.Reachable())
+	})
+}
+
+func TestNvrHealthcheckStatus(t *testing.T) {
+	t.Run("ChecksValue", func(t *testing.T) {
+		obj := model.NewNvrHealthcheckStatus()
+		value := model.NewNvrHealthcheckStatusChecks()
+		value.SetReachable(true)
+		obj.SetChecks(value)
+		result := obj.Checks()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Reachable())
+		assert.Equal(t, true, *result.Reachable())
+	})
+
+	t.Run("StatusValue", func(t *testing.T) {
+		obj := model.NewNvrHealthcheckStatus()
+		value := model.NvrHealthcheckStatusStatus("test")
+		obj.SetStatus(value)
+		assert.NotNil(t, obj.Status())
+		assert.Equal(t, value, *obj.Status())
+	})
+
+	t.Run("StatusChangedAtValue", func(t *testing.T) {
+		obj := model.NewNvrHealthcheckStatus()
+		tNow := time.Now().UnixMilli()
+		obj.SetStatusChangedAt(model.UtcMs(float64(tNow)))
+		assert.NotNil(t, obj.StatusChangedAt())
+		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.StatusChangedAt())
+	})
+}
+
+func TestNvr(t *testing.T) {
+	t.Run("IDValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := 42
+		obj.SetID(value)
+		assert.NotNil(t, obj.ID())
+		assert.Equal(t, value, *obj.ID())
+	})
+
+	t.Run("NoteValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := "test"
+		obj.SetNote(value)
+		assert.NotNil(t, obj.Note())
+		assert.Equal(t, value, *obj.Note())
+	})
+
+	t.Run("OrganizationValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := model.NewOrganizationBase()
+		value.SetID(42)
+		value.SetTitle("test")
+		obj.SetOrganization(value)
+		result := obj.Organization()
+		assert.NotNil(t, result)
+		assert.Equal(t, 42, result.ID())
+		assert.Equal(t, "test", result.Title())
+	})
+
+	t.Run("StatsValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := model.NewNvrStats()
+		obj.SetStats(value)
+		result := obj.Stats()
+		assert.NotNil(t, result)
+	})
+
+	t.Run("SyncValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := model.NewNvrSyncSettings()
+		value.SetEpisodes(true)
+		obj.SetSync(value)
+		result := obj.Sync()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Episodes())
+		assert.Equal(t, true, *result.Episodes())
+	})
+
+	t.Run("TitleValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := "test"
+		obj.SetTitle(value)
+		assert.NotNil(t, obj.Title())
+		assert.Equal(t, value, *obj.Title())
+	})
+
+	t.Run("UserPermissionsValue", func(t *testing.T) {
+		obj := model.NewNvr()
+		value := model.NewNvrPermissions()
+		value.SetCanEditSettings(true)
+		value.SetCanSync(true)
+		obj.SetUserPermissions(value)
+		result := obj.UserPermissions()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.CanEditSettings())
+		assert.Equal(t, true, *result.CanEditSettings())
+		assert.NotNil(t, result.CanSync())
+		assert.Equal(t, true, *result.CanSync())
+	})
+}
+
+func TestNvrList(t *testing.T) {
+	t.Run("EstimatedCountValue", func(t *testing.T) {
+		obj := model.NewNvrList()
+		value := 42
+		obj.SetEstimatedCount(value)
+		assert.NotNil(t, obj.EstimatedCount())
+		assert.Equal(t, value, *obj.EstimatedCount())
+	})
+
+	t.Run("NextValue", func(t *testing.T) {
+		obj := model.NewNvrList()
+		value := "test"
+		obj.SetNext(value)
+		assert.NotNil(t, obj.Next())
+		assert.Equal(t, value, *obj.Next())
+	})
+
+	t.Run("NvrsValue", func(t *testing.T) {
+		obj := model.NewNvrList()
+		item1 := model.NewNvr()
+		item2 := model.NewNvr()
+		item1.SetID(1)
+		item2.SetID(2)
+		item1.SetNote("item1")
+		item2.SetNote("item2")
+		value := []model.Nvr{item1, item2}
+		obj.SetNvrs(value)
+		result := obj.Nvrs()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].ID())
+			assert.Equal(t, 1, *result[0].ID())
+			assert.NotNil(t, result[0].Note())
+			assert.Equal(t, "item1", *result[0].Note())
+		}
+	})
+
+	t.Run("PrevValue", func(t *testing.T) {
+		obj := model.NewNvrList()
+		value := "test"
+		obj.SetPrev(value)
+		assert.NotNil(t, obj.Prev())
+		assert.Equal(t, value, *obj.Prev())
+	})
+}
+
+func TestNvrPermissions(t *testing.T) {
+	t.Run("CanEditSettingsValue", func(t *testing.T) {
+		obj := model.NewNvrPermissions()
+		value := true
+		obj.SetCanEditSettings(value)
+		assert.NotNil(t, obj.CanEditSettings())
+		assert.Equal(t, value, *obj.CanEditSettings())
+	})
+
+	t.Run("CanSyncValue", func(t *testing.T) {
+		obj := model.NewNvrPermissions()
+		value := true
+		obj.SetCanSync(value)
+		assert.NotNil(t, obj.CanSync())
+		assert.Equal(t, value, *obj.CanSync())
+	})
+}
+
+func TestNvrStats(t *testing.T) {
+	t.Run("HealthcheckStatusValue", func(t *testing.T) {
+		obj := model.NewNvrStats()
+		value := model.NewNvrHealthcheckStatus()
+		value.SetStatus(model.NvrHealthcheckStatusStatus("test"))
+		tNow1 := time.Now().UnixMilli()
+		value.SetStatusChangedAt(model.UtcMs(float64(tNow1)))
+		obj.SetHealthcheckStatus(value)
+		result := obj.HealthcheckStatus()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Status())
+		assert.Equal(t, model.NvrHealthcheckStatusStatus("test"), *result.Status())
+		assert.NotNil(t, result.StatusChangedAt())
+		assert.Equal(t, model.UtcMs(float64(tNow1)), *result.StatusChangedAt())
+	})
+
+	t.Run("StreamsValue", func(t *testing.T) {
+		obj := model.NewNvrStats()
+		value := model.NewNvrStreamsStats()
+		value.SetDisabled(42)
+		value.SetError(42)
+		obj.SetStreams(value)
+		result := obj.Streams()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Disabled())
+		assert.Equal(t, 42, *result.Disabled())
+		assert.NotNil(t, result.Error())
+		assert.Equal(t, 42, *result.Error())
+	})
+}
+
+func TestNvrStreamSettingsAudio(t *testing.T) {
+	t.Run("DisabledValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettingsAudio()
+		value := true
+		obj.SetDisabled(value)
+		assert.NotNil(t, obj.Disabled())
+		assert.Equal(t, value, *obj.Disabled())
+	})
+
+	t.Run("TranscodeAudioCodecValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettingsAudio()
+		value := model.FrameAudioCodec("test")
+		obj.SetTranscodeAudioCodec(value)
+		assert.NotNil(t, obj.TranscodeAudioCodec())
+		assert.Equal(t, value, *obj.TranscodeAudioCodec())
+	})
+}
+
+func TestNvrStreamSettings(t *testing.T) {
+	t.Run("AudioValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := model.NewNvrStreamSettingsAudio()
+		value.SetDisabled(true)
+		value.SetTranscodeAudioCodec(model.FrameAudioCodec("test"))
+		obj.SetAudio(value)
+		result := obj.Audio()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Disabled())
+		assert.Equal(t, true, *result.Disabled())
+		assert.NotNil(t, result.TranscodeAudioCodec())
+		assert.Equal(t, model.FrameAudioCodec("test"), *result.TranscodeAudioCodec())
+	})
+
+	t.Run("CanPublishValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := true
+		obj.SetCanPublish(value)
+		assert.NotNil(t, obj.CanPublish())
+		assert.Equal(t, value, *obj.CanPublish())
+	})
+
+	t.Run("DisabledValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := true
+		obj.SetDisabled(value)
+		assert.NotNil(t, obj.Disabled())
+		assert.Equal(t, value, *obj.Disabled())
+	})
+
+	t.Run("DvrValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := model.NewStreamDvrSpec()
+		value.SetDiskUsageLimit(model.Percent(42))
+		value.SetEpisodesExpiration(model.Seconds(42))
+		obj.SetDvr(value)
+		result := obj.Dvr()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.DiskUsageLimit())
+		assert.Equal(t, model.Percent(42), *result.DiskUsageLimit())
+		assert.NotNil(t, result.EpisodesExpiration())
+		assert.Equal(t, model.Seconds(42), *result.EpisodesExpiration())
+	})
+
+	t.Run("OnvifValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := model.NewStreamOnvifConfig()
+		value.SetPtz(true)
+		value.SetURL("test")
+		obj.SetOnvif(value)
+		result := obj.Onvif()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Ptz())
+		assert.Equal(t, true, *result.Ptz())
+		assert.NotNil(t, result.URL())
+		assert.Equal(t, "test", *result.URL())
+	})
+
+	t.Run("StaticValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := true
+		obj.SetStatic(value)
+		assert.NotNil(t, obj.Static())
+		assert.Equal(t, value, *obj.Static())
+	})
+
+	t.Run("VisionValue", func(t *testing.T) {
+		obj := model.NewNvrStreamSettings()
+		value := model.NewVisionSpec()
+		value.SetAlg(model.VisionSpecAlg("test"))
+		value.SetAreas("test")
+		obj.SetVision(value)
+		result := obj.Vision()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Alg())
+		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
+		assert.NotNil(t, result.Areas())
+		assert.Equal(t, "test", *result.Areas())
+	})
+}
+
+func TestNvrStreamsStats(t *testing.T) {
+	t.Run("DisabledValue", func(t *testing.T) {
+		obj := model.NewNvrStreamsStats()
+		value := 42
+		obj.SetDisabled(value)
+		assert.NotNil(t, obj.Disabled())
+		assert.Equal(t, value, *obj.Disabled())
+	})
+
+	t.Run("ErrorValue", func(t *testing.T) {
+		obj := model.NewNvrStreamsStats()
+		value := 42
+		obj.SetError(value)
+		assert.NotNil(t, obj.Error())
+		assert.Equal(t, value, *obj.Error())
+	})
+
+	t.Run("RunningValue", func(t *testing.T) {
+		obj := model.NewNvrStreamsStats()
+		value := 42
+		obj.SetRunning(value)
+		assert.NotNil(t, obj.Running())
+		assert.Equal(t, value, *obj.Running())
+	})
+
+	t.Run("TotalValue", func(t *testing.T) {
+		obj := model.NewNvrStreamsStats()
+		value := 42
+		obj.SetTotal(value)
+		assert.NotNil(t, obj.Total())
+		assert.Equal(t, value, *obj.Total())
+	})
+
+	t.Run("WaitingValue", func(t *testing.T) {
+		obj := model.NewNvrStreamsStats()
+		value := 42
+		obj.SetWaiting(value)
+		assert.NotNil(t, obj.Waiting())
+		assert.Equal(t, value, *obj.Waiting())
+	})
+}
+
+func TestNvrSyncSettings(t *testing.T) {
+	t.Run("EpisodesValue", func(t *testing.T) {
+		obj := model.NewNvrSyncSettings()
+		value := true
+		obj.SetEpisodes(value)
+		assert.NotNil(t, obj.Episodes())
+		assert.Equal(t, value, *obj.Episodes())
+	})
+}
+
 func TestOnOffAuto(t *testing.T) {
 	t.Run("ModeValue", func(t *testing.T) {
 		obj := model.NewOnOffAuto()
@@ -7673,6 +8309,232 @@ func TestOnOff(t *testing.T) {
 		obj.SetMode(value)
 		assert.NotNil(t, obj.Mode())
 		assert.Equal(t, value, *obj.Mode())
+	})
+}
+
+func TestOnvifDiscoverRequest(t *testing.T) {
+	t.Run("AddressValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoverRequest()
+		value := "test"
+		obj.SetAddress(value)
+		assert.NotNil(t, obj.Address())
+		assert.Equal(t, value, *obj.Address())
+	})
+
+	t.Run("LoginValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoverRequest()
+		value := "test"
+		obj.SetLogin(value)
+		assert.NotNil(t, obj.Login())
+		assert.Equal(t, value, *obj.Login())
+	})
+
+	t.Run("PasswordValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoverRequest()
+		value := "test"
+		obj.SetPassword(value)
+		assert.NotNil(t, obj.Password())
+		assert.Equal(t, value, *obj.Password())
+	})
+}
+
+func TestOnvifDiscoveredDevice(t *testing.T) {
+	t.Run("EndpointValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := "test"
+		obj.SetEndpoint(value)
+		assert.NotNil(t, obj.Endpoint())
+		assert.Equal(t, value, *obj.Endpoint())
+	})
+
+	t.Run("ErrorValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := "test"
+		obj.SetError(value)
+		assert.NotNil(t, obj.Error())
+		assert.Equal(t, value, *obj.Error())
+	})
+
+	t.Run("IPValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := "test"
+		obj.SetIP(value)
+		assert.NotNil(t, obj.IP())
+		assert.Equal(t, value, *obj.IP())
+	})
+
+	t.Run("IsKnownValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := true
+		obj.SetIsKnown(value)
+		assert.NotNil(t, obj.IsKnown())
+		assert.Equal(t, value, *obj.IsKnown())
+	})
+
+	t.Run("ManufacturerValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := "test"
+		obj.SetManufacturer(value)
+		assert.NotNil(t, obj.Manufacturer())
+		assert.Equal(t, value, *obj.Manufacturer())
+	})
+
+	t.Run("ModelValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := "test"
+		obj.SetModel(value)
+		assert.NotNil(t, obj.Model())
+		assert.Equal(t, value, *obj.Model())
+	})
+
+	t.Run("PtzValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		value := true
+		obj.SetPtz(value)
+		assert.NotNil(t, obj.Ptz())
+		assert.Equal(t, value, *obj.Ptz())
+	})
+
+	t.Run("StreamsValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevice()
+		item1 := model.NewOnvifDiscoveredStream()
+		item2 := model.NewOnvifDiscoveredStream()
+		item1.SetBitrate(1)
+		item2.SetBitrate(2)
+		item1.SetCodec("item1")
+		item2.SetCodec("item2")
+		value := []model.OnvifDiscoveredStream{item1, item2}
+		obj.SetStreams(value)
+		result := obj.Streams()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Bitrate())
+			assert.Equal(t, 1, *result[0].Bitrate())
+			assert.NotNil(t, result[0].Codec())
+			assert.Equal(t, "item1", *result[0].Codec())
+		}
+	})
+}
+
+func TestOnvifDiscoveredDevices(t *testing.T) {
+	t.Run("DevicesValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevices()
+		item1 := model.NewOnvifDiscoveredDevice()
+		item2 := model.NewOnvifDiscoveredDevice()
+		item1.SetEndpoint("item1")
+		item2.SetEndpoint("item2")
+		item1.SetError("item1")
+		item2.SetError("item2")
+		value := []model.OnvifDiscoveredDevice{item1, item2}
+		obj.SetDevices(value)
+		result := obj.Devices()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Endpoint())
+			assert.Equal(t, "item1", *result[0].Endpoint())
+			assert.NotNil(t, result[0].Error())
+			assert.Equal(t, "item1", *result[0].Error())
+		}
+	})
+
+	t.Run("EstimatedCountValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevices()
+		value := 42
+		obj.SetEstimatedCount(value)
+		assert.NotNil(t, obj.EstimatedCount())
+		assert.Equal(t, value, *obj.EstimatedCount())
+	})
+
+	t.Run("NextValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevices()
+		value := "test"
+		obj.SetNext(value)
+		assert.NotNil(t, obj.Next())
+		assert.Equal(t, value, *obj.Next())
+	})
+
+	t.Run("PrevValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredDevices()
+		value := "test"
+		obj.SetPrev(value)
+		assert.NotNil(t, obj.Prev())
+		assert.Equal(t, value, *obj.Prev())
+	})
+}
+
+func TestOnvifDiscoveredStream(t *testing.T) {
+	t.Run("BitrateValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := 42
+		obj.SetBitrate(value)
+		assert.NotNil(t, obj.Bitrate())
+		assert.Equal(t, value, *obj.Bitrate())
+	})
+
+	t.Run("CodecValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := "test"
+		obj.SetCodec(value)
+		assert.NotNil(t, obj.Codec())
+		assert.Equal(t, value, *obj.Codec())
+	})
+
+	t.Run("FPSValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := 42
+		obj.SetFPS(value)
+		assert.NotNil(t, obj.FPS())
+		assert.Equal(t, value, *obj.FPS())
+	})
+
+	t.Run("HeightValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := 42
+		obj.SetHeight(value)
+		assert.NotNil(t, obj.Height())
+		assert.Equal(t, value, *obj.Height())
+	})
+
+	t.Run("JpegURLValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := "test"
+		obj.SetJpegURL(value)
+		assert.NotNil(t, obj.JpegURL())
+		assert.Equal(t, value, *obj.JpegURL())
+	})
+
+	t.Run("ProfileValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := "test"
+		obj.SetProfile(value)
+		assert.NotNil(t, obj.Profile())
+		assert.Equal(t, value, *obj.Profile())
+	})
+
+	t.Run("ProfileNameValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := "test"
+		obj.SetProfileName(value)
+		assert.NotNil(t, obj.ProfileName())
+		assert.Equal(t, value, *obj.ProfileName())
+	})
+
+	t.Run("StreamURLValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := "test"
+		obj.SetStreamURL(value)
+		assert.NotNil(t, obj.StreamURL())
+		assert.Equal(t, value, *obj.StreamURL())
+	})
+
+	t.Run("WidthValue", func(t *testing.T) {
+		obj := model.NewOnvifDiscoveredStream()
+		value := 42
+		obj.SetWidth(value)
+		assert.NotNil(t, obj.Width())
+		assert.Equal(t, value, *obj.Width())
 	})
 }
 
@@ -7748,6 +8610,38 @@ func TestOrganizationPermissions(t *testing.T) {
 		assert.NotNil(t, obj.IsMember())
 		assert.Equal(t, value, *obj.IsMember())
 	})
+
+	t.Run("NvrsValue", func(t *testing.T) {
+		obj := model.NewOrganizationPermissions()
+		value := model.NewOrganizationPermissionsNvrs()
+		value.SetCanEdit(true)
+		value.SetCanView(true)
+		obj.SetNvrs(value)
+		result := obj.Nvrs()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.CanEdit())
+		assert.Equal(t, true, *result.CanEdit())
+		assert.NotNil(t, result.CanView())
+		assert.Equal(t, true, *result.CanView())
+	})
+}
+
+func TestOrganizationPermissionsNvrs(t *testing.T) {
+	t.Run("CanEditValue", func(t *testing.T) {
+		obj := model.NewOrganizationPermissionsNvrs()
+		value := true
+		obj.SetCanEdit(value)
+		assert.NotNil(t, obj.CanEdit())
+		assert.Equal(t, value, *obj.CanEdit())
+	})
+
+	t.Run("CanViewValue", func(t *testing.T) {
+		obj := model.NewOrganizationPermissionsNvrs()
+		value := true
+		obj.SetCanView(value)
+		assert.NotNil(t, obj.CanView())
+		assert.Equal(t, value, *obj.CanView())
+	})
 }
 
 func TestOrganizationPreset(t *testing.T) {
@@ -7785,6 +8679,14 @@ func TestOutputMpegtsPids(t *testing.T) {
 		obj.SetDefault(value)
 		assert.NotNil(t, obj.Default())
 		assert.Equal(t, value, *obj.Default())
+	})
+
+	t.Run("EcmValue", func(t *testing.T) {
+		obj := model.NewOutputMpegtsPids()
+		value := 42
+		obj.SetEcm(value)
+		assert.NotNil(t, obj.Ecm())
+		assert.Equal(t, value, *obj.Ecm())
 	})
 
 	t.Run("MediaValue", func(t *testing.T) {
@@ -7982,6 +8884,21 @@ func TestPeerStats(t *testing.T) {
 		obj.SetError(value)
 		assert.NotNil(t, obj.Error())
 		assert.Equal(t, value, *obj.Error())
+	})
+
+	t.Run("HealthcheckStatusValue", func(t *testing.T) {
+		obj := model.NewPeerStats()
+		value := model.NewCentralHealthcheckStatus()
+		value.SetStatus(model.CentralHealthcheckStatusStatus("test"))
+		tNow1 := time.Now().UnixMilli()
+		value.SetStatusChangedAt(model.UtcMs(float64(tNow1)))
+		obj.SetHealthcheckStatus(value)
+		result := obj.HealthcheckStatus()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.Status())
+		assert.Equal(t, model.CentralHealthcheckStatusStatus("test"), *result.Status())
+		assert.NotNil(t, result.StatusChangedAt())
+		assert.Equal(t, model.UtcMs(float64(tNow1)), *result.StatusChangedAt())
 	})
 
 	t.Run("HostnameValue", func(t *testing.T) {
@@ -8402,7 +9319,57 @@ func TestPlayProtocolsSpec(t *testing.T) {
 	})
 }
 
+func TestPresetDvr(t *testing.T) {
+	t.Run("DiskUsageLimitValue", func(t *testing.T) {
+		obj := model.NewPresetDvr()
+		value := model.Percent(42)
+		obj.SetDiskUsageLimit(value)
+		assert.NotNil(t, obj.DiskUsageLimit())
+		assert.Equal(t, value, *obj.DiskUsageLimit())
+	})
+
+	t.Run("EpisodesExpirationValue", func(t *testing.T) {
+		obj := model.NewPresetDvr()
+		value := model.Seconds(42)
+		obj.SetEpisodesExpiration(value)
+		assert.NotNil(t, obj.EpisodesExpiration())
+		assert.Equal(t, value, *obj.EpisodesExpiration())
+	})
+
+	t.Run("ExpirationValue", func(t *testing.T) {
+		obj := model.NewPresetDvr()
+		value := model.Seconds(42)
+		obj.SetExpiration(value)
+		assert.NotNil(t, obj.Expiration())
+		assert.Equal(t, value, *obj.Expiration())
+	})
+
+	t.Run("RedundancyFactorValue", func(t *testing.T) {
+		obj := model.NewPresetDvr()
+		value := 42
+		obj.SetRedundancyFactor(value)
+		assert.NotNil(t, obj.RedundancyFactor())
+		assert.Equal(t, value, *obj.RedundancyFactor())
+	})
+
+	t.Run("StorageLimitValue", func(t *testing.T) {
+		obj := model.NewPresetDvr()
+		value := model.Bytes(42)
+		obj.SetStorageLimit(value)
+		assert.NotNil(t, obj.StorageLimit())
+		assert.Equal(t, value, *obj.StorageLimit())
+	})
+}
+
 func TestPreset(t *testing.T) {
+	t.Run("BillingExternalIDValue", func(t *testing.T) {
+		obj := model.NewPreset()
+		value := "test"
+		obj.SetBillingExternalID(value)
+		assert.NotNil(t, obj.BillingExternalID())
+		assert.Equal(t, value, *obj.BillingExternalID())
+	})
+
 	t.Run("DeletedAtValue", func(t *testing.T) {
 		obj := model.NewPreset()
 		tNow := time.Now().UnixMilli()
@@ -8413,7 +9380,7 @@ func TestPreset(t *testing.T) {
 
 	t.Run("DvrValue", func(t *testing.T) {
 		obj := model.NewPreset()
-		value := model.NewStreamDvrSpec()
+		value := model.NewPresetDvr()
 		value.SetDiskUsageLimit(model.Percent(42))
 		value.SetEpisodesExpiration(model.Seconds(42))
 		obj.SetDvr(value)
@@ -8423,6 +9390,14 @@ func TestPreset(t *testing.T) {
 		assert.Equal(t, model.Percent(42), *result.DiskUsageLimit())
 		assert.NotNil(t, result.EpisodesExpiration())
 		assert.Equal(t, model.Seconds(42), *result.EpisodesExpiration())
+	})
+
+	t.Run("ExternalIDValue", func(t *testing.T) {
+		obj := model.NewPreset()
+		value := "test"
+		obj.SetExternalID(value)
+		assert.NotNil(t, obj.ExternalID())
+		assert.Equal(t, value, *obj.ExternalID())
 	})
 
 	t.Run("IDValue", func(t *testing.T) {
@@ -8491,13 +9466,16 @@ func TestPreset(t *testing.T) {
 
 	t.Run("VisionValue", func(t *testing.T) {
 		obj := model.NewPreset()
-		value := model.NewVisionSpecPresets()
+		value := model.NewPresetVision()
 		value.SetAlg(model.VisionSpecPresetsAlg("test"))
+		value.SetDetectorType(model.VisionDetector("test"))
 		obj.SetVision(value)
 		result := obj.Vision()
 		assert.NotNil(t, result)
 		assert.NotNil(t, result.Alg())
 		assert.Equal(t, model.VisionSpecPresetsAlg("test"), *result.Alg())
+		assert.NotNil(t, result.DetectorType())
+		assert.Equal(t, model.VisionDetector("test"), *result.DetectorType())
 	})
 }
 
@@ -8561,6 +9539,24 @@ func TestPresetStats(t *testing.T) {
 	})
 }
 
+func TestPresetVision(t *testing.T) {
+	t.Run("AlgValue", func(t *testing.T) {
+		obj := model.NewPresetVision()
+		value := model.VisionSpecPresetsAlg("test")
+		obj.SetAlg(value)
+		assert.NotNil(t, obj.Alg())
+		assert.Equal(t, value, *obj.Alg())
+	})
+
+	t.Run("DetectorTypeValue", func(t *testing.T) {
+		obj := model.NewPresetVision()
+		value := model.VisionDetector("test")
+		obj.SetDetectorType(value)
+		assert.NotNil(t, obj.DetectorType())
+		assert.Equal(t, value, *obj.DetectorType())
+	})
+}
+
 func TestPresetsList(t *testing.T) {
 	t.Run("EstimatedCountValue", func(t *testing.T) {
 		obj := model.NewPresetsList()
@@ -8582,21 +9578,22 @@ func TestPresetsList(t *testing.T) {
 		obj := model.NewPresetsList()
 		item1 := model.NewPreset()
 		item2 := model.NewPreset()
-		tNow1_0 := time.Now().UnixMilli()
-		tNow2_0 := time.Now().UnixMilli() + 1000
-		item1.SetDeletedAt(model.UtcMs(float64(tNow1_0)))
-		item2.SetDeletedAt(model.UtcMs(float64(tNow2_0)))
-		item1.SetID(1)
-		item2.SetID(2)
+		tNow1_1 := time.Now().UnixMilli()
+		tNow2_1 := time.Now().UnixMilli() + 1000
+		item1.SetBillingExternalID("item1")
+		item2.SetBillingExternalID("item2")
+		item1.SetDeletedAt(model.UtcMs(float64(tNow1_1)))
+		item2.SetDeletedAt(model.UtcMs(float64(tNow2_1)))
 		value := []model.Preset{item1, item2}
 		obj.SetPresets(value)
 		result := obj.Presets()
 		assert.NotNil(t, result)
 		assert.Len(t, result, 2)
 		if len(result) > 0 {
+			assert.NotNil(t, result[0].BillingExternalID())
+			assert.Equal(t, "item1", *result[0].BillingExternalID())
 			assert.NotNil(t, result[0].DeletedAt())
-			assert.Equal(t, model.UtcMs(float64(tNow1_0)), *result[0].DeletedAt())
-			assert.Equal(t, 1, result[0].ID())
+			assert.Equal(t, model.UtcMs(float64(tNow1_1)), *result[0].DeletedAt())
 		}
 	})
 
@@ -8837,12 +9834,12 @@ func TestPushCounters(t *testing.T) {
 		assert.Equal(t, value, *obj.PusherRestarts())
 	})
 
-	t.Run("ResentPacketsValue", func(t *testing.T) {
+	t.Run("RetransmittedPacketsValue", func(t *testing.T) {
 		obj := model.NewPushCounters()
 		value := 42
-		obj.SetResentPackets(value)
-		assert.NotNil(t, obj.ResentPackets())
-		assert.Equal(t, value, *obj.ResentPackets())
+		obj.SetRetransmittedPackets(value)
+		assert.NotNil(t, obj.RetransmittedPackets())
+		assert.Equal(t, value, *obj.RetransmittedPackets())
 	})
 
 	t.Run("SegmentsValue", func(t *testing.T) {
@@ -8859,14 +9856,6 @@ func TestPushCounters(t *testing.T) {
 		obj.SetStandbyStatus(value)
 		assert.NotNil(t, obj.StandbyStatus())
 		assert.Equal(t, value, *obj.StandbyStatus())
-	})
-
-	t.Run("SysFillersBytesValue", func(t *testing.T) {
-		obj := model.NewPushCounters()
-		value := model.Bytes(42)
-		obj.SetSysFillersBytes(value)
-		assert.NotNil(t, obj.SysFillersBytes())
-		assert.Equal(t, value, *obj.SysFillersBytes())
 	})
 
 	t.Run("SysPayloadBytesValue", func(t *testing.T) {
@@ -8983,22 +9972,6 @@ func TestPushPidCounters(t *testing.T) {
 		assert.Equal(t, value, *obj.FillerPackets())
 	})
 
-	t.Run("FillersValue", func(t *testing.T) {
-		obj := model.NewPushPidCounters()
-		value := model.Bytes(42)
-		obj.SetFillers(value)
-		assert.NotNil(t, obj.Fillers())
-		assert.Equal(t, value, *obj.Fillers())
-	})
-
-	t.Run("FillersBytesValue", func(t *testing.T) {
-		obj := model.NewPushPidCounters()
-		value := model.Bytes(42)
-		obj.SetFillersBytes(value)
-		assert.NotNil(t, obj.FillersBytes())
-		assert.Equal(t, value, *obj.FillersBytes())
-	})
-
 	t.Run("MaxBufferValue", func(t *testing.T) {
 		obj := model.NewPushPidCounters()
 		value := model.Milliseconds(3.14)
@@ -9021,14 +9994,6 @@ func TestPushPidCounters(t *testing.T) {
 		obj.SetPackets(value)
 		assert.NotNil(t, obj.Packets())
 		assert.Equal(t, value, *obj.Packets())
-	})
-
-	t.Run("PayloadValue", func(t *testing.T) {
-		obj := model.NewPushPidCounters()
-		value := model.Bytes(42)
-		obj.SetPayload(value)
-		assert.NotNil(t, obj.Payload())
-		assert.Equal(t, value, *obj.Payload())
 	})
 
 	t.Run("PayloadBytesValue", func(t *testing.T) {
@@ -9054,12 +10019,12 @@ func TestPushPidCounters(t *testing.T) {
 		assert.Equal(t, value, *obj.Pnr())
 	})
 
-	t.Run("StuffingValue", func(t *testing.T) {
+	t.Run("QueuedTimeValue", func(t *testing.T) {
 		obj := model.NewPushPidCounters()
-		value := 42
-		obj.SetStuffing(value)
-		assert.NotNil(t, obj.Stuffing())
-		assert.Equal(t, value, *obj.Stuffing())
+		value := model.Milliseconds(3.14)
+		obj.SetQueuedTime(value)
+		assert.NotNil(t, obj.QueuedTime())
+		assert.Equal(t, value, *obj.QueuedTime())
 	})
 
 	t.Run("StuffingPacketsValue", func(t *testing.T) {
@@ -9133,6 +10098,14 @@ func TestRTPCountersBase(t *testing.T) {
 		obj.SetErrorsLostPackets(value)
 		assert.NotNil(t, obj.ErrorsLostPackets())
 		assert.Equal(t, value, *obj.ErrorsLostPackets())
+	})
+
+	t.Run("ErrorsSrClockDeviationValue", func(t *testing.T) {
+		obj := model.NewRTPCountersBase()
+		value := 42
+		obj.SetErrorsSrClockDeviation(value)
+		assert.NotNil(t, obj.ErrorsSrClockDeviation())
+		assert.Equal(t, value, *obj.ErrorsSrClockDeviation())
 	})
 
 	t.Run("FramesValue", func(t *testing.T) {
@@ -9288,6 +10261,14 @@ func TestRaidDiskConfigStats(t *testing.T) {
 		assert.Equal(t, value, *obj.BlobsCountDb())
 	})
 
+	t.Run("DeviceValue", func(t *testing.T) {
+		obj := model.NewRaidDiskConfigStats()
+		value := "test"
+		obj.SetDevice(value)
+		assert.NotNil(t, obj.Device())
+		assert.Equal(t, value, *obj.Device())
+	})
+
 	t.Run("ErrorsValue", func(t *testing.T) {
 		obj := model.NewRaidDiskConfigStats()
 		value := model.NewRaidDiskErrors()
@@ -9356,6 +10337,14 @@ func TestRaidDiskConfigStats(t *testing.T) {
 		obj.SetSize(value)
 		assert.NotNil(t, obj.Size())
 		assert.Equal(t, value, *obj.Size())
+	})
+
+	t.Run("StatusValue", func(t *testing.T) {
+		obj := model.NewRaidDiskConfigStats()
+		value := model.RaidDiskStatus("test")
+		obj.SetStatus(value)
+		assert.NotNil(t, obj.Status())
+		assert.Equal(t, value, *obj.Status())
 	})
 
 	t.Run("UsageValue", func(t *testing.T) {
@@ -9498,6 +10487,14 @@ func TestRaidDiskErrors(t *testing.T) {
 }
 
 func TestRaidDiskStats(t *testing.T) {
+	t.Run("DeviceValue", func(t *testing.T) {
+		obj := model.NewRaidDiskStats()
+		value := "test"
+		obj.SetDevice(value)
+		assert.NotNil(t, obj.Device())
+		assert.Equal(t, value, *obj.Device())
+	})
+
 	t.Run("ErrorsValue", func(t *testing.T) {
 		obj := model.NewRaidDiskStats()
 		value := model.NewRaidDiskErrors()
@@ -9558,6 +10555,14 @@ func TestRaidDiskStats(t *testing.T) {
 		obj.SetMounted(value)
 		assert.NotNil(t, obj.Mounted())
 		assert.Equal(t, value, *obj.Mounted())
+	})
+
+	t.Run("StatusValue", func(t *testing.T) {
+		obj := model.NewRaidDiskStats()
+		value := model.RaidDiskStatus("test")
+		obj.SetStatus(value)
+		assert.NotNil(t, obj.Status())
+		assert.Equal(t, value, *obj.Status())
 	})
 }
 
@@ -9762,33 +10767,65 @@ func TestServerConfigBase(t *testing.T) {
 	t.Run("Srt2PlayValue", func(t *testing.T) {
 		obj := model.NewServerConfigBase()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrt2Play(value)
 		result := obj.Srt2Play()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("Srt2PublishValue", func(t *testing.T) {
 		obj := model.NewServerConfigBase()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrt2Publish(value)
 		result := obj.Srt2Publish()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("SrtPlayValue", func(t *testing.T) {
 		obj := model.NewServerConfigBase()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrtPlay(value)
 		result := obj.SrtPlay()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("SrtPublishValue", func(t *testing.T) {
 		obj := model.NewServerConfigBase()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrtPublish(value)
 		result := obj.SrtPublish()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
+	})
+
+	t.Run("StreamingPrefixValue", func(t *testing.T) {
+		obj := model.NewServerConfigBase()
+		value := "test"
+		obj.SetStreamingPrefix(value)
+		assert.NotNil(t, obj.StreamingPrefix())
+		assert.Equal(t, value, *obj.StreamingPrefix())
 	})
 
 	t.Run("TotalBandwidthValue", func(t *testing.T) {
@@ -9855,27 +10892,6 @@ func TestServerConfigFull(t *testing.T) {
 		}
 	})
 
-	t.Run("BalancersValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		item1 := model.NewBalancerConfig()
-		item2 := model.NewBalancerConfig()
-		item1.SetMode(model.BalancerConfigMode("test"))
-		item2.SetMode(model.BalancerConfigMode("test"))
-		item1.SetName(model.MediaName("test"))
-		item2.SetName(model.MediaName("test"))
-		value := []model.BalancerConfig{item1, item2}
-		obj.SetBalancers(value)
-		result := obj.Balancers()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].Mode())
-			assert.Equal(t, model.BalancerConfigMode("test"), *result[0].Mode())
-			assert.NotNil(t, result[0].Name())
-			assert.Equal(t, model.MediaName("test"), *result[0].Name())
-		}
-	})
-
 	t.Run("CachesValue", func(t *testing.T) {
 		obj := model.NewServerConfigFull()
 		item1 := model.NewCacheConfig()
@@ -9903,20 +10919,6 @@ func TestServerConfigFull(t *testing.T) {
 		obj.SetCameraAlarm(value)
 		result := obj.CameraAlarm()
 		assert.NotNil(t, result)
-	})
-
-	t.Run("ChassisValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		value := model.NewChassisConfig()
-		value.SetAutoReboot(true)
-		value.SetDefaultGatewayInterface("test")
-		obj.SetChassis(value)
-		result := obj.Chassis()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.AutoReboot())
-		assert.Equal(t, true, *result.AutoReboot())
-		assert.NotNil(t, result.DefaultGatewayInterface())
-		assert.Equal(t, "test", *result.DefaultGatewayInterface())
 	})
 
 	t.Run("DecklinksValue", func(t *testing.T) {
@@ -9999,17 +11001,6 @@ func TestServerConfigFull(t *testing.T) {
 		}
 	})
 
-	t.Run("FileProcessorValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		value := model.NewFileProcessorConfig()
-		value.SetPath(model.DiskPath("test"))
-		obj.SetFileProcessor(value)
-		result := obj.FileProcessor()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Path())
-		assert.Equal(t, model.DiskPath("test"), *result.Path())
-	})
-
 	t.Run("HTTPProxiesValue", func(t *testing.T) {
 		obj := model.NewServerConfigFull()
 		item1 := model.NewHTTPProxyConfig()
@@ -10030,38 +11021,6 @@ func TestServerConfigFull(t *testing.T) {
 		}
 	})
 
-	t.Run("IptvValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		value := model.NewIptvConfig()
-		value.SetDatabase("test")
-		obj.SetIptv(value)
-		result := obj.Iptv()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Database())
-		assert.Equal(t, "test", *result.Database())
-	})
-
-	t.Run("PeersValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		item1 := model.NewPeerConfig()
-		item2 := model.NewPeerConfig()
-		item1.SetAPIURL(model.URL("test"))
-		item2.SetAPIURL(model.URL("test"))
-		item1.SetChannelLimit(1)
-		item2.SetChannelLimit(2)
-		value := []model.PeerConfig{item1, item2}
-		obj.SetPeers(value)
-		result := obj.Peers()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].APIURL())
-			assert.Equal(t, model.URL("test"), *result[0].APIURL())
-			assert.NotNil(t, result[0].ChannelLimit())
-			assert.Equal(t, 1, *result[0].ChannelLimit())
-		}
-	})
-
 	t.Run("RproxyValue", func(t *testing.T) {
 		obj := model.NewServerConfigFull()
 		value := model.NewRproxyConfig()
@@ -10073,61 +11032,6 @@ func TestServerConfigFull(t *testing.T) {
 		assert.NotNil(t, result.EndpointAuth())
 		assert.Equal(t, "test", *result.EndpointAuth())
 		assert.Equal(t, "test", result.StreampointKey())
-	})
-
-	t.Run("SourcesValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		item1 := model.NewSourceConfig()
-		item2 := model.NewSourceConfig()
-		value := []model.SourceConfig{item1, item2}
-		obj.SetSources(value)
-		result := obj.Sources()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-		}
-	})
-
-	t.Run("StreamsValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		item1 := model.NewStreamConfig()
-		item2 := model.NewStreamConfig()
-		item1.SetCanPublish(true)
-		item2.SetCanPublish(true)
-		item1.SetComment("item1")
-		item2.SetComment("item2")
-		value := []model.StreamConfig{item1, item2}
-		obj.SetStreams(value)
-		result := obj.Streams()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].CanPublish())
-			assert.Equal(t, true, *result[0].CanPublish())
-			assert.NotNil(t, result[0].Comment())
-			assert.Equal(t, "item1", *result[0].Comment())
-		}
-	})
-
-	t.Run("TemplatesValue", func(t *testing.T) {
-		obj := model.NewServerConfigFull()
-		item1 := model.NewTemplateConfig()
-		item2 := model.NewTemplateConfig()
-		item1.SetDisabled(true)
-		item2.SetDisabled(true)
-		item1.SetStatic(true)
-		item2.SetStatic(true)
-		value := []model.TemplateConfig{item1, item2}
-		obj.SetTemplates(value)
-		result := obj.Templates()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].Disabled())
-			assert.Equal(t, true, *result[0].Disabled())
-			assert.NotNil(t, result[0].Static())
-			assert.Equal(t, true, *result[0].Static())
-		}
 	})
 
 	t.Run("TranspondersValue", func(t *testing.T) {
@@ -10644,85 +11548,144 @@ func TestSharedTokensList(t *testing.T) {
 	})
 }
 
-func TestSourceConfig(t *testing.T) {
-	t.Run("DvrValue", func(t *testing.T) {
-		obj := model.NewSourceConfig()
-		value := model.NewStreamDvrSpec()
-		value.SetDiskUsageLimit(model.Percent(42))
-		value.SetEpisodesExpiration(model.Seconds(42))
-		obj.SetDvr(value)
-		result := obj.Dvr()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.DiskUsageLimit())
-		assert.Equal(t, model.Percent(42), *result.DiskUsageLimit())
-		assert.NotNil(t, result.EpisodesExpiration())
-		assert.Equal(t, model.Seconds(42), *result.EpisodesExpiration())
-	})
-
-	t.Run("VisionValue", func(t *testing.T) {
-		obj := model.NewSourceConfig()
-		value := model.NewVisionSpec()
-		value.SetAlg(model.VisionSpecAlg("test"))
-		value.SetAreas("test")
-		obj.SetVision(value)
-		result := obj.Vision()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Alg())
-		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
-		assert.NotNil(t, result.Areas())
-		assert.Equal(t, "test", *result.Areas())
-	})
-}
-
-func TestSourceSpecificConfig(t *testing.T) {
-}
-
 func TestSrtConfigBase(t *testing.T) {
-}
+	t.Run("EnforcedencryptionValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := true
+		obj.SetEnforcedencryption(value)
+		assert.NotNil(t, obj.Enforcedencryption())
+		assert.Equal(t, value, *obj.Enforcedencryption())
+	})
 
-func TestSrtConfig(t *testing.T) {}
+	t.Run("LatencyValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := model.Milliseconds(3.14)
+		obj.SetLatency(value)
+		assert.NotNil(t, obj.Latency())
+		assert.Equal(t, value, *obj.Latency())
+	})
 
-func TestStreamConfigAdditional(t *testing.T) {
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamConfigAdditional()
-		value := model.NewStreamStats()
-		value.SetAgentStatus("test")
-		value.SetAlive(true)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.AgentStatus())
-		assert.Equal(t, "test", *result.AgentStatus())
-		assert.NotNil(t, result.Alive())
-		assert.Equal(t, true, *result.Alive())
+	t.Run("LingerValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := model.Seconds(42)
+		obj.SetLinger(value)
+		assert.NotNil(t, obj.Linger())
+		assert.Equal(t, value, *obj.Linger())
+	})
+
+	t.Run("MinversionValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := "test"
+		obj.SetMinversion(value)
+		assert.NotNil(t, obj.Minversion())
+		assert.Equal(t, value, *obj.Minversion())
+	})
+
+	t.Run("PassphraseValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := "test"
+		obj.SetPassphrase(value)
+		assert.NotNil(t, obj.Passphrase())
+		assert.Equal(t, value, *obj.Passphrase())
+	})
+
+	t.Run("StreamidValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := "test"
+		obj.SetStreamid(value)
+		assert.NotNil(t, obj.Streamid())
+		assert.Equal(t, value, *obj.Streamid())
+	})
+
+	t.Run("VersionValue", func(t *testing.T) {
+		obj := model.NewSrtConfigBase()
+		value := "test"
+		obj.SetVersion(value)
+		assert.NotNil(t, obj.Version())
+		assert.Equal(t, value, *obj.Version())
 	})
 }
 
-func TestStreamConfigBase(t *testing.T) {
+func TestSrtConfig(t *testing.T) {
+	t.Run("EnforcedencryptionValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := true
+		obj.SetEnforcedencryption(value)
+		assert.NotNil(t, obj.Enforcedencryption())
+		assert.Equal(t, value, *obj.Enforcedencryption())
+	})
+
+	t.Run("LatencyValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := model.Milliseconds(3.14)
+		obj.SetLatency(value)
+		assert.NotNil(t, obj.Latency())
+		assert.Equal(t, value, *obj.Latency())
+	})
+
+	t.Run("LingerValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := model.Seconds(42)
+		obj.SetLinger(value)
+		assert.NotNil(t, obj.Linger())
+		assert.Equal(t, value, *obj.Linger())
+	})
+
+	t.Run("MinversionValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := "test"
+		obj.SetMinversion(value)
+		assert.NotNil(t, obj.Minversion())
+		assert.Equal(t, value, *obj.Minversion())
+	})
+
+	t.Run("PassphraseValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := "test"
+		obj.SetPassphrase(value)
+		assert.NotNil(t, obj.Passphrase())
+		assert.Equal(t, value, *obj.Passphrase())
+	})
+
+	t.Run("StreamidValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := "test"
+		obj.SetStreamid(value)
+		assert.NotNil(t, obj.Streamid())
+		assert.Equal(t, value, *obj.Streamid())
+	})
+
+	t.Run("VersionValue", func(t *testing.T) {
+		obj := model.NewSrtConfig()
+		value := "test"
+		obj.SetVersion(value)
+		assert.NotNil(t, obj.Version())
+		assert.Equal(t, value, *obj.Version())
+	})
+}
+
+func TestStreamConfigAudio(t *testing.T) {
 	t.Run("DisabledValue", func(t *testing.T) {
-		obj := model.NewStreamConfigBase()
+		obj := model.NewStreamConfigAudio()
 		value := true
 		obj.SetDisabled(value)
 		assert.NotNil(t, obj.Disabled())
 		assert.Equal(t, value, *obj.Disabled())
 	})
 
-	t.Run("StaticValue", func(t *testing.T) {
-		obj := model.NewStreamConfigBase()
-		value := true
-		obj.SetStatic(value)
-		assert.NotNil(t, obj.Static())
-		assert.Equal(t, value, *obj.Static())
+	t.Run("TranscodeAudioCodecValue", func(t *testing.T) {
+		obj := model.NewStreamConfigAudio()
+		value := model.FrameAudioCodec("test")
+		obj.SetTranscodeAudioCodec(value)
+		assert.NotNil(t, obj.TranscodeAudioCodec())
+		assert.Equal(t, value, *obj.TranscodeAudioCodec())
 	})
-}
-
-func TestStreamConfigDeprecated(t *testing.T) {
 }
 
 func TestStreamConfig(t *testing.T) {
 	t.Run("AudioValue", func(t *testing.T) {
 		obj := model.NewStreamConfig()
-		value := model.NewWatcherStreamConfigAudio()
+		value := model.NewStreamConfigAudio()
 		value.SetDisabled(true)
 		value.SetTranscodeAudioCodec(model.FrameAudioCodec("test"))
 		obj.SetAudio(value)
@@ -10781,15 +11744,15 @@ func TestStreamConfig(t *testing.T) {
 	t.Run("DomainValue", func(t *testing.T) {
 		obj := model.NewStreamConfig()
 		value := model.NewDomainBase()
+		value.SetDomainCode("test")
 		value.SetID(42)
-		value.SetTitle("test")
 		obj.SetDomain(value)
 		result := obj.Domain()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.DomainCode())
+		assert.Equal(t, "test", *result.DomainCode())
 		assert.NotNil(t, result.ID())
 		assert.Equal(t, 42, *result.ID())
-		assert.NotNil(t, result.Title())
-		assert.Equal(t, "test", *result.Title())
 	})
 
 	t.Run("DvrValue", func(t *testing.T) {
@@ -10884,16 +11847,17 @@ func TestStreamConfig(t *testing.T) {
 		obj := model.NewStreamConfig()
 		value := model.MediaName("test")
 		obj.SetName(value)
-		assert.Equal(t, value, obj.Name())
+		assert.NotNil(t, obj.Name())
+		assert.Equal(t, value, *obj.Name())
 	})
 
 	t.Run("NotificationsValue", func(t *testing.T) {
 		obj := model.NewStreamConfig()
-		item1 := model.NewWatcherStreamConfigNotificationsItem()
-		item2 := model.NewWatcherStreamConfigNotificationsItem()
+		item1 := model.NewStreamConfigNotificationsItem()
+		item2 := model.NewStreamConfigNotificationsItem()
 		item1.SetNotificationType(model.NotificationType("test"))
 		item2.SetNotificationType(model.NotificationType("test"))
-		value := []model.WatcherStreamConfigNotificationsItem{item1, item2}
+		value := []model.StreamConfigNotificationsItem{item1, item2}
 		obj.SetNotifications(value)
 		result := obj.Notifications()
 		assert.NotNil(t, result)
@@ -10902,6 +11866,28 @@ func TestStreamConfig(t *testing.T) {
 			assert.NotNil(t, result[0].NotificationType())
 			assert.Equal(t, model.NotificationType("test"), *result[0].NotificationType())
 		}
+	})
+
+	t.Run("NvrIDValue", func(t *testing.T) {
+		obj := model.NewStreamConfig()
+		value := 42
+		obj.SetNvrID(value)
+		assert.NotNil(t, obj.NvrID())
+		assert.Equal(t, value, *obj.NvrID())
+	})
+
+	t.Run("NvrSettingsValue", func(t *testing.T) {
+		obj := model.NewStreamConfig()
+		value := model.NewNvrStreamSettings()
+		value.SetCanPublish(true)
+		value.SetDisabled(true)
+		obj.SetNvrSettings(value)
+		result := obj.NvrSettings()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.CanPublish())
+		assert.Equal(t, true, *result.CanPublish())
+		assert.NotNil(t, result.Disabled())
+		assert.Equal(t, true, *result.Disabled())
 	})
 
 	t.Run("OnvifValue", func(t *testing.T) {
@@ -11036,28 +12022,52 @@ func TestStreamConfig(t *testing.T) {
 	})
 }
 
-func TestStreamConfigInput(t *testing.T) {}
+func TestStreamConfigMultieditDvr(t *testing.T) {
+	t.Run("DiskUsageLimitValue", func(t *testing.T) {
+		obj := model.NewStreamConfigMultieditDvr()
+		value := model.Percent(42)
+		obj.SetDiskUsageLimit(value)
+		assert.NotNil(t, obj.DiskUsageLimit())
+		assert.Equal(t, value, *obj.DiskUsageLimit())
+	})
 
-func TestStreamConfigMedia(t *testing.T) {
-	t.Run("DvrValue", func(t *testing.T) {
-		obj := model.NewStreamConfigMedia()
-		value := model.NewStreamDvrSpec()
-		value.SetDiskUsageLimit(model.Percent(42))
-		value.SetEpisodesExpiration(model.Seconds(42))
-		obj.SetDvr(value)
-		result := obj.Dvr()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.DiskUsageLimit())
-		assert.Equal(t, model.Percent(42), *result.DiskUsageLimit())
-		assert.NotNil(t, result.EpisodesExpiration())
-		assert.Equal(t, model.Seconds(42), *result.EpisodesExpiration())
+	t.Run("EpisodesExpirationValue", func(t *testing.T) {
+		obj := model.NewStreamConfigMultieditDvr()
+		value := model.Seconds(42)
+		obj.SetEpisodesExpiration(value)
+		assert.NotNil(t, obj.EpisodesExpiration())
+		assert.Equal(t, value, *obj.EpisodesExpiration())
+	})
+
+	t.Run("ExpirationValue", func(t *testing.T) {
+		obj := model.NewStreamConfigMultieditDvr()
+		value := model.Seconds(42)
+		obj.SetExpiration(value)
+		assert.NotNil(t, obj.Expiration())
+		assert.Equal(t, value, *obj.Expiration())
+	})
+
+	t.Run("RedundancyFactorValue", func(t *testing.T) {
+		obj := model.NewStreamConfigMultieditDvr()
+		value := 42
+		obj.SetRedundancyFactor(value)
+		assert.NotNil(t, obj.RedundancyFactor())
+		assert.Equal(t, value, *obj.RedundancyFactor())
+	})
+
+	t.Run("StorageLimitValue", func(t *testing.T) {
+		obj := model.NewStreamConfigMultieditDvr()
+		value := model.Bytes(42)
+		obj.SetStorageLimit(value)
+		assert.NotNil(t, obj.StorageLimit())
+		assert.Equal(t, value, *obj.StorageLimit())
 	})
 }
 
 func TestStreamConfigMultiedit(t *testing.T) {
 	t.Run("DvrValue", func(t *testing.T) {
 		obj := model.NewStreamConfigMultiedit()
-		value := model.NewStreamDvrSpec()
+		value := model.NewStreamConfigMultieditDvr()
 		value.SetDiskUsageLimit(model.Percent(42))
 		value.SetEpisodesExpiration(model.Seconds(42))
 		obj.SetDvr(value)
@@ -11094,44 +12104,27 @@ func TestStreamConfigMultiedit(t *testing.T) {
 	})
 }
 
-func TestStreamConfigOnpremises(t *testing.T) {
-	t.Run("VisionValue", func(t *testing.T) {
-		obj := model.NewStreamConfigOnpremises()
-		value := model.NewVisionSpec()
-		value.SetAlg(model.VisionSpecAlg("test"))
-		value.SetAreas("test")
-		obj.SetVision(value)
-		result := obj.Vision()
+func TestStreamConfigNotificationsItem(t *testing.T) {
+	t.Run("EventTypesValue", func(t *testing.T) {
+		obj := model.NewStreamConfigNotificationsItem()
+		value := model.NewEventTypes()
+		value.SetEpisodeFace(true)
+		value.SetEpisodeGeneric(true)
+		obj.SetEventTypes(value)
+		result := obj.EventTypes()
 		assert.NotNil(t, result)
-		assert.NotNil(t, result.Alg())
-		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
-		assert.NotNil(t, result.Areas())
-		assert.Equal(t, "test", *result.Areas())
-	})
-}
-
-func TestStreamConfigSpecific(t *testing.T) {
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamConfigSpecific()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
+		assert.NotNil(t, result.EpisodeFace())
+		assert.Equal(t, true, *result.EpisodeFace())
+		assert.NotNil(t, result.EpisodeGeneric())
+		assert.Equal(t, true, *result.EpisodeGeneric())
 	})
 
-	t.Run("NameValue", func(t *testing.T) {
-		obj := model.NewStreamConfigSpecific()
-		value := model.MediaName("test")
-		obj.SetName(value)
-		assert.Equal(t, value, obj.Name())
-	})
-
-	t.Run("TitleValue", func(t *testing.T) {
-		obj := model.NewStreamConfigSpecific()
-		value := "test"
-		obj.SetTitle(value)
-		assert.NotNil(t, obj.Title())
-		assert.Equal(t, value, *obj.Title())
+	t.Run("NotificationTypeValue", func(t *testing.T) {
+		obj := model.NewStreamConfigNotificationsItem()
+		value := model.NotificationType("test")
+		obj.SetNotificationType(value)
+		assert.NotNil(t, obj.NotificationType())
+		assert.Equal(t, value, *obj.NotificationType())
 	})
 }
 
@@ -11177,183 +12170,13 @@ func TestStreamDvrSpec(t *testing.T) {
 	})
 }
 
-func TestStreamDvrSpecificSpec(t *testing.T) {
-	t.Run("RedundancyFactorValue", func(t *testing.T) {
-		obj := model.NewStreamDvrSpecificSpec()
-		value := 42
-		obj.SetRedundancyFactor(value)
-		assert.NotNil(t, obj.RedundancyFactor())
-		assert.Equal(t, value, *obj.RedundancyFactor())
-	})
-}
-
-func TestStreamInputBase(t *testing.T) {
-	t.Run("AllowIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := "test"
-		obj.SetAllowIf(value)
-		assert.NotNil(t, obj.AllowIf())
-		assert.Equal(t, value, *obj.AllowIf())
-	})
-
-	t.Run("AudioTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.Seconds(42)
-		obj.SetAudioTimeout(value)
-		assert.NotNil(t, obj.AudioTimeout())
-		assert.Equal(t, value, *obj.AudioTimeout())
-	})
-
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DenyIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := "test"
-		obj.SetDenyIf(value)
-		assert.NotNil(t, obj.DenyIf())
-		assert.Equal(t, value, *obj.DenyIf())
-	})
-
-	t.Run("FramesTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := 42
-		obj.SetFramesTimeout(value)
-		assert.NotNil(t, obj.FramesTimeout())
-		assert.Equal(t, value, *obj.FramesTimeout())
-	})
-
-	t.Run("MaxRetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.Seconds(42)
-		obj.SetMaxRetryTimeout(value)
-		assert.NotNil(t, obj.MaxRetryTimeout())
-		assert.Equal(t, value, *obj.MaxRetryTimeout())
-	})
-
-	t.Run("NoClientsReconnectDelayValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := 42
-		obj.SetNoClientsReconnectDelay(value)
-		assert.NotNil(t, obj.NoClientsReconnectDelay())
-		assert.Equal(t, value, *obj.NoClientsReconnectDelay())
-	})
-
-	t.Run("OutputAudioValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.OutputAudio("test")
-		obj.SetOutputAudio(value)
-		assert.NotNil(t, obj.OutputAudio())
-		assert.Equal(t, value, *obj.OutputAudio())
-	})
-
-	t.Run("PriorityValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := 42
-		obj.SetPriority(value)
-		assert.NotNil(t, obj.Priority())
-		assert.Equal(t, value, *obj.Priority())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.NewInputStats()
-		value.SetActive(true)
-		value.SetAdSplicesIngested(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Active())
-		assert.Equal(t, true, *result.Active())
-		assert.NotNil(t, result.AdSplicesIngested())
-		assert.Equal(t, 42, *result.AdSplicesIngested())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := 42
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
-	t.Run("UserAgentValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := "test"
-		obj.SetUserAgent(value)
-		assert.NotNil(t, obj.UserAgent())
-		assert.Equal(t, value, *obj.UserAgent())
-	})
-
-	t.Run("ViaValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.AgentURL("test")
-		obj.SetVia(value)
-		assert.NotNil(t, obj.Via())
-		assert.Equal(t, value, *obj.Via())
-	})
-
-	t.Run("VideoTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputBase()
-		value := model.Seconds(42)
-		obj.SetVideoTimeout(value)
-		assert.NotNil(t, obj.VideoTimeout())
-		assert.Equal(t, value, *obj.VideoTimeout())
-	})
-}
-
 func TestStreamInputFake(t *testing.T) {
-	t.Run("AllowIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := "test"
-		obj.SetAllowIf(value)
-		assert.NotNil(t, obj.AllowIf())
-		assert.Equal(t, value, *obj.AllowIf())
-	})
-
-	t.Run("AudioTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.Seconds(42)
-		obj.SetAudioTimeout(value)
-		assert.NotNil(t, obj.AudioTimeout())
-		assert.Equal(t, value, *obj.AudioTimeout())
-	})
-
 	t.Run("BitrateValue", func(t *testing.T) {
 		obj := model.NewStreamInputFake()
 		value := model.Speed(42)
 		obj.SetBitrate(value)
 		assert.NotNil(t, obj.Bitrate())
 		assert.Equal(t, value, *obj.Bitrate())
-	})
-
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DenyIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := "test"
-		obj.SetDenyIf(value)
-		assert.NotNil(t, obj.DenyIf())
-		assert.Equal(t, value, *obj.DenyIf())
-	})
-
-	t.Run("FramesTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := 42
-		obj.SetFramesTimeout(value)
-		assert.NotNil(t, obj.FramesTimeout())
-		assert.Equal(t, value, *obj.FramesTimeout())
 	})
 
 	t.Run("HeightValue", func(t *testing.T) {
@@ -11364,89 +12187,11 @@ func TestStreamInputFake(t *testing.T) {
 		assert.Equal(t, value, *obj.Height())
 	})
 
-	t.Run("MaxRetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.Seconds(42)
-		obj.SetMaxRetryTimeout(value)
-		assert.NotNil(t, obj.MaxRetryTimeout())
-		assert.Equal(t, value, *obj.MaxRetryTimeout())
-	})
-
-	t.Run("NoClientsReconnectDelayValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := 42
-		obj.SetNoClientsReconnectDelay(value)
-		assert.NotNil(t, obj.NoClientsReconnectDelay())
-		assert.Equal(t, value, *obj.NoClientsReconnectDelay())
-	})
-
-	t.Run("OutputAudioValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.OutputAudio("test")
-		obj.SetOutputAudio(value)
-		assert.NotNil(t, obj.OutputAudio())
-		assert.Equal(t, value, *obj.OutputAudio())
-	})
-
-	t.Run("PriorityValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := 42
-		obj.SetPriority(value)
-		assert.NotNil(t, obj.Priority())
-		assert.Equal(t, value, *obj.Priority())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.NewInputStats()
-		value.SetActive(true)
-		value.SetAdSplicesIngested(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Active())
-		assert.Equal(t, true, *result.Active())
-		assert.NotNil(t, result.AdSplicesIngested())
-		assert.Equal(t, 42, *result.AdSplicesIngested())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := 42
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewStreamInputFake()
 		value := model.InputURL("test")
 		obj.SetURL(value)
 		assert.Equal(t, value, obj.URL())
-	})
-
-	t.Run("UserAgentValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := "test"
-		obj.SetUserAgent(value)
-		assert.NotNil(t, obj.UserAgent())
-		assert.Equal(t, value, *obj.UserAgent())
-	})
-
-	t.Run("ViaValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.AgentURL("test")
-		obj.SetVia(value)
-		assert.NotNil(t, obj.Via())
-		assert.Equal(t, value, *obj.Via())
-	})
-
-	t.Run("VideoTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFake()
-		value := model.Seconds(42)
-		obj.SetVideoTimeout(value)
-		assert.NotNil(t, obj.VideoTimeout())
-		assert.Equal(t, value, *obj.VideoTimeout())
 	})
 
 	t.Run("WidthValue", func(t *testing.T) {
@@ -11459,494 +12204,42 @@ func TestStreamInputFake(t *testing.T) {
 }
 
 func TestStreamInputFile(t *testing.T) {
-	t.Run("AllowIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := "test"
-		obj.SetAllowIf(value)
-		assert.NotNil(t, obj.AllowIf())
-		assert.Equal(t, value, *obj.AllowIf())
-	})
-
-	t.Run("AudioTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.Seconds(42)
-		obj.SetAudioTimeout(value)
-		assert.NotNil(t, obj.AudioTimeout())
-		assert.Equal(t, value, *obj.AudioTimeout())
-	})
-
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DenyIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := "test"
-		obj.SetDenyIf(value)
-		assert.NotNil(t, obj.DenyIf())
-		assert.Equal(t, value, *obj.DenyIf())
-	})
-
-	t.Run("FramesTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := 42
-		obj.SetFramesTimeout(value)
-		assert.NotNil(t, obj.FramesTimeout())
-		assert.Equal(t, value, *obj.FramesTimeout())
-	})
-
-	t.Run("MaxRetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.Seconds(42)
-		obj.SetMaxRetryTimeout(value)
-		assert.NotNil(t, obj.MaxRetryTimeout())
-		assert.Equal(t, value, *obj.MaxRetryTimeout())
-	})
-
-	t.Run("NoClientsReconnectDelayValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := 42
-		obj.SetNoClientsReconnectDelay(value)
-		assert.NotNil(t, obj.NoClientsReconnectDelay())
-		assert.Equal(t, value, *obj.NoClientsReconnectDelay())
-	})
-
-	t.Run("OutputAudioValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.OutputAudio("test")
-		obj.SetOutputAudio(value)
-		assert.NotNil(t, obj.OutputAudio())
-		assert.Equal(t, value, *obj.OutputAudio())
-	})
-
-	t.Run("PriorityValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := 42
-		obj.SetPriority(value)
-		assert.NotNil(t, obj.Priority())
-		assert.Equal(t, value, *obj.Priority())
-	})
-
-	t.Run("Scte35Value", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := true
-		obj.SetScte35(value)
-		assert.NotNil(t, obj.Scte35())
-		assert.Equal(t, value, *obj.Scte35())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.NewInputStats()
-		value.SetActive(true)
-		value.SetAdSplicesIngested(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Active())
-		assert.Equal(t, true, *result.Active())
-		assert.NotNil(t, result.AdSplicesIngested())
-		assert.Equal(t, 42, *result.AdSplicesIngested())
-	})
-
-	t.Run("SubtitlesValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.StreamInputMpegtsSpecificSubtitles("test")
-		obj.SetSubtitles(value)
-		assert.NotNil(t, obj.Subtitles())
-		assert.Equal(t, value, *obj.Subtitles())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := 42
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewStreamInputFile()
 		value := model.InputURL("test")
 		obj.SetURL(value)
 		assert.Equal(t, value, obj.URL())
 	})
+}
 
-	t.Run("UserAgentValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := "test"
-		obj.SetUserAgent(value)
-		assert.NotNil(t, obj.UserAgent())
-		assert.Equal(t, value, *obj.UserAgent())
-	})
-
-	t.Run("ViaValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.AgentURL("test")
-		obj.SetVia(value)
-		assert.NotNil(t, obj.Via())
-		assert.Equal(t, value, *obj.Via())
-	})
-
-	t.Run("VideoTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputFile()
-		value := model.Seconds(42)
-		obj.SetVideoTimeout(value)
-		assert.NotNil(t, obj.VideoTimeout())
-		assert.Equal(t, value, *obj.VideoTimeout())
+func TestStreamInputM4f(t *testing.T) {
+	t.Run("URLValue", func(t *testing.T) {
+		obj := model.NewStreamInputM4f()
+		value := model.InputURL("test")
+		obj.SetURL(value)
+		assert.Equal(t, value, obj.URL())
 	})
 }
 
-func TestStreamInputMpegtsSpecific(t *testing.T) {
-	t.Run("Scte35Value", func(t *testing.T) {
-		obj := model.NewStreamInputMpegtsSpecific()
-		value := true
-		obj.SetScte35(value)
-		assert.NotNil(t, obj.Scte35())
-		assert.Equal(t, value, *obj.Scte35())
-	})
-
-	t.Run("SubtitlesValue", func(t *testing.T) {
-		obj := model.NewStreamInputMpegtsSpecific()
-		value := model.StreamInputMpegtsSpecificSubtitles("test")
-		obj.SetSubtitles(value)
-		assert.NotNil(t, obj.Subtitles())
-		assert.Equal(t, value, *obj.Subtitles())
+func TestStreamInputM4s(t *testing.T) {
+	t.Run("URLValue", func(t *testing.T) {
+		obj := model.NewStreamInputM4s()
+		value := model.InputURL("test")
+		obj.SetURL(value)
+		assert.Equal(t, value, obj.URL())
 	})
 }
 
 func TestStreamInputPublish(t *testing.T) {
-	t.Run("AbrCorrectionValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrCorrection(value)
-		assert.NotNil(t, obj.AbrCorrection())
-		assert.Equal(t, value, *obj.AbrCorrection())
-	})
-
-	t.Run("AbrCyclesValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrCycles(value)
-		assert.NotNil(t, obj.AbrCycles())
-		assert.Equal(t, value, *obj.AbrCycles())
-	})
-
-	t.Run("AbrDebugValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrDebug(value)
-		assert.NotNil(t, obj.AbrDebug())
-		assert.Equal(t, value, *obj.AbrDebug())
-	})
-
-	t.Run("AbrLossLowerValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 3.14
-		obj.SetAbrLossLower(value)
-		assert.NotNil(t, obj.AbrLossLower())
-		assert.Equal(t, value, *obj.AbrLossLower())
-	})
-
-	t.Run("AbrLossUpperValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 3.14
-		obj.SetAbrLossUpper(value)
-		assert.NotNil(t, obj.AbrLossUpper())
-		assert.Equal(t, value, *obj.AbrLossUpper())
-	})
-
-	t.Run("AbrMaxBitrateValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrMaxBitrate(value)
-		assert.NotNil(t, obj.AbrMaxBitrate())
-		assert.Equal(t, value, *obj.AbrMaxBitrate())
-	})
-
-	t.Run("AbrModeValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrMode(value)
-		assert.NotNil(t, obj.AbrMode())
-		assert.Equal(t, value, *obj.AbrMode())
-	})
-
-	t.Run("AbrStepdownValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 3.14
-		obj.SetAbrStepdown(value)
-		assert.NotNil(t, obj.AbrStepdown())
-		assert.Equal(t, value, *obj.AbrStepdown())
-	})
-
-	t.Run("AbrStepupValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetAbrStepup(value)
-		assert.NotNil(t, obj.AbrStepup())
-		assert.Equal(t, value, *obj.AbrStepup())
-	})
-
-	t.Run("AllowIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := "test"
-		obj.SetAllowIf(value)
-		assert.NotNil(t, obj.AllowIf())
-		assert.Equal(t, value, *obj.AllowIf())
-	})
-
-	t.Run("AudioTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.Seconds(42)
-		obj.SetAudioTimeout(value)
-		assert.NotNil(t, obj.AudioTimeout())
-		assert.Equal(t, value, *obj.AudioTimeout())
-	})
-
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DenyIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := "test"
-		obj.SetDenyIf(value)
-		assert.NotNil(t, obj.DenyIf())
-		assert.Equal(t, value, *obj.DenyIf())
-	})
-
-	t.Run("FramesTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetFramesTimeout(value)
-		assert.NotNil(t, obj.FramesTimeout())
-		assert.Equal(t, value, *obj.FramesTimeout())
-	})
-
-	t.Run("MaxRetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.Seconds(42)
-		obj.SetMaxRetryTimeout(value)
-		assert.NotNil(t, obj.MaxRetryTimeout())
-		assert.Equal(t, value, *obj.MaxRetryTimeout())
-	})
-
-	t.Run("MinBitrateValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetMinBitrate(value)
-		assert.NotNil(t, obj.MinBitrate())
-		assert.Equal(t, value, *obj.MinBitrate())
-	})
-
-	t.Run("NoClientsReconnectDelayValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetNoClientsReconnectDelay(value)
-		assert.NotNil(t, obj.NoClientsReconnectDelay())
-		assert.Equal(t, value, *obj.NoClientsReconnectDelay())
-	})
-
-	t.Run("OutputAudioValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.OutputAudio("test")
-		obj.SetOutputAudio(value)
-		assert.NotNil(t, obj.OutputAudio())
-		assert.Equal(t, value, *obj.OutputAudio())
-	})
-
-	t.Run("PreferCodecValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.WebrtcPreferVideoCodec("test")
-		obj.SetPreferCodec(value)
-		assert.NotNil(t, obj.PreferCodec())
-		assert.Equal(t, value, *obj.PreferCodec())
-	})
-
-	t.Run("PreferVideoCodecValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.WebrtcPreferVideoCodec("test")
-		obj.SetPreferVideoCodec(value)
-		assert.NotNil(t, obj.PreferVideoCodec())
-		assert.Equal(t, value, *obj.PreferVideoCodec())
-	})
-
-	t.Run("PriorityValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetPriority(value)
-		assert.NotNil(t, obj.Priority())
-		assert.Equal(t, value, *obj.Priority())
-	})
-
-	t.Run("Scte35Value", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := true
-		obj.SetScte35(value)
-		assert.NotNil(t, obj.Scte35())
-		assert.Equal(t, value, *obj.Scte35())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.NewInputStats()
-		value.SetActive(true)
-		value.SetAdSplicesIngested(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Active())
-		assert.Equal(t, true, *result.Active())
-		assert.NotNil(t, result.AdSplicesIngested())
-		assert.Equal(t, 42, *result.AdSplicesIngested())
-	})
-
-	t.Run("SubtitlesValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.StreamInputSrtPublishSpecificSubtitles("test")
-		obj.SetSubtitles(value)
-		assert.NotNil(t, obj.Subtitles())
-		assert.Equal(t, value, *obj.Subtitles())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := 42
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
-	t.Run("TransportValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.WebrtcTransport("test")
-		obj.SetTransport(value)
-		assert.NotNil(t, obj.Transport())
-		assert.Equal(t, value, *obj.Transport())
-	})
-
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewStreamInputPublish()
 		value := model.InputURL("test")
 		obj.SetURL(value)
 		assert.Equal(t, value, obj.URL())
 	})
-
-	t.Run("UserAgentValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := "test"
-		obj.SetUserAgent(value)
-		assert.NotNil(t, obj.UserAgent())
-		assert.Equal(t, value, *obj.UserAgent())
-	})
-
-	t.Run("ViaValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.AgentURL("test")
-		obj.SetVia(value)
-		assert.NotNil(t, obj.Via())
-		assert.Equal(t, value, *obj.Via())
-	})
-
-	t.Run("VideoTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := model.Seconds(42)
-		obj.SetVideoTimeout(value)
-		assert.NotNil(t, obj.VideoTimeout())
-		assert.Equal(t, value, *obj.VideoTimeout())
-	})
-
-	t.Run("WebrtcAbrValue", func(t *testing.T) {
-		obj := model.NewStreamInputPublish()
-		value := true
-		obj.SetWebrtcAbr(value)
-		assert.NotNil(t, obj.WebrtcAbr())
-		assert.Equal(t, value, *obj.WebrtcAbr())
-	})
 }
 
 func TestStreamInputRtsp(t *testing.T) {
-	t.Run("AllowIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := "test"
-		obj.SetAllowIf(value)
-		assert.NotNil(t, obj.AllowIf())
-		assert.Equal(t, value, *obj.AllowIf())
-	})
-
-	t.Run("AudioTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.Seconds(42)
-		obj.SetAudioTimeout(value)
-		assert.NotNil(t, obj.AudioTimeout())
-		assert.Equal(t, value, *obj.AudioTimeout())
-	})
-
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DenyIfValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := "test"
-		obj.SetDenyIf(value)
-		assert.NotNil(t, obj.DenyIf())
-		assert.Equal(t, value, *obj.DenyIf())
-	})
-
-	t.Run("FramesTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := 42
-		obj.SetFramesTimeout(value)
-		assert.NotNil(t, obj.FramesTimeout())
-		assert.Equal(t, value, *obj.FramesTimeout())
-	})
-
-	t.Run("MaxRetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.Seconds(42)
-		obj.SetMaxRetryTimeout(value)
-		assert.NotNil(t, obj.MaxRetryTimeout())
-		assert.Equal(t, value, *obj.MaxRetryTimeout())
-	})
-
-	t.Run("NoClientsReconnectDelayValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := 42
-		obj.SetNoClientsReconnectDelay(value)
-		assert.NotNil(t, obj.NoClientsReconnectDelay())
-		assert.Equal(t, value, *obj.NoClientsReconnectDelay())
-	})
-
-	t.Run("OutputAudioValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.OutputAudio("test")
-		obj.SetOutputAudio(value)
-		assert.NotNil(t, obj.OutputAudio())
-		assert.Equal(t, value, *obj.OutputAudio())
-	})
-
-	t.Run("PriorityValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := 42
-		obj.SetPriority(value)
-		assert.NotNil(t, obj.Priority())
-		assert.Equal(t, value, *obj.Priority())
-	})
-
 	t.Run("RTPValue", func(t *testing.T) {
 		obj := model.NewStreamInputRtsp()
 		value := "test"
@@ -11955,57 +12248,11 @@ func TestStreamInputRtsp(t *testing.T) {
 		assert.Equal(t, value, *obj.RTP())
 	})
 
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.NewInputStats()
-		value.SetActive(true)
-		value.SetAdSplicesIngested(42)
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Active())
-		assert.Equal(t, true, *result.Active())
-		assert.NotNil(t, result.AdSplicesIngested())
-		assert.Equal(t, 42, *result.AdSplicesIngested())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := 42
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewStreamInputRtsp()
 		value := model.InputURL("test")
 		obj.SetURL(value)
 		assert.Equal(t, value, obj.URL())
-	})
-
-	t.Run("UserAgentValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := "test"
-		obj.SetUserAgent(value)
-		assert.NotNil(t, obj.UserAgent())
-		assert.Equal(t, value, *obj.UserAgent())
-	})
-
-	t.Run("ViaValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.AgentURL("test")
-		obj.SetVia(value)
-		assert.NotNil(t, obj.Via())
-		assert.Equal(t, value, *obj.Via())
-	})
-
-	t.Run("VideoTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamInputRtsp()
-		value := model.Seconds(42)
-		obj.SetVideoTimeout(value)
-		assert.NotNil(t, obj.VideoTimeout())
-		assert.Equal(t, value, *obj.VideoTimeout())
 	})
 
 	t.Run("WaitRtcpValue", func(t *testing.T) {
@@ -12014,138 +12261,6 @@ func TestStreamInputRtsp(t *testing.T) {
 		obj.SetWaitRtcp(value)
 		assert.NotNil(t, obj.WaitRtcp())
 		assert.Equal(t, value, *obj.WaitRtcp())
-	})
-}
-
-func TestStreamInputSrtPublishSpecific(t *testing.T) {
-	t.Run("Scte35Value", func(t *testing.T) {
-		obj := model.NewStreamInputSrtPublishSpecific()
-		value := true
-		obj.SetScte35(value)
-		assert.NotNil(t, obj.Scte35())
-		assert.Equal(t, value, *obj.Scte35())
-	})
-
-	t.Run("SubtitlesValue", func(t *testing.T) {
-		obj := model.NewStreamInputSrtPublishSpecific()
-		value := model.StreamInputSrtPublishSpecificSubtitles("test")
-		obj.SetSubtitles(value)
-		assert.NotNil(t, obj.Subtitles())
-		assert.Equal(t, value, *obj.Subtitles())
-	})
-}
-
-func TestStreamInputWebrtcPublishSpecific(t *testing.T) {
-	t.Run("AbrCorrectionValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrCorrection(value)
-		assert.NotNil(t, obj.AbrCorrection())
-		assert.Equal(t, value, *obj.AbrCorrection())
-	})
-
-	t.Run("AbrCyclesValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrCycles(value)
-		assert.NotNil(t, obj.AbrCycles())
-		assert.Equal(t, value, *obj.AbrCycles())
-	})
-
-	t.Run("AbrDebugValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrDebug(value)
-		assert.NotNil(t, obj.AbrDebug())
-		assert.Equal(t, value, *obj.AbrDebug())
-	})
-
-	t.Run("AbrLossLowerValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 3.14
-		obj.SetAbrLossLower(value)
-		assert.NotNil(t, obj.AbrLossLower())
-		assert.Equal(t, value, *obj.AbrLossLower())
-	})
-
-	t.Run("AbrLossUpperValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 3.14
-		obj.SetAbrLossUpper(value)
-		assert.NotNil(t, obj.AbrLossUpper())
-		assert.Equal(t, value, *obj.AbrLossUpper())
-	})
-
-	t.Run("AbrMaxBitrateValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrMaxBitrate(value)
-		assert.NotNil(t, obj.AbrMaxBitrate())
-		assert.Equal(t, value, *obj.AbrMaxBitrate())
-	})
-
-	t.Run("AbrModeValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrMode(value)
-		assert.NotNil(t, obj.AbrMode())
-		assert.Equal(t, value, *obj.AbrMode())
-	})
-
-	t.Run("AbrStepdownValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 3.14
-		obj.SetAbrStepdown(value)
-		assert.NotNil(t, obj.AbrStepdown())
-		assert.Equal(t, value, *obj.AbrStepdown())
-	})
-
-	t.Run("AbrStepupValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetAbrStepup(value)
-		assert.NotNil(t, obj.AbrStepup())
-		assert.Equal(t, value, *obj.AbrStepup())
-	})
-
-	t.Run("MinBitrateValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := 42
-		obj.SetMinBitrate(value)
-		assert.NotNil(t, obj.MinBitrate())
-		assert.Equal(t, value, *obj.MinBitrate())
-	})
-
-	t.Run("PreferCodecValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := model.WebrtcPreferVideoCodec("test")
-		obj.SetPreferCodec(value)
-		assert.NotNil(t, obj.PreferCodec())
-		assert.Equal(t, value, *obj.PreferCodec())
-	})
-
-	t.Run("PreferVideoCodecValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := model.WebrtcPreferVideoCodec("test")
-		obj.SetPreferVideoCodec(value)
-		assert.NotNil(t, obj.PreferVideoCodec())
-		assert.Equal(t, value, *obj.PreferVideoCodec())
-	})
-
-	t.Run("TransportValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := model.WebrtcTransport("test")
-		obj.SetTransport(value)
-		assert.NotNil(t, obj.Transport())
-		assert.Equal(t, value, *obj.Transport())
-	})
-
-	t.Run("WebrtcAbrValue", func(t *testing.T) {
-		obj := model.NewStreamInputWebrtcPublishSpecific()
-		value := true
-		obj.SetWebrtcAbr(value)
-		assert.NotNil(t, obj.WebrtcAbr())
-		assert.Equal(t, value, *obj.WebrtcAbr())
 	})
 }
 
@@ -12211,117 +12326,7 @@ func TestStreamPreset(t *testing.T) {
 	})
 }
 
-func TestStreamPushBase(t *testing.T) {
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DisabledValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := true
-		obj.SetDisabled(value)
-		assert.NotNil(t, obj.Disabled())
-		assert.Equal(t, value, *obj.Disabled())
-	})
-
-	t.Run("RetryLimitValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := 42
-		obj.SetRetryLimit(value)
-		assert.NotNil(t, obj.RetryLimit())
-		assert.Equal(t, value, *obj.RetryLimit())
-	})
-
-	t.Run("RetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := model.Seconds(42)
-		obj.SetRetryTimeout(value)
-		assert.NotNil(t, obj.RetryTimeout())
-		assert.Equal(t, value, *obj.RetryTimeout())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := model.NewPushCounters()
-		value.SetBytes(model.Bytes(42))
-		value.SetEncodedBytes(model.Bytes(42))
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Bytes())
-		assert.Equal(t, model.Bytes(42), *result.Bytes())
-		assert.NotNil(t, result.EncodedBytes())
-		assert.Equal(t, model.Bytes(42), *result.EncodedBytes())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamPushBase()
-		value := model.Seconds(42)
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-}
-
 func TestStreamPushRtmp(t *testing.T) {
-	t.Run("CommentValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := "test"
-		obj.SetComment(value)
-		assert.NotNil(t, obj.Comment())
-		assert.Equal(t, value, *obj.Comment())
-	})
-
-	t.Run("DisabledValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := true
-		obj.SetDisabled(value)
-		assert.NotNil(t, obj.Disabled())
-		assert.Equal(t, value, *obj.Disabled())
-	})
-
-	t.Run("RetryLimitValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := 42
-		obj.SetRetryLimit(value)
-		assert.NotNil(t, obj.RetryLimit())
-		assert.Equal(t, value, *obj.RetryLimit())
-	})
-
-	t.Run("RetryTimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := model.Seconds(42)
-		obj.SetRetryTimeout(value)
-		assert.NotNil(t, obj.RetryTimeout())
-		assert.Equal(t, value, *obj.RetryTimeout())
-	})
-
-	t.Run("StatsValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := model.NewPushCounters()
-		value.SetBytes(model.Bytes(42))
-		value.SetEncodedBytes(model.Bytes(42))
-		obj.SetStats(value)
-		result := obj.Stats()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Bytes())
-		assert.Equal(t, model.Bytes(42), *result.Bytes())
-		assert.NotNil(t, result.EncodedBytes())
-		assert.Equal(t, model.Bytes(42), *result.EncodedBytes())
-	})
-
-	t.Run("TimeoutValue", func(t *testing.T) {
-		obj := model.NewStreamPushRtmp()
-		value := model.Seconds(42)
-		obj.SetTimeout(value)
-		assert.NotNil(t, obj.Timeout())
-		assert.Equal(t, value, *obj.Timeout())
-	})
-
 	t.Run("URLValue", func(t *testing.T) {
 		obj := model.NewStreamPushRtmp()
 		value := model.InputURL("test")
@@ -12382,6 +12387,27 @@ func TestStreamStats(t *testing.T) {
 		assert.NotNil(t, result.Bytes())
 		assert.Equal(t, model.Bytes(42), *result.Bytes())
 		assert.Equal(t, model.Seconds(42), result.Depth())
+	})
+
+	t.Run("InputsValue", func(t *testing.T) {
+		obj := model.NewStreamStats()
+		item1 := model.NewInputStats()
+		item2 := model.NewInputStats()
+		item1.SetActive(true)
+		item2.SetActive(true)
+		item1.SetAdSplicesIngested(1)
+		item2.SetAdSplicesIngested(2)
+		value := []model.InputStats{item1, item2}
+		obj.SetInputs(value)
+		result := obj.Inputs()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Active())
+			assert.Equal(t, true, *result[0].Active())
+			assert.NotNil(t, result[0].AdSplicesIngested())
+			assert.Equal(t, 1, *result[0].AdSplicesIngested())
+		}
 	})
 
 	t.Run("LastDtsAtValue", func(t *testing.T) {
@@ -12494,27 +12520,6 @@ func TestStreamerConfigConfig(t *testing.T) {
 		assert.Equal(t, value, *obj.AuthToken())
 	})
 
-	t.Run("BalancersValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		item1 := model.NewBalancerConfig()
-		item2 := model.NewBalancerConfig()
-		item1.SetMode(model.BalancerConfigMode("test"))
-		item2.SetMode(model.BalancerConfigMode("test"))
-		item1.SetName(model.MediaName("test"))
-		item2.SetName(model.MediaName("test"))
-		value := []model.BalancerConfig{item1, item2}
-		obj.SetBalancers(value)
-		result := obj.Balancers()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].Mode())
-			assert.Equal(t, model.BalancerConfigMode("test"), *result[0].Mode())
-			assert.NotNil(t, result[0].Name())
-			assert.Equal(t, model.MediaName("test"), *result[0].Name())
-		}
-	})
-
 	t.Run("CachesValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		item1 := model.NewCacheConfig()
@@ -12542,20 +12547,6 @@ func TestStreamerConfigConfig(t *testing.T) {
 		obj.SetCameraAlarm(value)
 		result := obj.CameraAlarm()
 		assert.NotNil(t, result)
-	})
-
-	t.Run("ChassisValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		value := model.NewChassisConfig()
-		value.SetAutoReboot(true)
-		value.SetDefaultGatewayInterface("test")
-		obj.SetChassis(value)
-		result := obj.Chassis()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.AutoReboot())
-		assert.Equal(t, true, *result.AutoReboot())
-		assert.NotNil(t, result.DefaultGatewayInterface())
-		assert.Equal(t, "test", *result.DefaultGatewayInterface())
 	})
 
 	t.Run("ClusterKeyValue", func(t *testing.T) {
@@ -12658,17 +12649,6 @@ func TestStreamerConfigConfig(t *testing.T) {
 		}
 	})
 
-	t.Run("FileProcessorValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		value := model.NewFileProcessorConfig()
-		value.SetPath(model.DiskPath("test"))
-		obj.SetFileProcessor(value)
-		result := obj.FileProcessor()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Path())
-		assert.Equal(t, model.DiskPath("test"), *result.Path())
-	})
-
 	t.Run("GeoipValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		value := model.DiskPath("test")
@@ -12695,17 +12675,6 @@ func TestStreamerConfigConfig(t *testing.T) {
 			assert.Equal(t, true, *result[0].Mainpage())
 			assert.Equal(t, model.MediaName("test"), result[0].Prefix())
 		}
-	})
-
-	t.Run("IptvValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		value := model.NewIptvConfig()
-		value.SetDatabase("test")
-		obj.SetIptv(value)
-		result := obj.Iptv()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Database())
-		assert.Equal(t, "test", *result.Database())
 	})
 
 	t.Run("ListenersValue", func(t *testing.T) {
@@ -12746,27 +12715,6 @@ func TestStreamerConfigConfig(t *testing.T) {
 		obj.SetNvidiaMonitor(value)
 		assert.NotNil(t, obj.NvidiaMonitor())
 		assert.Equal(t, value, *obj.NvidiaMonitor())
-	})
-
-	t.Run("PeersValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		item1 := model.NewPeerConfig()
-		item2 := model.NewPeerConfig()
-		item1.SetAPIURL(model.URL("test"))
-		item2.SetAPIURL(model.URL("test"))
-		item1.SetChannelLimit(1)
-		item2.SetChannelLimit(2)
-		value := []model.PeerConfig{item1, item2}
-		obj.SetPeers(value)
-		result := obj.Peers()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].APIURL())
-			assert.Equal(t, model.URL("test"), *result[0].APIURL())
-			assert.NotNil(t, result[0].ChannelLimit())
-			assert.Equal(t, 1, *result[0].ChannelLimit())
-		}
 	})
 
 	t.Run("PulsedbValue", func(t *testing.T) {
@@ -12814,91 +12762,68 @@ func TestStreamerConfigConfig(t *testing.T) {
 		assert.Equal(t, value, *obj.SessionLog())
 	})
 
-	t.Run("SourcesValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		item1 := model.NewSourceConfig()
-		item2 := model.NewSourceConfig()
-		value := []model.SourceConfig{item1, item2}
-		obj.SetSources(value)
-		result := obj.Sources()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-		}
-	})
-
 	t.Run("Srt2PlayValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrt2Play(value)
 		result := obj.Srt2Play()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("Srt2PublishValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrt2Publish(value)
 		result := obj.Srt2Publish()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("SrtPlayValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrtPlay(value)
 		result := obj.SrtPlay()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
 	t.Run("SrtPublishValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
 		value := model.NewSrtConfig()
+		value.SetEnforcedencryption(true)
+		value.SetLatency(model.Milliseconds(3.14))
 		obj.SetSrtPublish(value)
 		result := obj.SrtPublish()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Enforcedencryption())
+		assert.Equal(t, true, *result.Enforcedencryption())
+		assert.NotNil(t, result.Latency())
+		assert.Equal(t, model.Milliseconds(3.14), *result.Latency())
 	})
 
-	t.Run("StreamsValue", func(t *testing.T) {
+	t.Run("StreamingPrefixValue", func(t *testing.T) {
 		obj := model.NewStreamerConfigConfig()
-		item1 := model.NewStreamConfig()
-		item2 := model.NewStreamConfig()
-		item1.SetCanPublish(true)
-		item2.SetCanPublish(true)
-		item1.SetComment("item1")
-		item2.SetComment("item2")
-		value := []model.StreamConfig{item1, item2}
-		obj.SetStreams(value)
-		result := obj.Streams()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].CanPublish())
-			assert.Equal(t, true, *result[0].CanPublish())
-			assert.NotNil(t, result[0].Comment())
-			assert.Equal(t, "item1", *result[0].Comment())
-		}
-	})
-
-	t.Run("TemplatesValue", func(t *testing.T) {
-		obj := model.NewStreamerConfigConfig()
-		item1 := model.NewTemplateConfig()
-		item2 := model.NewTemplateConfig()
-		item1.SetDisabled(true)
-		item2.SetDisabled(true)
-		item1.SetStatic(true)
-		item2.SetStatic(true)
-		value := []model.TemplateConfig{item1, item2}
-		obj.SetTemplates(value)
-		result := obj.Templates()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].Disabled())
-			assert.Equal(t, true, *result[0].Disabled())
-			assert.NotNil(t, result[0].Static())
-			assert.Equal(t, true, *result[0].Static())
-		}
+		value := "test"
+		obj.SetStreamingPrefix(value)
+		assert.NotNil(t, obj.StreamingPrefix())
+		assert.Equal(t, value, *obj.StreamingPrefix())
 	})
 
 	t.Run("TotalBandwidthValue", func(t *testing.T) {
@@ -13008,6 +12933,14 @@ func TestStreamerConfig(t *testing.T) {
 		assert.Equal(t, value, *obj.APIURL())
 	})
 
+	t.Run("CdnZoneValue", func(t *testing.T) {
+		obj := model.NewStreamerConfig()
+		value := "test"
+		obj.SetCdnZone(value)
+		assert.NotNil(t, obj.CdnZone())
+		assert.Equal(t, value, *obj.CdnZone())
+	})
+
 	t.Run("ChannelLimitValue", func(t *testing.T) {
 		obj := model.NewStreamerConfig()
 		value := 42
@@ -13020,8 +12953,7 @@ func TestStreamerConfig(t *testing.T) {
 		obj := model.NewStreamerConfig()
 		value := "test"
 		obj.SetClusterKey(value)
-		assert.NotNil(t, obj.ClusterKey())
-		assert.Equal(t, value, *obj.ClusterKey())
+		assert.Equal(t, value, obj.ClusterKey())
 	})
 
 	t.Run("ConfigValue", func(t *testing.T) {
@@ -13063,8 +12995,7 @@ func TestStreamerConfig(t *testing.T) {
 		obj := model.NewStreamerConfig()
 		value := model.ServerName("test")
 		obj.SetHostname(value)
-		assert.NotNil(t, obj.Hostname())
-		assert.Equal(t, value, *obj.Hostname())
+		assert.Equal(t, value, obj.Hostname())
 	})
 
 	t.Run("PrivatePayloadURLValue", func(t *testing.T) {
@@ -13087,8 +13018,7 @@ func TestStreamerConfig(t *testing.T) {
 		obj := model.NewStreamerConfig()
 		value := model.CentralNodeRoleRole("test")
 		obj.SetRole(value)
-		assert.NotNil(t, obj.Role())
-		assert.Equal(t, value, *obj.Role())
+		assert.Equal(t, value, obj.Role())
 	})
 
 	t.Run("StatsValue", func(t *testing.T) {
@@ -13121,6 +13051,14 @@ func TestStreamer(t *testing.T) {
 		obj.SetAPIURL(value)
 		assert.NotNil(t, obj.APIURL())
 		assert.Equal(t, value, *obj.APIURL())
+	})
+
+	t.Run("CdnZoneValue", func(t *testing.T) {
+		obj := model.NewStreamer()
+		value := "test"
+		obj.SetCdnZone(value)
+		assert.NotNil(t, obj.CdnZone())
+		assert.Equal(t, value, *obj.CdnZone())
 	})
 
 	t.Run("ChannelLimitValue", func(t *testing.T) {
@@ -13236,6 +13174,14 @@ func TestStreamerLayoutPrediction(t *testing.T) {
 		obj.SetAPIURL(value)
 		assert.NotNil(t, obj.APIURL())
 		assert.Equal(t, value, *obj.APIURL())
+	})
+
+	t.Run("CdnZoneValue", func(t *testing.T) {
+		obj := model.NewStreamerLayoutPrediction()
+		value := "test"
+		obj.SetCdnZone(value)
+		assert.NotNil(t, obj.CdnZone())
+		assert.Equal(t, value, *obj.CdnZone())
 	})
 
 	t.Run("ChannelLimitValue", func(t *testing.T) {
@@ -13375,8 +13321,8 @@ func TestStreamersList(t *testing.T) {
 		item2 := model.NewStreamer()
 		item1.SetAPIURL(model.URL("test"))
 		item2.SetAPIURL(model.URL("test"))
-		item1.SetChannelLimit(1)
-		item2.SetChannelLimit(2)
+		item1.SetCdnZone("item1")
+		item2.SetCdnZone("item2")
 		value := []model.Streamer{item1, item2}
 		obj.SetStreamers(value)
 		result := obj.Streamers()
@@ -13385,8 +13331,8 @@ func TestStreamersList(t *testing.T) {
 		if len(result) > 0 {
 			assert.NotNil(t, result[0].APIURL())
 			assert.Equal(t, model.URL("test"), *result[0].APIURL())
-			assert.NotNil(t, result[0].ChannelLimit())
-			assert.Equal(t, 1, *result[0].ChannelLimit())
+			assert.NotNil(t, result[0].CdnZone())
+			assert.Equal(t, "item1", *result[0].CdnZone())
 		}
 	})
 }
@@ -13496,6 +13442,22 @@ func TestSystemConfig(t *testing.T) {
 		result := obj.Database()
 		assert.NotNil(t, result)
 		assert.Equal(t, "test", result.URL())
+	})
+
+	t.Run("IsAPIV2EnabledValue", func(t *testing.T) {
+		obj := model.NewSystemConfig()
+		value := true
+		obj.SetIsAPIV2Enabled(value)
+		assert.NotNil(t, obj.IsAPIV2Enabled())
+		assert.Equal(t, value, *obj.IsAPIV2Enabled())
+	})
+
+	t.Run("IsNvrEnabledValue", func(t *testing.T) {
+		obj := model.NewSystemConfig()
+		value := true
+		obj.SetIsNvrEnabled(value)
+		assert.NotNil(t, obj.IsNvrEnabled())
+		assert.Equal(t, value, *obj.IsNvrEnabled())
 	})
 
 	t.Run("LicenseKeyValue", func(t *testing.T) {
@@ -13633,56 +13595,15 @@ func TestTSVersions(t *testing.T) {
 	})
 }
 
-func TestTemplateConfig(t *testing.T) {
-	t.Run("DisabledValue", func(t *testing.T) {
-		obj := model.NewTemplateConfig()
-		value := true
-		obj.SetDisabled(value)
-		assert.NotNil(t, obj.Disabled())
-		assert.Equal(t, value, *obj.Disabled())
-	})
-
-	t.Run("DvrValue", func(t *testing.T) {
-		obj := model.NewTemplateConfig()
-		value := model.NewStreamDvrSpec()
-		value.SetDiskUsageLimit(model.Percent(42))
-		value.SetEpisodesExpiration(model.Seconds(42))
-		obj.SetDvr(value)
-		result := obj.Dvr()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.DiskUsageLimit())
-		assert.Equal(t, model.Percent(42), *result.DiskUsageLimit())
-		assert.NotNil(t, result.EpisodesExpiration())
-		assert.Equal(t, model.Seconds(42), *result.EpisodesExpiration())
-	})
-
-	t.Run("StaticValue", func(t *testing.T) {
-		obj := model.NewTemplateConfig()
-		value := true
-		obj.SetStatic(value)
-		assert.NotNil(t, obj.Static())
-		assert.Equal(t, value, *obj.Static())
-	})
-
-	t.Run("VisionValue", func(t *testing.T) {
-		obj := model.NewTemplateConfig()
-		value := model.NewVisionSpec()
-		value.SetAlg(model.VisionSpecAlg("test"))
-		value.SetAreas("test")
-		obj.SetVision(value)
-		result := obj.Vision()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Alg())
-		assert.Equal(t, model.VisionSpecAlg("test"), *result.Alg())
-		assert.NotNil(t, result.Areas())
-		assert.Equal(t, "test", *result.Areas())
+func TestThumbnailsSpec(t *testing.T) {
+	t.Run("HwValue", func(t *testing.T) {
+		obj := model.NewThumbnailsSpec()
+		value := model.TranscoderDevice("test")
+		obj.SetHw(value)
+		assert.NotNil(t, obj.Hw())
+		assert.Equal(t, value, *obj.Hw())
 	})
 }
-
-func TestTemplateConfigSpecific(t *testing.T) {
-}
-
-func TestThumbnailsSpec(t *testing.T) {}
 
 func TestTlsCertificate(t *testing.T) {
 	t.Run("CacertValue", func(t *testing.T) {
@@ -13997,6 +13918,252 @@ func TestTrackInfoBase(t *testing.T) {
 		obj.SetFrameDuration(value)
 		assert.NotNil(t, obj.FrameDuration())
 		assert.Equal(t, value, *obj.FrameDuration())
+	})
+}
+
+func TestTrackInfoFull(t *testing.T) {
+	t.Run("AvgFPSValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 3.14
+		obj.SetAvgFPS(value)
+		assert.NotNil(t, obj.AvgFPS())
+		assert.Equal(t, value, *obj.AvgFPS())
+	})
+
+	t.Run("AvgGopValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetAvgGop(value)
+		assert.NotNil(t, obj.AvgGop())
+		assert.Equal(t, value, *obj.AvgGop())
+	})
+
+	t.Run("BandwidthValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Speed(42)
+		obj.SetBandwidth(value)
+		assert.NotNil(t, obj.Bandwidth())
+		assert.Equal(t, value, *obj.Bandwidth())
+	})
+
+	t.Run("BframesValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetBframes(value)
+		assert.NotNil(t, obj.Bframes())
+		assert.Equal(t, value, *obj.Bframes())
+	})
+
+	t.Run("BitrateValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Speed(42)
+		obj.SetBitrate(value)
+		assert.NotNil(t, obj.Bitrate())
+		assert.Equal(t, value, *obj.Bitrate())
+	})
+
+	t.Run("ChannelsValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetChannels(value)
+		assert.NotNil(t, obj.Channels())
+		assert.Equal(t, value, *obj.Channels())
+	})
+
+	t.Run("ClosedCaptionsValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		item1 := model.NewClosedCaptions()
+		item2 := model.NewClosedCaptions()
+		item1.SetLanguage("item1")
+		item2.SetLanguage("item2")
+		item1.SetName("item1")
+		item2.SetName("item2")
+		value := []model.ClosedCaptions{item1, item2}
+		obj.SetClosedCaptions(value)
+		result := obj.ClosedCaptions()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Language())
+			assert.Equal(t, "item1", *result[0].Language())
+			assert.NotNil(t, result[0].Name())
+			assert.Equal(t, "item1", *result[0].Name())
+		}
+	})
+
+	t.Run("CodecValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.FrameCodec("test")
+		obj.SetCodec(value)
+		assert.NotNil(t, obj.Codec())
+		assert.Equal(t, value, *obj.Codec())
+	})
+
+	t.Run("ContentValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.FrameContent("test")
+		obj.SetContent(value)
+		assert.Equal(t, value, obj.Content())
+	})
+
+	t.Run("FPSValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 3.14
+		obj.SetFPS(value)
+		assert.NotNil(t, obj.FPS())
+		assert.Equal(t, value, *obj.FPS())
+	})
+
+	t.Run("FrameDurationValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Ticks(3.14)
+		obj.SetFrameDuration(value)
+		assert.NotNil(t, obj.FrameDuration())
+		assert.Equal(t, value, *obj.FrameDuration())
+	})
+
+	t.Run("GopSizeValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetGopSize(value)
+		assert.NotNil(t, obj.GopSize())
+		assert.Equal(t, value, *obj.GopSize())
+	})
+
+	t.Run("HeightValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Pixels(42)
+		obj.SetHeight(value)
+		assert.NotNil(t, obj.Height())
+		assert.Equal(t, value, *obj.Height())
+	})
+
+	t.Run("IsProgressiveValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := true
+		obj.SetIsProgressive(value)
+		assert.NotNil(t, obj.IsProgressive())
+		assert.Equal(t, value, *obj.IsProgressive())
+	})
+
+	t.Run("LanguageValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := "test"
+		obj.SetLanguage(value)
+		assert.NotNil(t, obj.Language())
+		assert.Equal(t, value, *obj.Language())
+	})
+
+	t.Run("LastGopValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetLastGop(value)
+		assert.NotNil(t, obj.LastGop())
+		assert.Equal(t, value, *obj.LastGop())
+	})
+
+	t.Run("LengthSizeValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetLengthSize(value)
+		assert.NotNil(t, obj.LengthSize())
+		assert.Equal(t, value, *obj.LengthSize())
+	})
+
+	t.Run("LevelValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := "test"
+		obj.SetLevel(value)
+		assert.NotNil(t, obj.Level())
+		assert.Equal(t, value, *obj.Level())
+	})
+
+	t.Run("NumRefsFramesValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetNumRefsFrames(value)
+		assert.NotNil(t, obj.NumRefsFrames())
+		assert.Equal(t, value, *obj.NumRefsFrames())
+	})
+
+	t.Run("PidValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetPid(value)
+		assert.NotNil(t, obj.Pid())
+		assert.Equal(t, value, *obj.Pid())
+	})
+
+	t.Run("PixFmtValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.FrameVideoPixFmt("test")
+		obj.SetPixFmt(value)
+		assert.NotNil(t, obj.PixFmt())
+		assert.Equal(t, value, *obj.PixFmt())
+	})
+
+	t.Run("PixelHeightValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Pixels(42)
+		obj.SetPixelHeight(value)
+		assert.NotNil(t, obj.PixelHeight())
+		assert.Equal(t, value, *obj.PixelHeight())
+	})
+
+	t.Run("PixelWidthValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Pixels(42)
+		obj.SetPixelWidth(value)
+		assert.NotNil(t, obj.PixelWidth())
+		assert.Equal(t, value, *obj.PixelWidth())
+	})
+
+	t.Run("ProfileValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := "test"
+		obj.SetProfile(value)
+		assert.NotNil(t, obj.Profile())
+		assert.Equal(t, value, *obj.Profile())
+	})
+
+	t.Run("SampleRateValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetSampleRate(value)
+		assert.NotNil(t, obj.SampleRate())
+		assert.Equal(t, value, *obj.SampleRate())
+	})
+
+	t.Run("SarHeightValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetSarHeight(value)
+		assert.NotNil(t, obj.SarHeight())
+		assert.Equal(t, value, *obj.SarHeight())
+	})
+
+	t.Run("SarWidthValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := 42
+		obj.SetSarWidth(value)
+		assert.NotNil(t, obj.SarWidth())
+		assert.Equal(t, value, *obj.SarWidth())
+	})
+
+	t.Run("TitleValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := "test"
+		obj.SetTitle(value)
+		assert.NotNil(t, obj.Title())
+		assert.Equal(t, value, *obj.Title())
+	})
+
+	t.Run("WidthValue", func(t *testing.T) {
+		obj := model.NewTrackInfoFull()
+		value := model.Pixels(42)
+		obj.SetWidth(value)
+		assert.NotNil(t, obj.Width())
+		assert.Equal(t, value, *obj.Width())
 	})
 }
 
@@ -14873,6 +15040,14 @@ func TestTranscoderDeviceStats(t *testing.T) {
 		assert.NotNil(t, obj.Type())
 		assert.Equal(t, value, *obj.Type())
 	})
+
+	t.Run("UUIDValue", func(t *testing.T) {
+		obj := model.NewTranscoderDeviceStats()
+		value := "test"
+		obj.SetUUID(value)
+		assert.NotNil(t, obj.UUID())
+		assert.Equal(t, value, *obj.UUID())
+	})
 }
 
 func TestTransponderConfig(t *testing.T) {
@@ -15007,14 +15182,14 @@ func TestTransponderConfig(t *testing.T) {
 		obj := model.NewTransponderConfig()
 		value := model.NewMultiplexerStats()
 		value.SetBitrate(model.Speed(42))
-		value.SetEncoded(model.Bytes(42))
+		value.SetEcmgNetworkErrors(42)
 		obj.SetStats(value)
 		result := obj.Stats()
 		assert.NotNil(t, result)
 		assert.NotNil(t, result.Bitrate())
 		assert.Equal(t, model.Speed(42), *result.Bitrate())
-		assert.NotNil(t, result.Encoded())
-		assert.Equal(t, model.Bytes(42), *result.Encoded())
+		assert.NotNil(t, result.EcmgNetworkErrors())
+		assert.Equal(t, 42, *result.EcmgNetworkErrors())
 	})
 
 	t.Run("TimeOffsetsValue", func(t *testing.T) {
@@ -15094,7 +15269,7 @@ func TestTransponderConfig(t *testing.T) {
 
 	t.Run("VideoBufferValue", func(t *testing.T) {
 		obj := model.NewTransponderConfig()
-		value := 42
+		value := model.Milliseconds(3.14)
 		obj.SetVideoBuffer(value)
 		assert.NotNil(t, obj.VideoBuffer())
 		assert.Equal(t, value, *obj.VideoBuffer())
@@ -15254,14 +15429,14 @@ func TestTransponderProgram(t *testing.T) {
 		obj := model.NewTransponderProgram()
 		value := model.NewOutputMpegtsPids()
 		value.SetDefault("test")
-		value.SetPcr(42)
+		value.SetEcm(42)
 		obj.SetPids(value)
 		result := obj.Pids()
 		assert.NotNil(t, result)
 		assert.NotNil(t, result.Default())
 		assert.Equal(t, "test", *result.Default())
-		assert.NotNil(t, result.Pcr())
-		assert.Equal(t, 42, *result.Pcr())
+		assert.NotNil(t, result.Ecm())
+		assert.Equal(t, 42, *result.Ecm())
 	})
 
 	t.Run("ProgramIDValue", func(t *testing.T) {
@@ -15553,6 +15728,14 @@ func TestUserBase(t *testing.T) {
 		assert.Equal(t, value, *obj.Email())
 	})
 
+	t.Run("ExternalIDValue", func(t *testing.T) {
+		obj := model.NewUserBase()
+		value := "test"
+		obj.SetExternalID(value)
+		assert.NotNil(t, obj.ExternalID())
+		assert.Equal(t, value, *obj.ExternalID())
+	})
+
 	t.Run("FullnameValue", func(t *testing.T) {
 		obj := model.NewUserBase()
 		value := "test"
@@ -15641,6 +15824,14 @@ func TestUserCreate(t *testing.T) {
 		obj.SetEmail(value)
 		assert.NotNil(t, obj.Email())
 		assert.Equal(t, value, *obj.Email())
+	})
+
+	t.Run("ExternalIDValue", func(t *testing.T) {
+		obj := model.NewUserCreate()
+		value := "test"
+		obj.SetExternalID(value)
+		assert.NotNil(t, obj.ExternalID())
+		assert.Equal(t, value, *obj.ExternalID())
 	})
 
 	t.Run("FullnameValue", func(t *testing.T) {
@@ -15776,6 +15967,14 @@ func TestUser(t *testing.T) {
 		obj.SetEmail(value)
 		assert.NotNil(t, obj.Email())
 		assert.Equal(t, value, *obj.Email())
+	})
+
+	t.Run("ExternalIDValue", func(t *testing.T) {
+		obj := model.NewUser()
+		value := "test"
+		obj.SetExternalID(value)
+		assert.NotNil(t, obj.ExternalID())
+		assert.Equal(t, value, *obj.ExternalID())
 	})
 
 	t.Run("FullnameValue", func(t *testing.T) {
@@ -16251,9 +16450,12 @@ func TestVodConfig(t *testing.T) {
 	t.Run("ThumbnailsValue", func(t *testing.T) {
 		obj := model.NewVodConfig()
 		value := model.NewThumbnailsSpec()
+		value.SetHw(model.TranscoderDevice("test"))
 		obj.SetThumbnails(value)
 		result := obj.Thumbnails()
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Hw())
+		assert.Equal(t, model.TranscoderDevice("test"), *result.Hw())
 	})
 
 	t.Run("TimeoutValue", func(t *testing.T) {
@@ -16338,6 +16540,119 @@ func TestWatcherAgentConfig(t *testing.T) {
 		assert.Equal(t, "test", *result.AgentType())
 		assert.NotNil(t, result.ConnectionsEstablished())
 		assert.Equal(t, 42, *result.ConnectionsEstablished())
+	})
+
+	t.Run("StreamsValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfig()
+		item1 := model.NewWatcherAgentConfigStreamsItem()
+		item2 := model.NewWatcherAgentConfigStreamsItem()
+		item1.SetComment("item1")
+		item2.SetComment("item2")
+		item1.SetName(model.MediaName("test"))
+		item2.SetName(model.MediaName("test"))
+		value := []model.WatcherAgentConfigStreamsItem{item1, item2}
+		obj.SetStreams(value)
+		result := obj.Streams()
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+		if len(result) > 0 {
+			assert.NotNil(t, result[0].Comment())
+			assert.Equal(t, "item1", *result[0].Comment())
+			assert.NotNil(t, result[0].Name())
+			assert.Equal(t, model.MediaName("test"), *result[0].Name())
+		}
+	})
+}
+
+func TestWatcherAgentConfigStreamsItem(t *testing.T) {
+	t.Run("CommentValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := "test"
+		obj.SetComment(value)
+		assert.NotNil(t, obj.Comment())
+		assert.Equal(t, value, *obj.Comment())
+	})
+
+	t.Run("NameValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.MediaName("test")
+		obj.SetName(value)
+		assert.NotNil(t, obj.Name())
+		assert.Equal(t, value, *obj.Name())
+	})
+
+	t.Run("NamedByValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.NamedBy("test")
+		obj.SetNamedBy(value)
+		assert.NotNil(t, obj.NamedBy())
+		assert.Equal(t, value, *obj.NamedBy())
+	})
+
+	t.Run("NmosValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.NewNmosConfig()
+		value.SetBindToDevice("test")
+		value.SetEnabled(true)
+		obj.SetNmos(value)
+		result := obj.Nmos()
+		assert.NotNil(t, result)
+		assert.NotNil(t, result.BindToDevice())
+		assert.Equal(t, "test", *result.BindToDevice())
+		assert.NotNil(t, result.Enabled())
+		assert.Equal(t, true, *result.Enabled())
+	})
+
+	t.Run("OrganizationValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.NewOrganizationBase()
+		value.SetID(42)
+		value.SetTitle("test")
+		obj.SetOrganization(value)
+		result := obj.Organization()
+		assert.NotNil(t, result)
+		assert.Equal(t, 42, result.ID())
+		assert.Equal(t, "test", result.Title())
+	})
+
+	t.Run("PositionValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.SortIndex(42)
+		obj.SetPosition(value)
+		assert.NotNil(t, obj.Position())
+		assert.Equal(t, value, *obj.Position())
+	})
+
+	t.Run("RecheckSecondaryInputsIntervalValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.Seconds(42)
+		obj.SetRecheckSecondaryInputsInterval(value)
+		assert.NotNil(t, obj.RecheckSecondaryInputsInterval())
+		assert.Equal(t, value, *obj.RecheckSecondaryInputsInterval())
+	})
+
+	t.Run("SrtPortResolveValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := true
+		obj.SetSrtPortResolve(value)
+		assert.NotNil(t, obj.SrtPortResolve())
+		assert.Equal(t, value, *obj.SrtPortResolve())
+	})
+
+	t.Run("TemplateValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := model.MediaName("test")
+		obj.SetTemplate(value)
+		assert.NotNil(t, obj.Template())
+		assert.Equal(t, value, *obj.Template())
+	})
+
+	t.Run("TitleValue", func(t *testing.T) {
+		obj := model.NewWatcherAgentConfigStreamsItem()
+		value := "test"
+		obj.SetTitle(value)
+		assert.NotNil(t, obj.Title())
+		assert.Equal(t, value, *obj.Title())
 	})
 }
 
@@ -16663,284 +16978,6 @@ func TestWatcherStatus(t *testing.T) {
 		obj.SetOperatorID(value)
 		assert.NotNil(t, obj.OperatorID())
 		assert.Equal(t, value, *obj.OperatorID())
-	})
-}
-
-func TestWatcherStreamConfigAudio(t *testing.T) {
-	t.Run("DisabledValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfigAudio()
-		value := true
-		obj.SetDisabled(value)
-		assert.NotNil(t, obj.Disabled())
-		assert.Equal(t, value, *obj.Disabled())
-	})
-
-	t.Run("TranscodeAudioCodecValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfigAudio()
-		value := model.FrameAudioCodec("test")
-		obj.SetTranscodeAudioCodec(value)
-		assert.NotNil(t, obj.TranscodeAudioCodec())
-		assert.Equal(t, value, *obj.TranscodeAudioCodec())
-	})
-}
-
-func TestWatcherStreamConfig(t *testing.T) {
-	t.Run("AudioValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewWatcherStreamConfigAudio()
-		value.SetDisabled(true)
-		value.SetTranscodeAudioCodec(model.FrameAudioCodec("test"))
-		obj.SetAudio(value)
-		result := obj.Audio()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Disabled())
-		assert.Equal(t, true, *result.Disabled())
-		assert.NotNil(t, result.TranscodeAudioCodec())
-		assert.Equal(t, model.FrameAudioCodec("test"), *result.TranscodeAudioCodec())
-	})
-
-	t.Run("CanPublishValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := true
-		obj.SetCanPublish(value)
-		assert.NotNil(t, obj.CanPublish())
-		assert.Equal(t, value, *obj.CanPublish())
-	})
-
-	t.Run("CoordinatesValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewMapSpec()
-		value.SetLatitude(3.14)
-		value.SetLongitude(3.14)
-		obj.SetCoordinates(value)
-		result := obj.Coordinates()
-		assert.NotNil(t, result)
-		assert.Equal(t, 3.14, result.Latitude())
-		assert.Equal(t, 3.14, result.Longitude())
-	})
-
-	t.Run("CreatedAtValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		tNow := time.Now().UnixMilli()
-		obj.SetCreatedAt(model.UtcMs(float64(tNow)))
-		assert.NotNil(t, obj.CreatedAt())
-		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.CreatedAt())
-	})
-
-	t.Run("DomainValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewDomainBase()
-		value.SetID(42)
-		value.SetTitle("test")
-		obj.SetDomain(value)
-		result := obj.Domain()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.ID())
-		assert.Equal(t, 42, *result.ID())
-		assert.NotNil(t, result.Title())
-		assert.Equal(t, "test", *result.Title())
-	})
-
-	t.Run("FirmwareUpdateDurationValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.Milliseconds(3.14)
-		obj.SetFirmwareUpdateDuration(value)
-		assert.NotNil(t, obj.FirmwareUpdateDuration())
-		assert.Equal(t, value, *obj.FirmwareUpdateDuration())
-	})
-
-	t.Run("FolderIDValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := 42
-		obj.SetFolderID(value)
-		assert.NotNil(t, obj.FolderID())
-		assert.Equal(t, value, *obj.FolderID())
-	})
-
-	t.Run("LastChangeValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewAuditLogRecord()
-		tNow0 := time.Now().UnixMilli()
-		value.SetCreatedAt(model.UtcMs(float64(tNow0)))
-		value.SetUser("test")
-		obj.SetLastChange(value)
-		result := obj.LastChange()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.CreatedAt())
-		assert.Equal(t, model.UtcMs(float64(tNow0)), *result.CreatedAt())
-		assert.NotNil(t, result.User())
-		assert.Equal(t, "test", *result.User())
-	})
-
-	t.Run("LastEpisodeAtValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		tNow := time.Now().UnixMilli()
-		obj.SetLastEpisodeAt(model.UtcMs(float64(tNow)))
-		assert.NotNil(t, obj.LastEpisodeAt())
-		assert.Equal(t, model.UtcMs(float64(tNow)), *obj.LastEpisodeAt())
-	})
-
-	t.Run("LayoutValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewCentralStreamLayout()
-		value.SetChangeReason(model.CentralStreamLayoutChangeReason("test"))
-		tNow1 := time.Now().UnixMilli()
-		value.SetCreatedAt(model.UtcMs(float64(tNow1)))
-		obj.SetLayout(value)
-		result := obj.Layout()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.ChangeReason())
-		assert.Equal(t, model.CentralStreamLayoutChangeReason("test"), *result.ChangeReason())
-		assert.NotNil(t, result.CreatedAt())
-		assert.Equal(t, model.UtcMs(float64(tNow1)), *result.CreatedAt())
-	})
-
-	t.Run("LayoutRulesValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewStreamZoneConfig()
-		obj.SetLayoutRules(value)
-		result := obj.LayoutRules()
-		assert.NotNil(t, result)
-	})
-
-	t.Run("MapCoordinatesValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewMapSpec()
-		value.SetLatitude(3.14)
-		value.SetLongitude(3.14)
-		obj.SetMapCoordinates(value)
-		result := obj.MapCoordinates()
-		assert.NotNil(t, result)
-		assert.Equal(t, 3.14, result.Latitude())
-		assert.Equal(t, 3.14, result.Longitude())
-	})
-
-	t.Run("NotificationsValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		item1 := model.NewWatcherStreamConfigNotificationsItem()
-		item2 := model.NewWatcherStreamConfigNotificationsItem()
-		item1.SetNotificationType(model.NotificationType("test"))
-		item2.SetNotificationType(model.NotificationType("test"))
-		value := []model.WatcherStreamConfigNotificationsItem{item1, item2}
-		obj.SetNotifications(value)
-		result := obj.Notifications()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].NotificationType())
-			assert.Equal(t, model.NotificationType("test"), *result[0].NotificationType())
-		}
-	})
-
-	t.Run("OnvifValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewStreamOnvifConfig()
-		value.SetPtz(true)
-		value.SetURL("test")
-		obj.SetOnvif(value)
-		result := obj.Onvif()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.Ptz())
-		assert.Equal(t, true, *result.Ptz())
-		assert.NotNil(t, result.URL())
-		assert.Equal(t, "test", *result.URL())
-	})
-
-	t.Run("OrganizationValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewOrganizationStream()
-		value.SetID(42)
-		value.SetTitle("test")
-		obj.SetOrganization(value)
-		result := obj.Organization()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.ID())
-		assert.Equal(t, 42, *result.ID())
-		assert.NotNil(t, result.Title())
-		assert.Equal(t, "test", *result.Title())
-	})
-
-	t.Run("OrganizationIDValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := 42
-		obj.SetOrganizationID(value)
-		assert.NotNil(t, obj.OrganizationID())
-		assert.Equal(t, value, *obj.OrganizationID())
-	})
-
-	t.Run("PathValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		item1 := model.NewStreamPathItem()
-		item2 := model.NewStreamPathItem()
-		item1.SetID(1)
-		item2.SetID(2)
-		item1.SetTitle("item1")
-		item2.SetTitle("item2")
-		value := []model.StreamPathItem{item1, item2}
-		obj.SetPath(value)
-		result := obj.Path()
-		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
-		if len(result) > 0 {
-			assert.NotNil(t, result[0].ID())
-			assert.Equal(t, 1, *result[0].ID())
-			assert.NotNil(t, result[0].Title())
-			assert.Equal(t, "item1", *result[0].Title())
-		}
-	})
-
-	t.Run("PostalAddressValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := "test"
-		obj.SetPostalAddress(value)
-		assert.NotNil(t, obj.PostalAddress())
-		assert.Equal(t, value, *obj.PostalAddress())
-	})
-
-	t.Run("PresetValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := model.NewStreamPreset()
-		value.SetID(42)
-		value.SetIsAdjustable(true)
-		obj.SetPreset(value)
-		result := obj.Preset()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.ID())
-		assert.Equal(t, 42, *result.ID())
-		assert.NotNil(t, result.IsAdjustable())
-		assert.Equal(t, true, *result.IsAdjustable())
-	})
-
-	t.Run("PresetIDValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfig()
-		value := 42
-		obj.SetPresetID(value)
-		assert.NotNil(t, obj.PresetID())
-		assert.Equal(t, value, *obj.PresetID())
-	})
-}
-
-func TestWatcherStreamConfigNotificationsItem(t *testing.T) {
-	t.Run("EventTypesValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfigNotificationsItem()
-		value := model.NewEventTypes()
-		value.SetEpisodeFace(true)
-		value.SetEpisodeGeneric(true)
-		obj.SetEventTypes(value)
-		result := obj.EventTypes()
-		assert.NotNil(t, result)
-		assert.NotNil(t, result.EpisodeFace())
-		assert.Equal(t, true, *result.EpisodeFace())
-		assert.NotNil(t, result.EpisodeGeneric())
-		assert.Equal(t, true, *result.EpisodeGeneric())
-	})
-
-	t.Run("NotificationTypeValue", func(t *testing.T) {
-		obj := model.NewWatcherStreamConfigNotificationsItem()
-		value := model.NotificationType("test")
-		obj.SetNotificationType(value)
-		assert.NotNil(t, obj.NotificationType())
-		assert.Equal(t, value, *obj.NotificationType())
 	})
 }
 

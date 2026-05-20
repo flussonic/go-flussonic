@@ -79,7 +79,7 @@ func TestClient_AgentGet(t *testing.T) {
 	expectedPath := "/central/api/v3/agents/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"layout":{"created_at":1637094994000,"ingest":"example","originator":"layouter"}}`
+	expectedJSON := `{"layout":{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -217,7 +217,7 @@ func TestClient_AgentSave(t *testing.T) {
 	expectedPath := "/central/api/v3/agents/test-id"
 
 	// Expected JSON response
-	expectedJSON := `{"layout":{"created_at":1637094994000,"ingest":"example","originator":"layouter"}}`
+	expectedJSON := `{"layout":{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -259,7 +259,7 @@ func TestClient_AgentsList(t *testing.T) {
 	expectedPath := "/central/api/v3/agents"
 
 	// Expected JSON response
-	expectedJSON := `{"agents":[{"layout":{"created_at":1637094994000,"ingest":"example","originator":"layouter"}}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"agents":[{"layout":{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -763,6 +763,158 @@ func TestClient_BatchUpdateStreamsLayouts(t *testing.T) {
 	}
 }
 
+func TestClient_CdnZoneDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/central/api/v3/cdn-zones/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.CdnZoneDelete(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("CdnZoneDelete failed: %v", err)
+	}
+}
+
+func TestClient_CdnZoneGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/cdn-zones/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{"fallback_zone":"example","name":"example","routes":[{"address":"10.0.0.0","mask":0}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.CdnZoneGet(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("CdnZoneGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.CdnZoneGet(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("CdnZoneGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("CdnZoneGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_CdnZoneSave(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/central/api/v3/cdn-zones/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{"fallback_zone":"example","name":"example","routes":[{"address":"10.0.0.0","mask":0}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.CdnZoneImpl{}
+	_, err := client.CdnZoneSave(ctx, "test-name", body)
+	if err != nil {
+		t.Fatalf("CdnZoneSave failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.CdnZoneSave(ctx, "test-name", body)
+	if err != nil {
+		t.Fatalf("CdnZoneSave failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("CdnZoneSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_CdnZonesList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/cdn-zones"
+
+	// Expected JSON response
+	expectedJSON := `{"cdn_zones":[{"fallback_zone":"example","name":"example","routes":[{"address":"10.0.0.0","mask":0}]}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.CdnZonesList(ctx, nil)
+	if err != nil {
+		t.Fatalf("CdnZonesList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.CdnZonesList(ctx, nil)
+	if err != nil {
+		t.Fatalf("CdnZonesList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("CdnZonesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
 func TestClient_CentralEventsList(t *testing.T) {
 	ctx := context.Background()
 
@@ -1161,6 +1313,88 @@ func TestClient_ExternalEpisodesList(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("ExternalEpisodesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_LayoutIterationGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/streams/layouts/iterations/test-iteration_id"
+
+	// Expected JSON response
+	expectedJSON := `null`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.LayoutIterationGet(ctx, "test-iteration_id")
+	if err != nil {
+		t.Fatalf("LayoutIterationGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.LayoutIterationGet(ctx, "test-iteration_id")
+	if err != nil {
+		t.Fatalf("LayoutIterationGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("LayoutIterationGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_LayoutIterationsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/streams/layouts/iterations"
+
+	// Expected JSON response
+	expectedJSON := `null`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.LayoutIterationsList(ctx, nil)
+	if err != nil {
+		t.Fatalf("LayoutIterationsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.LayoutIterationsList(ctx, nil)
+	if err != nil {
+		t.Fatalf("LayoutIterationsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("LayoutIterationsList returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -1707,7 +1941,7 @@ func TestClient_StreamGet(t *testing.T) {
 	expectedPath := "/central/api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"claims":{"bitrate":2543},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"namespace":"example","updated_at":1637098611000}`
+	expectedJSON := `{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"claims":{"bitrate":2543},"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","namespace":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","updated_at":1637098611000,"video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1721,12 +1955,12 @@ func TestClient_StreamGet(t *testing.T) {
 	client := createTestClient(t, rt)
 
 	// Call method
-	_, err := client.StreamGet(ctx, "test-name")
+	_, err := client.StreamGet(ctx, "test-name", nil)
 	if err != nil {
 		t.Fatalf("StreamGet failed: %v", err)
 	}
 	// Re-call to get result for verification
-	result, err := client.StreamGet(ctx, "test-name")
+	result, err := client.StreamGet(ctx, "test-name", nil)
 	if err != nil {
 		t.Fatalf("StreamGet failed: %v", err)
 	}
@@ -1748,7 +1982,7 @@ func TestClient_StreamLayoutsGet(t *testing.T) {
 	expectedPath := "/central/api/v3/streams/test-name/layouts"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"layouts":[{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+	expectedJSON := `{"estimated_count":5,"layouts":[{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"}],"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1790,7 +2024,7 @@ func TestClient_StreamSave(t *testing.T) {
 	expectedPath := "/central/api/v3/streams/test-name"
 
 	// Expected JSON response
-	expectedJSON := `{"claims":{"bitrate":2543},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"namespace":"example","updated_at":1637098611000}`
+	expectedJSON := `{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"claims":{"bitrate":2543},"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","namespace":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","updated_at":1637098611000,"video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1818,6 +2052,47 @@ func TestClient_StreamSave(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("StreamSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_StreamerConfigExt(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/streamers/test-hostname/config"
+
+	// Expected JSON response
+	expectedJSON := `{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.StreamerConfigExt(ctx, "test-hostname")
+	if err != nil {
+		t.Fatalf("StreamerConfigExt failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.StreamerConfigExt(ctx, "test-hostname")
+	if err != nil {
+		t.Fatalf("StreamerConfigExt failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("StreamerConfigExt returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data
@@ -1860,7 +2135,7 @@ func TestClient_StreamerDynamicStreamsList(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers/test-hostname/dynamic-streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","config_on_disk":{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}},"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1903,7 +2178,7 @@ func TestClient_StreamerGet(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers/test-hostname"
 
 	// Expected JSON response
-	expectedJSON := `{"api_url":"http://streamer.local:8080","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu"}],"uptime":4325502},"total_bandwidth":1024}`
+	expectedJSON := `{"api_url":"http://streamer.local:8080","cdn_zone":"example","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"device":"sda1","errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep","status":"active"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu","uuid":"example"}],"uptime":4325502},"total_bandwidth":1024}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1944,7 +2219,7 @@ func TestClient_StreamerSave(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers/test-hostname"
 
 	// Expected JSON response
-	expectedJSON := `{"api_url":"http://streamer.local:8080","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu"}],"uptime":4325502},"total_bandwidth":1024}`
+	expectedJSON := `{"api_url":"http://streamer.local:8080","cdn_zone":"example","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"device":"sda1","errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep","status":"active"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu","uuid":"example"}],"uptime":4325502},"total_bandwidth":1024}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -1986,7 +2261,7 @@ func TestClient_StreamerStreamsList(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers/test-hostname/streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","config_on_disk":{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}},"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2028,7 +2303,7 @@ func TestClient_StreamerUpdateStreamsList(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers/test-hostname/update-streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","config_on_disk":{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}},"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}],"updated_at":1727274724000}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2099,7 +2374,7 @@ func TestClient_StreamersList(t *testing.T) {
 	expectedPath := "/central/api/v3/streamers"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streamers":[{"api_url":"http://streamer.local:8080","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu"}],"uptime":4325502},"total_bandwidth":1024}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streamers":[{"api_url":"http://streamer.local:8080","cdn_zone":"example","channel_limit":5,"cluster_key":"xS6i6Q3DCc5nEvnu","config":{"cluster_key":"xS6i6Q3DCc5nEvnu","event_sinks":[{"except":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"extra":{"key1":"example","key2":"example"},"level":"debug","max_depth":100,"max_size":10000,"name":"my_json_sink","only":[{"key1":["stream_stopped"],"key2":["stream_stopped"]}],"resend_limit":1000,"resend_timeout":10,"throttle_delay":1,"url":"jsonlog:///var/log/events-json.log"}],"http_proxies":[{"prefix":"example","stats":{"http_100":1000,"http_200":1000,"http_300":10,"http_400":10,"http_500":10,"protocol_upgrades":1000,"proxy_error":10,"proxy_error_connection":10,"requests":1000,"time_1000ms":2,"time_100ms":10,"time_5000ms":2,"time_500ms":5,"time_longms":1},"url":"https://example.com"}],"rproxy":{"endpoint_auth":"example","forward_ports":{"key1":{"handler":"example"},"key2":{"handler":"example"}},"streampoint_key":"example"},"server_names":[{"aliases":["s1.streamer.local","s2.streamer.local"],"domain":"streamer.local"}]},"cpu_limit":10,"dvrs":[{"disk_usage_limit":98,"disks":[{"mode":"keep","path":"volume1","stats":{"device":"sda1","errors":{"connection_timeout":1,"eacces":1,"eagain":1,"ebusy":1,"econnrefused":1,"edquot":1,"emfile":1,"enodev":1,"enoent":1,"enospc":1,"erofs":1,"nxdomain":1,"other":1,"ssl_error":1},"migration_eta":1000000000,"migration_updated":1000000000,"mode":"keep","status":"active"}}],"episodes_url":"example","index":"example","name":"example","root":"example","schedule":[[800,1600],[2200,130]],"storage_limit":400000000000}],"fetch_timeout":1000,"hostname":"peer.example.com","labels":{"key1":"value1","key2":"value2"},"namespace":"example","private_payload_url":"http://streamer.local","public_payload_url":"http://public.example.com","role":"streamer","stale_timeout":1000,"stats":{"bandwidth_usage":67,"config_error":{"col":20,"detail":"example","error":"bad_url","first_error_col":5,"first_error_line":14,"line":15,"path":["streams",0,"inputs",0,"url","input_url"]},"config_external_status":{"detail":"example","error":"invalid_authorization","path":["streams",0,"inputs",0,"url","input_url"],"reason":"validation_error","status":"loaded","while":"refresh"},"config_version":[1636709231,4],"cpu_usage":48,"error":"example","healthcheck_status":{"checks":{"errors_details":[{"error":"example","rule":"example"}]},"status":"ok","status_changed_at":1000000000000},"hostname":"openapi.flussonic.com","id":"61893b15-75b2-4fcb-b4cf-ae1dd0858ea2","input_kbit":400300,"license_txt":"uO8v12HJhNXVj5gM","license_type":"undefined","memory_usage":27,"next_version":"22.01","now":1000000000000,"online_streams":27,"opened_files":5,"output_kbit":500400,"partitions":[{"device":"sda1","io_util":42,"path":"_var_lib_docker_overlay2_3684778579db0a4d418fdc1a8a6953b680ab92d179a7d6f9506710d073095e36_merged","total_mb":45423,"usage":30}],"scheduler_load":40,"server_version":"23.04","started_at":1639337825,"streamer_status":"running","text_alerts":{"key1":"example","key2":"example"},"total_clients":2040,"total_streams":45,"transcoder_devices":[{"id":"auto","name":"example","reconfig_support":"full","type":"cpu","uuid":"example"}],"uptime":4325502},"total_bandwidth":1024}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2225,7 +2500,7 @@ func TestClient_StreamsList(t *testing.T) {
 	expectedPath := "/central/api/v3/streams"
 
 	// Expected JSON response
-	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"claims":{"bitrate":2543},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","originator":"layouter"}],"node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer"}],"originator":"layouter"},"namespace":"example","updated_at":1637098611000}]}`
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","streams":[{"add_audio_only":true,"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"claims":{"bitrate":2543},"clients_timeout":485,"comment":"This is a test stream","drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"hls_scte35":"scte35","input_media_info":{"program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"match":{"codec":"ac3","index":2,"language":"eng"}}]},"inputs":[{"allow_if":"example","audio_timeout":20,"comment":"This is a test input","deny_if":"example","frames_timeout":3,"headers":{"Authorization":"Basic dXNlcjpwYXNzd29yZA==","User-Agent":"curl/7.85.0"},"max_retry_timeout":30,"output_audio":"keep","priority":1,"source_timeout":20,"stats":{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2},"timeout":10,"url":"fake://fake","user_agent":"example","via":"example","video_timeout":20}],"jpeg_snapshot_sign_key":"example","labels":{"key1":"example_value","key2":"example_value"},"layout":{"change_reason":"stream_misses_node_required_labels","created_at":1637094994000,"dvr_backups":["example"],"dvr_parts":["example"],"failover_from":"example","inference":"example","ingest":"example","ingest_history":[{"created_at":1637094994000,"ingest":"example","iteration_id":"550e8400-e29b-41d4-a716-446655440000","originator":"layouter"}],"iteration_id":"550e8400-e29b-41d4-a716-446655440000","node_layout_decisions":[{"hostname":"streamer1.com","reasons":["stream_misses_node_required_labels","node_misses_stream_required_labels","node_channel_limit_exceeded"],"role":"streamer","transcoder_device_type":"nvenc"}],"originator":"layouter","transcoder_device_type":"nvenc"},"max_retry_timeout":30,"meta":{"key1":"example","key2":"example"},"mpegts_ac3":"keep","mpegts_pids":{"default":"auto","media":[{"bitrate":2543,"codec":"scte35","content":"audio","es_info":"52010D","pid":0,"stats":{"content":"audio","pid":0},"stream_type":12,"track":1}]},"name":"example","named_by":"config","namespace":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"position":2,"provider":"SportsTV","pushes":[{"comment":"This is a test push","connect_timeout":2,"domain":"officialdomain.com","encoder":"Lavf57","retry_timeout":7,"service":"My service","stats":{"genlock_status":"no_ref","genref_status":{"vstd":"pal","vstd_detected":"pal"},"opened_at":1000000000000,"pids":[{"content":"audio","pid":0}],"standby_status":"active","status":"starting","url":"example"},"timeout":10,"url":"example_value"}],"recheck_secondary_inputs_interval":120,"segment_count":4,"segment_duration":5000,"source_timeout":10,"srt2_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"srt_publish":{"enforcedencryption":true,"latency":150,"linger":15,"minversion":"1.1.0","passphrase":"9876543210","port":9050,"streamid":"#!::r=my-stream,m=publish","timeout":10,"version":"1.3.0"},"static":true,"stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284},"template":"sports-hd","thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"title":"Hockey channel","track_filter":{"key1":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}},"key2":{"match":{"headers":{"stb-model":"4800x"},"user_agent":"Roku"},"video":{"exclude_formats":["720p60"],"formats":["1080p30","576p"],"max_width":720}}},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"transport":"udp","updated_at":1637098611000,"video_timeout":20,"vision":{"alg":"faces","areas":"example","detectors":[{"detector_type":{},"region_id":"example","stats":{"alerts":{"low_quality_at":1637094994000,"not_enough_detections_at":1637094994000,"small_size_at":1637094994000},"last_detection_at":1637094994000,"status":"running"}}]},"webrtc_abr":{"start_track":"v2"}}]}`
 
 	// RoundTripper that validates request and returns example response
 	rt := &validatingRoundTripper{
@@ -2253,6 +2528,353 @@ func TestClient_StreamsList(t *testing.T) {
 	// Verify result is not nil
 	if result == nil {
 		t.Fatal("StreamsList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_StreamsStatsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/streams/stats"
+
+	// Expected JSON response
+	expectedJSON := `{"next":"JTI0cG9zaXRpb25fZ3Q9MA==","stats":[{"hostname":"streamer1.example.com","name":"camera1","stats":{"agent_status":"connected","alive":true,"backup_error":"enoent","bitrate":186,"current_agent_id":"example","dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"episodes_density":0.001,"inputs":[{"active":true,"dvr_info":{"bytes":129600000000,"depth":259200,"disk_size":1099511627776,"duration":172800,"from":1641045644,"ranges":[{"closed_at":1000000000000,"duration":28800,"from":1525186456,"opened_at":1000000000000}]},"ip":"172.16.25.73","media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"opened_at":1637094994000,"pids":[{"pid":0}],"proto":"dash","rtp_channels":[{"channel_id":0,"content":"video"}],"stop_events":[{"code":"example","timestamp":1000000000000}],"ts_delay":1284,"ts_delay_per_tracks":[1284],"url":"udp://239.0.0.1:1234","user_agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/90.0.4430.72 Safari/537.36","valid_secondary_inputs":2}],"last_dts_at":1636383841974,"last_running_at":1737975543123,"lifetime":71977,"media_info":{"flow_type":"stream","program_id":110,"provider":"Netflix","stream_id":253,"title":"Bunny","tracks":[{"avg_gop":25,"bandwidth":2600,"bframes":3,"bitrate":2543,"closed_captions":[{"language":"eng","name":"English"}],"codec":"h264","content":"audio","last_gop":28,"length_size":2,"level":"example","pix_fmt":"yuv420p","profile":"example","title":"Video1","track_id":"v1"}]},"online_clients":3,"running_on":["streamer1.example.com"],"status":"running","streaming_endpoint":"example","ts_delay":1284}}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.StreamsStatsList(ctx, nil)
+	if err != nil {
+		t.Fatalf("StreamsStatsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.StreamsStatsList(ctx, nil)
+	if err != nil {
+		t.Fatalf("StreamsStatsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("StreamsStatsList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TemplateDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/central/api/v3/templates/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.TemplateDelete(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("TemplateDelete failed: %v", err)
+	}
+}
+
+func TestClient_TemplateGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/templates/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"max_retry_timeout":30,"name":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"segment_count":4,"segment_duration":5000,"source_timeout":10,"static":true,"thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"video_timeout":20}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.TemplateGet(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("TemplateGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TemplateGet(ctx, "test-name")
+	if err != nil {
+		t.Fatalf("TemplateGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TemplateGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TemplateSave(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/central/api/v3/templates/test-name"
+
+	// Expected JSON response
+	expectedJSON := `{"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"max_retry_timeout":30,"name":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"segment_count":4,"segment_duration":5000,"source_timeout":10,"static":true,"thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"video_timeout":20}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.CentralTemplateConfigImpl{}
+	_, err := client.TemplateSave(ctx, "test-name", body)
+	if err != nil {
+		t.Fatalf("TemplateSave failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TemplateSave(ctx, "test-name", body)
+	if err != nil {
+		t.Fatalf("TemplateSave failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TemplateSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TemplatesList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/templates"
+
+	// Expected JSON response
+	expectedJSON := `{"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl","templates":[{"audio_timeout":20,"backup":{"audio_timeout":5,"file":"vod/blank.mp4","timeout":10,"video_timeout":4},"chunk_duration":200,"clients_timeout":485,"drm":{"encryption":"full","keyserver":"https://keyserver1.mycompany.com","resource_id":"L2sItm6","vendor":"example"},"dvbocr":"replace","dvr":{"disk_usage_limit":98,"episodes_url":"example","redundancy_factor":1,"reference":"localdvr0","remotes":["example_value"],"schedule":[[800,1600],[2200,130]],"storage_limit":400000000000},"epg_enabled":true,"max_retry_timeout":30,"name":"example","on_play":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"on_publish":{"allowed_countries":["US","DE","GB"],"disallowed_countries":["US","DE","GB"],"domains":["mycompany.com"],"extra":{"key1":"example","key2":"example"},"max_sessions":5000,"session_keys":["name","token","proto","ip"],"url":"http://middleware-address/auth/v2"},"playback_headers":[{"headers":{"Cache-Control":"max-age=3600"},"playback":"live","segment_headers":{"Cache-Control":"max-age=3600"}}],"segment_count":4,"segment_duration":5000,"source_timeout":10,"static":true,"thumbnails":{"deviceid":"auto","hw":"cpu","sizes":[{}],"url":"http://10.115.23.45/isapi/thumbnail.jpg"},"transcoder":{"audio":{"avol":"-6dB","bitrate":64000,"channels":2,"codec":"opus","sample_rate":48000},"decoder":{"crop":{"height":0,"left":0,"top":0,"width":0},"deinterlace":true,"deinterlace_rate":"frame","drop_frame_interval":3,"pix_fmt":"yuv420p"},"global":{"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"deviceid":"auto","gop":150,"hw":"cpu","target":"uhdtv"},"tracks":[{"bitrate":2543,"channels":2,"codec":"opus","content":"audio","input_track":1,"language":"eng","sample_rate":48000,"title":"Video1","volume":"-6dB"}],"video":[{"alogo":{"path":"@chan.png","position":"tl","x":10,"y":10},"bframes":3,"bitrate":1000000,"burn":{"text":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"},"time":{"box":{"borderw":10,"color":"example"},"font":{"alpha":1,"color":"example","file":"/usr/share/fonts/truetype/freefont/FONT_NAME.ttf","size":24},"position":"tl","text":"example"}},"codec":"h264","extra":{"key1":"example","key2":"example"},"fps":"any","gop":150,"interlace":"tff","level":"1","logo":{"path":"@chan.png","position":"tl","x":10,"y":10},"preset":"medium","profile":"simple","rc_method":"vbr","refs":1,"resize_mode":"vic","size":{"background":"blur","height":-1,"strategy":"crop","width":-1},"track":1}]},"video_timeout":20}]}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &central.TemplatesListQuery{}
+	_, err := client.TemplatesList(ctx, query)
+	if err != nil {
+		t.Fatalf("TemplatesList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TemplatesList(ctx, query)
+	if err != nil {
+		t.Fatalf("TemplatesList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TemplatesList returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TranscodingClaimDelete(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "DELETE"
+	expectedPath := "/central/api/v3/transcoding/claims/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	err := client.TranscodingClaimDelete(ctx, "test-id")
+	if err != nil {
+		t.Fatalf("TranscodingClaimDelete failed: %v", err)
+	}
+}
+
+func TestClient_TranscodingClaimGet(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/transcoding/claims/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{"buckets":[{"bucket":"sd","max_streams":1}],"id":"NVIDIA GeForce RTX 5050"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	_, err := client.TranscodingClaimGet(ctx, "test-id")
+	if err != nil {
+		t.Fatalf("TranscodingClaimGet failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TranscodingClaimGet(ctx, "test-id")
+	if err != nil {
+		t.Fatalf("TranscodingClaimGet failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TranscodingClaimGet returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TranscodingClaimSave(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "PUT"
+	expectedPath := "/central/api/v3/transcoding/claims/test-id"
+
+	// Expected JSON response
+	expectedJSON := `{"buckets":[{"bucket":"sd","max_streams":1}],"id":"NVIDIA GeForce RTX 5050"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	body := &model.CentralTranscodingClaimImpl{}
+	_, err := client.TranscodingClaimSave(ctx, "test-id", body)
+	if err != nil {
+		t.Fatalf("TranscodingClaimSave failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TranscodingClaimSave(ctx, "test-id", body)
+	if err != nil {
+		t.Fatalf("TranscodingClaimSave failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TranscodingClaimSave returned nil result")
+	}
+
+	// Verify marshaling/unmarshaling preserves data
+	verifyMarshalUnmarshal(t, result, expectedJSON)
+}
+
+func TestClient_TranscodingClaimsList(t *testing.T) {
+	ctx := context.Background()
+
+	// Expected request
+	expectedMethod := "GET"
+	expectedPath := "/central/api/v3/transcoding/claims"
+
+	// Expected JSON response
+	expectedJSON := `{"claims":[{"buckets":[{"bucket":"sd","max_streams":1}],"id":"NVIDIA GeForce RTX 5050"}],"estimated_count":5,"next":"JTI0cG9zaXRpb25fZ3Q9MA==","prev":"JTI0cG9zaXRpb25fbHQ9MSYlMjRyZXZlcnNlZD10cnVl"}`
+
+	// RoundTripper that validates request and returns example response
+	rt := &validatingRoundTripper{
+		t:              t,
+		expectedMethod: expectedMethod,
+		expectedPath:   expectedPath,
+		responseJSON:   expectedJSON,
+	}
+
+	// Create client with custom transport
+	client := createTestClient(t, rt)
+
+	// Call method
+	query := &central.TranscodingClaimsListQuery{}
+	_, err := client.TranscodingClaimsList(ctx, query)
+	if err != nil {
+		t.Fatalf("TranscodingClaimsList failed: %v", err)
+	}
+	// Re-call to get result for verification
+	result, err := client.TranscodingClaimsList(ctx, query)
+	if err != nil {
+		t.Fatalf("TranscodingClaimsList failed: %v", err)
+	}
+
+	// Verify result is not nil
+	if result == nil {
+		t.Fatal("TranscodingClaimsList returned nil result")
 	}
 
 	// Verify marshaling/unmarshaling preserves data

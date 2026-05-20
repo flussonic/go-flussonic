@@ -21,6 +21,11 @@ import (
 
 // WatcherAdmin defines the interface for interacting with WatcherAdmin API.
 type WatcherAdmin interface {
+	// AdminNvrsList List all NVRs in system
+	// Returns a list of all NVRs (Network Video Recorders) registered in the system across all organizations. This endpoint is available only to administrators. Each NVR represents a remote Watcher instance that has been connected to this main Watcher.
+	AdminNvrsList(ctx context.Context, query *AdminNvrsListQuery) (model.NvrList, error)
+	// AdminNvrsListIterator iterates through all items using cursor pagination
+	AdminNvrsListIterator(ctx context.Context, query *AdminNvrsListQuery) iter.Seq2[model.Nvr, error]
 	// AdminStreamsList List streams for admin
 	// The key difference between this method and streams_list is the additional parameters. These additional parameters are available only for admin (e.g. 'required_zones' and 'preferred_zones').  This API method is one of the most important in whole API, because it gives the list of all streams.  `streams_list` in Watcher Admin API: * can list all streams within the Watcher. * admin is not allowed to watch content from any cameras for security reasons.  `streams_list` in Watcher Client API: * return streams from organizations where you're member * provives a playback token that allows play video from the camera.
 	AdminStreamsList(ctx context.Context, query *AdminStreamsListQuery) (model.StreamsList, error)
@@ -49,6 +54,11 @@ type WatcherAdmin interface {
 	// CameraReboot Reboot camera
 	// Reboot camera
 	CameraReboot(ctx context.Context, name string) error
+	// CameraUsagesAdminList List camera usage from all domains
+	// Returns camera usage data for billing integration across all domains.  Each entry represents a period when a camera was assigned to a specific preset (tariff plan). The preset is recorded at 00:00 UTC each day — if a preset changes multiple times during the day, only the one active at midnight is used for billing.  Response contains two plan identifiers: `plan_id` (from preset's `external_id`, for internal billing) and `billing_plan_id` (from preset's `billing_external_id`, for operator's own billing system).
+	CameraUsagesAdminList(ctx context.Context, query *CameraUsagesAdminListQuery) (model.CameraUsagesList, error)
+	// CameraUsagesAdminListIterator iterates through all items using cursor pagination
+	CameraUsagesAdminListIterator(ctx context.Context, query *CameraUsagesAdminListQuery) iter.Seq2[model.CameraUsage, error]
 	// ClusterStatsGet Get current health of cluster
 	// This method allows you to fetch cluster's health
 	ClusterStatsGet(ctx context.Context, query *ClusterStatsGetQuery) (model.ClusterHealthStats, error)
@@ -78,6 +88,9 @@ type WatcherAdmin interface {
 	// OrganizationPresetSave Update organizations preset
 	// Save organization preset by its id or adds new preset to organization.
 	OrganizationPresetSave(ctx context.Context, organization_id string, body model.OrganizationPreset) (model.Preset, error)
+	// PresetDelete Delete preset
+	// Marks the preset with the given ID as deleted, i.e. sets `is_deleted = true`. The deleted presets are not returned in the response to the preset list request but still are stored in the database.  The deleted preset can remain assigned to cameras and Organizations. This is necessary for the camera not to be left without a preset when you delete one because the preset is required for any camera. Consider reassigning presets for cameras and Organizations manually before deleting the preset.
+	PresetDelete(ctx context.Context, id string) error
 	// PresetGet Get one preset
 	// This method is used to get info about preset by its id.
 	PresetGet(ctx context.Context, id string) (model.Preset, error)
@@ -147,6 +160,19 @@ type WatcherAdmin interface {
 	StreamersList(ctx context.Context, query *StreamersListQuery) (model.StreamersList, error)
 	// StreamersListIterator iterates through all items using cursor pagination
 	StreamersListIterator(ctx context.Context, query *StreamersListQuery) iter.Seq2[model.Streamer, error]
+	// StreamsDiscoverList Get discovered cameras
+	// Returns the current list of cameras found by an active or completed ONVIF discovery session.
+	StreamsDiscoverList(ctx context.Context, query *StreamsDiscoverListQuery) (model.OnvifDiscoveredDevices, error)
+	// StreamsDiscoverListIterator iterates through all items using cursor pagination
+	StreamsDiscoverListIterator(ctx context.Context, query *StreamsDiscoverListQuery) iter.Seq2[model.OnvifDiscoveredDevice, error]
+	// StreamsDiscoverStart Start ONVIF network scan
+	// Starts a broad ONVIF scan across the entire local network and returns the initial list of discovered cameras. Only available to admin users. Returns a 409 error if a discovery session is already running.
+	StreamsDiscoverStart(ctx context.Context, query *StreamsDiscoverStartQuery, body model.OnvifDiscoverRequest) (model.OnvifDiscoveredDevices, error)
+	// StreamsDiscoverStartIterator iterates through all items using cursor pagination
+	StreamsDiscoverStartIterator(ctx context.Context, query *StreamsDiscoverStartQuery, body model.OnvifDiscoverRequest) iter.Seq2[model.OnvifDiscoveredDevice, error]
+	// StreamsDiscoverStop Stop ONVIF network scan
+	// Stops the currently running ONVIF discovery scan.
+	StreamsDiscoverStop(ctx context.Context) error
 	// StreamsMultiedit Save streams settings
 	// Create or update settings for each stream. This operation does everything or nothing. If at least one stream has an invalid configuration or can't be processed, the request will fail.
 	StreamsMultiedit(ctx context.Context, body model.StreamsMultieditConfig) error
@@ -202,6 +228,49 @@ type WatcherAdmin interface {
 	ZonesList(ctx context.Context, query *ZonesListQuery) (model.ZonesList, error)
 	// ZonesListIterator iterates through all items using cursor pagination
 	ZonesListIterator(ctx context.Context, query *ZonesListQuery) iter.Seq2[model.Zone, error]
+}
+
+// AdminNvrsListQuery represents query parameters for AdminNvrsList method
+type AdminNvrsListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts AdminNvrsListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *AdminNvrsListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *AdminNvrsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
 }
 
 // AdminStreamsListQuery represents query parameters for AdminStreamsList method
@@ -308,6 +377,64 @@ func (q *AgentsListQuery) ToQueryString() (string, error) {
 
 // SetCursor sets the cursor for pagination.
 func (q *AgentsListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// CameraUsagesAdminListQuery represents query parameters for CameraUsagesAdminList method
+type CameraUsagesAdminListQuery struct {
+	Cursor string
+	// Start date of the usage reporting period (inclusive). Format: YYYY-MM-DD (ISO 8601 date). Default is yesterday.
+	From string
+	// Filter by license identifier.
+	LicenseId string
+	Limit     int
+	Select    []string
+	Sort      []string
+	// End date of the usage reporting period (inclusive). Format: YYYY-MM-DD (ISO 8601 date). Default is the same as "from" date.
+	To    string
+	Extra map[string]string
+}
+
+// ToQueryString converts CameraUsagesAdminListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *CameraUsagesAdminListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if q.From != "" {
+		values.Set("from", q.From)
+	}
+	if q.LicenseId != "" {
+		values.Set("license_id", q.LicenseId)
+	}
+	if q.To != "" {
+		values.Set("to", q.To)
+	}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *CameraUsagesAdminListQuery) SetCursor(cursor *string) {
 	if cursor != nil {
 		q.Cursor = *cursor
 	} else {
@@ -723,6 +850,92 @@ func (q *StreamersListQuery) SetCursor(cursor *string) {
 	}
 }
 
+// StreamsDiscoverListQuery represents query parameters for StreamsDiscoverList method
+type StreamsDiscoverListQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts StreamsDiscoverListQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *StreamsDiscoverListQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *StreamsDiscoverListQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
+// StreamsDiscoverStartQuery represents query parameters for StreamsDiscoverStart method
+type StreamsDiscoverStartQuery struct {
+	Cursor string
+	Limit  int
+	Select []string
+	Sort   []string
+	Extra  map[string]string
+}
+
+// ToQueryString converts StreamsDiscoverStartQuery to a valid query string.
+// It validates required parameters and returns an error if any are missing.
+func (q *StreamsDiscoverStartQuery) ToQueryString() (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	values := url.Values{}
+	if len(q.Select) > 0 {
+		values.Set("select", strings.Join(q.Select, ","))
+	}
+	if len(q.Sort) > 0 {
+		values.Set("sort", strings.Join(q.Sort, ","))
+	}
+	if q.Limit > 0 {
+		values.Set("limit", strconv.Itoa(q.Limit))
+	}
+	if q.Cursor != "" {
+		values.Set("cursor", q.Cursor)
+	}
+	for key, value := range q.Extra {
+		values.Set(key, value)
+	}
+	return values.Encode(), nil
+}
+
+// SetCursor sets the cursor for pagination.
+func (q *StreamsDiscoverStartQuery) SetCursor(cursor *string) {
+	if cursor != nil {
+		q.Cursor = *cursor
+	} else {
+		q.Cursor = ""
+	}
+}
+
 // UsersListQuery represents query parameters for UsersList method
 type UsersListQuery struct {
 	Cursor string
@@ -947,6 +1160,22 @@ func (c *Client) doList(ctx context.Context, path string, query interface{ ToQue
 	return c.base.Request(ctx, request, result)
 }
 
+// AdminNvrsList List all NVRs in system
+// Returns a list of all NVRs (Network Video Recorders) registered in the system across all organizations. This endpoint is available only to administrators. Each NVR represents a remote Watcher instance that has been connected to this main Watcher.
+func (c *Client) AdminNvrsList(ctx context.Context, query *AdminNvrsListQuery) (model.NvrList, error) {
+	path := "/watcher/admin-api/v3/nvrs"
+	result := &model.NvrListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// AdminNvrsListIterator iterates through all Nvr items using cursor pagination.
+func (c *Client) AdminNvrsListIterator(ctx context.Context, query *AdminNvrsListQuery) iter.Seq2[model.Nvr, error] {
+	return cursors.Iterator(ctx, c.AdminNvrsList, query)
+}
+
 // AdminStreamsList List streams for admin
 // The key difference between this method and streams_list is the additional parameters. These additional parameters are available only for admin (e.g. 'required_zones' and 'preferred_zones').  This API method is one of the most important in whole API, because it gives the list of all streams.  `streams_list` in Watcher Admin API: * can list all streams within the Watcher. * admin is not allowed to watch content from any cameras for security reasons.  `streams_list` in Watcher Client API: * return streams from organizations where you're member * provives a playback token that allows play video from the camera.
 func (c *Client) AdminStreamsList(ctx context.Context, query *AdminStreamsListQuery) (model.StreamsList, error) {
@@ -1042,6 +1271,22 @@ func (c *Client) CameraReboot(ctx context.Context, name string) error {
 		return err
 	}
 	return nil
+}
+
+// CameraUsagesAdminList List camera usage from all domains
+// Returns camera usage data for billing integration across all domains.  Each entry represents a period when a camera was assigned to a specific preset (tariff plan). The preset is recorded at 00:00 UTC each day — if a preset changes multiple times during the day, only the one active at midnight is used for billing.  Response contains two plan identifiers: `plan_id` (from preset's `external_id`, for internal billing) and `billing_plan_id` (from preset's `billing_external_id`, for operator's own billing system).
+func (c *Client) CameraUsagesAdminList(ctx context.Context, query *CameraUsagesAdminListQuery) (model.CameraUsagesList, error) {
+	path := "/watcher/admin-api/v3/usage/cameras"
+	result := &model.CameraUsagesListImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CameraUsagesAdminListIterator iterates through all CameraUsage items using cursor pagination.
+func (c *Client) CameraUsagesAdminListIterator(ctx context.Context, query *CameraUsagesAdminListQuery) iter.Seq2[model.CameraUsage, error] {
+	return cursors.Iterator(ctx, c.CameraUsagesAdminList, query)
 }
 
 // ClusterStatsGet Get current health of cluster
@@ -1144,6 +1389,16 @@ func (c *Client) OrganizationPresetSave(ctx context.Context, organization_id str
 		return nil, err
 	}
 	return result, nil
+}
+
+// PresetDelete Delete preset
+// Marks the preset with the given ID as deleted, i.e. sets `is_deleted = true`. The deleted presets are not returned in the response to the preset list request but still are stored in the database.  The deleted preset can remain assigned to cameras and Organizations. This is necessary for the camera not to be left without a preset when you delete one because the preset is required for any camera. Consider reassigning presets for cameras and Organizations manually before deleting the preset.
+func (c *Client) PresetDelete(ctx context.Context, id string) error {
+	path := fmt.Sprintf("/watcher/admin-api/v3/presets/%s", id)
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
 }
 
 // PresetGet Get one preset
@@ -1385,6 +1640,50 @@ func (c *Client) StreamersList(ctx context.Context, query *StreamersListQuery) (
 // StreamersListIterator iterates through all Streamer items using cursor pagination.
 func (c *Client) StreamersListIterator(ctx context.Context, query *StreamersListQuery) iter.Seq2[model.Streamer, error] {
 	return cursors.Iterator(ctx, c.StreamersList, query)
+}
+
+// StreamsDiscoverList Get discovered cameras
+// Returns the current list of cameras found by an active or completed ONVIF discovery session.
+func (c *Client) StreamsDiscoverList(ctx context.Context, query *StreamsDiscoverListQuery) (model.OnvifDiscoveredDevices, error) {
+	path := "/watcher/admin-api/v3/streams/discover"
+	result := &model.OnvifDiscoveredDevicesImpl{}
+	if err := c.doList(ctx, path, query, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// StreamsDiscoverListIterator iterates through all OnvifDiscoveredDevice items using cursor pagination.
+func (c *Client) StreamsDiscoverListIterator(ctx context.Context, query *StreamsDiscoverListQuery) iter.Seq2[model.OnvifDiscoveredDevice, error] {
+	return cursors.Iterator(ctx, c.StreamsDiscoverList, query)
+}
+
+// StreamsDiscoverStart Start ONVIF network scan
+// Starts a broad ONVIF scan across the entire local network and returns the initial list of discovered cameras. Only available to admin users. Returns a 409 error if a discovery session is already running.
+func (c *Client) StreamsDiscoverStart(ctx context.Context, query *StreamsDiscoverStartQuery, body model.OnvifDiscoverRequest) (model.OnvifDiscoveredDevices, error) {
+	path := "/watcher/admin-api/v3/streams/discover"
+	result := &model.OnvifDiscoveredDevicesImpl{}
+	if err := c.doPut(ctx, path, body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// StreamsDiscoverStartIterator iterates through all OnvifDiscoveredDevice items using cursor pagination.
+func (c *Client) StreamsDiscoverStartIterator(ctx context.Context, query *StreamsDiscoverStartQuery, body model.OnvifDiscoverRequest) iter.Seq2[model.OnvifDiscoveredDevice, error] {
+	return cursors.Iterator(ctx, func(ctx context.Context, query *StreamsDiscoverStartQuery) (model.OnvifDiscoveredDevices, error) {
+		return c.StreamsDiscoverStart(ctx, query, body)
+	}, query)
+}
+
+// StreamsDiscoverStop Stop ONVIF network scan
+// Stops the currently running ONVIF discovery scan.
+func (c *Client) StreamsDiscoverStop(ctx context.Context) error {
+	path := "/watcher/admin-api/v3/streams/discover"
+	if err := c.doDelete(ctx, path); err != nil {
+		return err
+	}
+	return nil
 }
 
 // StreamsMultiedit Save streams settings
